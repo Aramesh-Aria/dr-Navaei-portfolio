@@ -1,0 +1,18 @@
+agents.md
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+database/
+media/
+staticfiles/
+public/
+
+# Env
+.env

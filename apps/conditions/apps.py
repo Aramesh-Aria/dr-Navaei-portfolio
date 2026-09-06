@@ -5,3 +5,4 @@ class ConditionsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.conditions'
     label = 'conditions'
+    verbose_name = 'بیماری‌های تحت درمان'

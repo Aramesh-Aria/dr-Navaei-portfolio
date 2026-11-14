@@ -7,7 +7,7 @@ from .models import Credential, DoctorProfile
 class CredentialInline(admin.TabularInline):
     model = Credential
     extra = 1
-    fields = ("title", "institution", "year", "order")
+    fields = ("title", "institution", "year", "detail", "order")
 
 
 @admin.register(DoctorProfile)

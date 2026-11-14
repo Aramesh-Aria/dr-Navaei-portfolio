@@ -1,0 +1,35 @@
+{% load site %}
+<footer class="site-footer on-field">
+  {% include "partials/_weave.html" %}
+  <div class="wrap site-footer__body">
+    <div class="site-footer__brand">
+      <span class="mark mark--gold" aria-hidden="true"></span>
+      <p class="site-footer__name">{{ profile.full_name }}</p>
+      {% if profile.intro_tagline %}<p class="site-footer__degrees">{{ profile.intro_tagline|isolate_latin }}</p>{% endif %}
+      {% if profile.medical_council_number %}<p class="site-footer__fact">شماره نظام پزشکی: <span class="num">{{ profile.medical_council_number|fa_digits }}</span></p>{% endif %}
+    </div>
+    {% if locations %}
+    <section class="site-footer__clinics" aria-labelledby="footer-clinics">
+      <h2 class="site-footer__heading" id="footer-clinics">{% if locations|length > 1 %}نشانی و تلفن مطب‌ها{% else %}نشانی و تلفن مطب{% endif %}</h2>
+      <div class="clinics clinics--{{ locations|length|default:1 }}{% if locations|length > 1 %} clinics--many{% endif %}">
+        {% for location in locations %}
+        <div class="clinic">
+          <h3 class="clinic__name">{{ location.name|isolate_latin }}</h3>
+          <p class="clinic__address">{{ location.address|isolate_latin }}</p>
+          <dl class="clinic__facts">
+            <div><dt>تلفن مطب</dt><dd><a href="{{ location.phone|tel_href }}" class="num">{{ location.phone|phone_display }}</a></dd></div>
+            {% if location.mobile_phone %}<div><dt>همراه</dt><dd><a href="{{ location.mobile_phone|tel_href }}" class="num">{{ location.mobile_phone|phone_display }}</a></dd></div>{% endif %}
+            <div><dt>ساعت پذیرش</dt><dd>{{ location.hours|fa_digits|linebreaksbr }}</dd></div>
+          </dl>
+          {% if location.map_url %}<a class="pill pill--line pill--on-field pill--small" href="{{ location.map_url }}" rel="noopener" target="_blank"><svg aria-hidden="true"><use href="#i-route"/></svg>مسیر روی نقشه<span class="sr-only"> (در پنجره‌ی تازه)</span></a>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+  </div>
+  <div class="wrap"><div class="site-footer__end">
+    <nav aria-label="پانویس"><ul>{% include "partials/_nav_links.html" %}</ul></nav>
+    {% if profile.paziresh24_url %}<a class="site-footer__out" href="{{ profile.paziresh24_url }}" rel="noopener" target="_blank">پروفایل در پذیرش۲۴<svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr-only"> (در پنجره‌ی تازه)</span></a>{% endif %}
+  </div></div>
+</footer>

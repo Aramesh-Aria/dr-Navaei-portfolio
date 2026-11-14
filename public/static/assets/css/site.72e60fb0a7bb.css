@@ -1,0 +1,460 @@
+/*
+ * Dr. Sepideh Safanavaei: public site styles.
+ * Direction A «چادرشب»: deep teal cloth with saffron-gold and madder-red threads.
+ * Plain CSS, no build step. Logical properties throughout (the site is RTL).
+ * Tokens are documented in docs/design/PROGRESS.md (Stage 3 handoff).
+ */
+@layer reset, tokens, base, layout, components, pages, utilities;
+
+/* ---------------------------------------------------------------- fonts */
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../fonts/vazirmatn-400.382e69170a27.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../fonts/vazirmatn-500.561c0ace8669.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../fonts/vazirmatn-700.63029d9e256c.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lalezar";
+  src: url("../fonts/lalezar-400.dd64019fb7eb.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+/* ---------------------------------------------------------------- reset */
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body, h1, h2, h3, h4, p, figure, blockquote, dl, dd, ul, ol { margin: 0; }
+  ul[class], ol[class], nav ul { list-style: none; padding: 0; }
+  img, svg, picture { display: block; max-width: 100%; }
+  img { height: auto; }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  [hidden] { display: none !important; }
+}
+
+/* --------------------------------------------------------------- tokens */
+@layer tokens {
+  :root {
+    /* Colour: five threads of the cloth, plus two derived inks. */
+    --field: #0C3438;        /* deep teal cloth: header, hero, footer, text ink */
+    --field-2: #165257;      /* second teal thread: portrait ground, chips */
+    --gold: #D4A84E;         /* saffron thread: primary button, years. Never on --sea */
+    --madder: #A23B2C;       /* madder-red thread: stripes and focus on light ground only */
+    --sea: #E3ECE6;          /* page ground: pale Caspian green */
+    --ivory: #F7F2E7;        /* text on teal, card grounds */
+    --ink: var(--field);     /* body text on light ground (11.1:1 on --sea) */
+    --ink-2: #3B5A5C;        /* secondary text on light ground (6.2:1) */
+    --ivory-2: #C9D6D1;      /* secondary text on teal (9.0:1) */
+
+    /* Type: Lalezar for display only (one weight), Vazirmatn for everything read. */
+    --font-display: "Lalezar", "Vazirmatn", system-ui, sans-serif;
+    --font-text: "Vazirmatn", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+    --fs-small: 1rem;                                          /* 16px, the floor */
+    --fs-body: clamp(1.125rem, 1.08rem + 0.2vw, 1.1875rem);    /* 18 → 19px */
+    --fs-lede: clamp(1.1875rem, 1.1rem + 0.45vw, 1.375rem);    /* 19 → 22px */
+    --fs-h3: clamp(1.375rem, 1.25rem + 0.6vw, 1.75rem);        /* 22 → 28px, display */
+    --fs-h2: clamp(2.125rem, 1.5rem + 2.8vw, 4rem);            /* 34 → 64px, display */
+    --fs-tagline: clamp(1.5rem, 1.2rem + 1.4vw, 2.375rem);     /* 24 → 38px, display */
+    --fs-h1: clamp(2.625rem, 1.4rem + 5.6vw, 6.5rem);          /* 42 → 104px, display */
+    --lh-text: 1.9;          /* Persian needs room for dots and descenders */
+    --lh-display: 1.35;
+
+    /* Space: the 8px thread. Every gap, band and stripe is a multiple. */
+    --t: 8px;
+    --s-1: calc(var(--t) * 1);    /*   8 */
+    --s-2: calc(var(--t) * 2);    /*  16 */
+    --s-3: calc(var(--t) * 3);    /*  24 */
+    --s-4: calc(var(--t) * 4);    /*  32 */
+    --s-5: calc(var(--t) * 5);    /*  40 */
+    --s-6: calc(var(--t) * 6);    /*  48 */
+    --s-8: calc(var(--t) * 8);    /*  64 */
+    --s-10: calc(var(--t) * 10);  /*  80 */
+    --s-12: calc(var(--t) * 12);  /*  96 */
+    --s-15: calc(var(--t) * 15);  /* 120 */
+    --margin: clamp(20px, 4vw, 64px);
+    --measure: 38em;               /* reading column */
+    --wrap: 1312px;
+
+    /* Shape: cloth has hard edges; only buttons are pills. */
+    --r-0: 0;
+    --r-pill: 999px;
+    --r-focus: 4px;
+    --tap: 48px;                   /* minimum tap target */
+
+    /* Motion: flat and exact. Hovers are colour only. */
+    --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --dur-hover: 150ms;
+    --dur-menu: 220ms;
+    --dur-tab: 260ms;
+    --dur-flip-in: 560ms;
+    --dur-flip-out: 380ms;
+
+    --focus: var(--madder);
+    --shadow-float: 0 8px 24px rgb(12 52 56 / 0.28);  /* the call tab only */
+  }
+  /* Teal surfaces switch the focus ring to gold (6.1:1 on --field). */
+  .on-field { --focus: var(--gold); }
+}
+
+/* ----------------------------------------------------------------- base */
+@layer base {
+  html { scroll-padding-block-start: var(--s-3); }
+  body {
+    background: var(--sea);
+    color: var(--ink);
+    font: 400 var(--fs-body) / var(--lh-text) var(--font-text);
+    min-block-size: 100dvh;
+    display: flex;
+    flex-direction: column;
+    -webkit-tap-highlight-color: transparent;
+  }
+  main { flex: 1 0 auto; }
+  main:focus { outline: none; }
+  a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.35em; }
+  ::selection { background: var(--gold); color: var(--field); }
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: var(--r-focus);
+  }
+  h1, h2, h3 { font-weight: 400; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  /* Latin runs inside display type fall back to Vazirmatn; keep their weight close to Lalezar's. */
+  :is(.display-1, .display-2, .display-3, .display-tagline, .clinic__name, .site-footer__name, .menu__nav ul a) bdi { font-family: var(--font-text); font-weight: 700; }
+  .num { font-variant-numeric: tabular-nums; white-space: nowrap; direction: ltr; unicode-bidi: isolate; }
+}
+
+/* --------------------------------------------------------------- layout */
+@layer layout {
+  .wrap {
+    inline-size: 100%;
+    max-inline-size: calc(var(--wrap) + 2 * var(--margin));
+    margin-inline: auto;
+    padding-inline: var(--margin);
+  }
+  .on-field { background: var(--field); color: var(--ivory); }
+  .stack > * + * { margin-block-start: var(--s-3); }
+  .actions { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
+}
+
+/* ----------------------------------------------------------- components */
+@layer components {
+  /* Display type */
+  .display-1 { font: 400 var(--fs-h1) / 1.2 var(--font-display); }
+  .display-2 { font: 400 var(--fs-h2) / 1.3 var(--font-display); }
+  .display-3 { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); }
+  .display-tagline { font: 400 var(--fs-tagline) / 1.5 var(--font-display); color: var(--gold); }
+  .eyebrow { font-size: var(--fs-small); font-weight: 500; color: var(--ink-2); }
+  .on-field .eyebrow { color: var(--ivory-2); }
+  .lede { font-size: var(--fs-lede); max-inline-size: var(--measure); }
+  .on-field .lede { color: var(--ivory-2); }
+  .prose { max-inline-size: var(--measure); }
+
+  /* The lungs mark, recoloured by currentColor through a mask. */
+  .mark {
+    display: block;
+    inline-size: 44px;
+    aspect-ratio: 321 / 327;
+    background: currentColor;
+    -webkit-mask: url("../img/lungs.8750df230bc7.svg") center / contain no-repeat;
+    mask: url("../img/lungs.8750df230bc7.svg") center / contain no-repeat;
+    flex: none;
+  }
+  .mark--gold { color: var(--gold); }
+
+  /* The selvedge: seven threads, hard edges, multiples of 8px (and its 4px half). */
+  .selvedge {
+    display: grid;
+    grid-template-rows: 16px 8px 4px 8px 24px 8px 4px;
+  }
+  .selvedge i:nth-child(1) { background: var(--gold); }
+  .selvedge i:nth-child(2) { background: var(--field); }
+  .selvedge i:nth-child(3) { background: var(--madder); }
+  .selvedge i:nth-child(4) { background: var(--ivory); }
+  .selvedge i:nth-child(5) { background: var(--field-2); }
+  .selvedge i:nth-child(6) { background: var(--gold); }
+  .selvedge i:nth-child(7) { background: var(--field); }
+
+  /* Pills (Parsley): full radius, colour-only hover, 150ms. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-block-size: var(--tap);
+    padding: 10px 24px;
+    border: 2px solid transparent;
+    border-radius: var(--r-pill);
+    font: 700 1.0625rem / 1.2 var(--font-text);
+    text-decoration: none;
+    transition: background-color var(--dur-hover) var(--ease-out),
+                color var(--dur-hover) var(--ease-out),
+                border-color var(--dur-hover) var(--ease-out);
+    touch-action: manipulation;
+    user-select: none;
+  }
+  .pill svg { inline-size: 18px; block-size: 18px; flex: none; }
+  .pill--small { min-block-size: 44px; padding: 8px 20px; font-size: var(--fs-small); }
+  /* Primary on teal: gold, turns ivory. */
+  .pill--gold { background: var(--gold); border-color: var(--gold); color: var(--field); }
+  /* Primary on light ground: teal, turns gold (Shafer's invert, done in colour). */
+  .pill--field { background: var(--field); border-color: var(--field); color: var(--ivory); }
+  /* Secondary: an outline that fills on hover (Parsley's secondary, reversed). */
+  .pill--line { background: transparent; border-color: var(--field); color: var(--field); }
+  .pill--line.pill--on-field { border-color: var(--gold); color: var(--ivory); }
+  @media (hover: hover) {
+    .pill--gold:hover { background: var(--ivory); border-color: var(--ivory); }
+    .pill--field:hover { background: var(--gold); border-color: var(--gold); color: var(--field); }
+    .pill--line:hover { background: var(--field); color: var(--ivory); }
+    .pill--line.pill--on-field:hover { background: var(--gold); color: var(--field); }
+  }
+  .pill:active { filter: brightness(0.94); }
+
+  .icon-button {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--tap);
+    block-size: var(--tap);
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out);
+    touch-action: manipulation;
+  }
+  .icon-button svg { inline-size: 24px; block-size: 24px; }
+  .icon-button--gold { background: var(--gold); color: var(--field); }
+  .icon-button--gold svg { inline-size: 20px; block-size: 20px; }
+
+  /* ---- header ---- */
+  .site-header { position: relative; z-index: 20; }
+  .site-header__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--s-4);
+    min-block-size: 88px;
+    padding-block: var(--s-2);
+  }
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    min-inline-size: 0;
+  }
+  .lockup .mark { color: var(--ivory); }
+  .lockup__text { display: grid; min-inline-size: 0; }
+  .lockup__name { font: 700 1.125rem / 1.4 var(--font-text); }
+  .lockup__degrees { font-size: 0.875rem; line-height: 1.5; color: var(--ivory-2); }
+
+  .site-nav ul { display: flex; gap: var(--s-3); font-weight: 500; }
+  .site-nav a, .site-footer__end a {
+    display: inline-block;
+    padding-block: 8px;
+    text-decoration: none;
+    border-block-end: 2px solid transparent;
+    transition: border-color var(--dur-hover) var(--ease-out);
+  }
+  @media (hover: hover) { .site-nav a:hover, .site-footer__end a:hover { border-color: var(--gold); } }
+  .site-nav a[aria-current="page"], .site-footer__end a[aria-current="page"] { border-color: var(--gold); }
+  .site-header__phone { margin-inline-start: auto; }
+  .site-header__call, .site-header__menu { display: none; }
+
+  /* Phone menu: a disclosure panel under the bar, on the same cloth. */
+  .menu { display: none; }
+  .menu { border-block-end: 4px solid var(--gold); }
+  .menu__nav { padding-block: var(--s-1) var(--s-5); }
+  .menu__nav ul { display: grid; }
+  .menu__nav li + li { border-block-start: 1px solid rgb(247 242 231 / 0.14); }
+  .menu__nav ul a {
+    display: flex;
+    align-items: center;
+    min-block-size: 60px;
+    font: 400 1.5rem / 1.4 var(--font-display);
+    text-decoration: none;
+  }
+  .menu__nav ul a[aria-current="page"] { color: var(--gold); }
+  .menu__clinic { margin-block-start: var(--s-4); }
+  .menu__clinic-name { font-size: var(--fs-small); color: var(--ivory-2); margin-block-end: var(--s-1); }
+  .menu__phones { display: flex; flex-wrap: wrap; gap: var(--s-1); }
+
+  /* ---- footer ---- */
+  .site-footer { margin-block-start: auto; }
+  .site-footer__body {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: var(--s-8);
+    padding-block: var(--s-10) var(--s-8);
+  }
+  .site-footer__brand .mark { inline-size: 56px; margin-block-end: var(--s-2); }
+  .site-footer__name { font: 400 1.75rem / 1.4 var(--font-display); }
+  .site-footer__degrees { color: var(--ivory-2); margin-block-start: 4px; }
+  .site-footer__fact { margin-block-start: var(--s-2); font-size: var(--fs-small); color: var(--ivory-2); }
+  .site-footer__heading { font: 500 var(--fs-small) / 1.6 var(--font-text); color: var(--ivory-2); margin-block-end: var(--s-3); }
+
+  /* 1 location: one wide composition. 2+: equal columns. Never a lonely card. */
+  .clinics { display: grid; gap: var(--s-6) var(--s-5); }
+  .clinics--many { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+  .site-footer__body:has(.clinics--many) { grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); }
+  .clinic { display: grid; gap: var(--s-2); align-content: start; justify-items: start; }
+  .clinics--1 .clinic {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--s-6);
+  }
+  .clinics--1 .clinic__name, .clinics--1 .clinic__address { grid-column: 1; }
+  .clinics--1 .clinic__facts { grid-column: 2; grid-row: 1 / span 3; }
+  .clinics--1 .clinic > .pill { grid-column: 1; }
+  .clinic__name { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); color: var(--gold); }
+  .clinic__address { max-inline-size: 30em; }
+  .clinic__facts { display: grid; gap: var(--s-2); }
+  .clinic__facts dt { font-size: var(--fs-small); color: var(--ivory-2); }
+  .clinic__facts dd a { font-weight: 700; font-size: 1.25rem; text-decoration: none; }
+  @media (hover: hover) { .clinic__facts dd a:hover { color: var(--gold); } }
+
+  .site-footer__end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-2) var(--s-4);
+    padding-block: var(--s-3) var(--s-4);
+    border-block-start: 1px solid rgb(247 242 231 / 0.14);
+    font-size: var(--fs-small);
+  }
+  .site-footer__end ul { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-3); }
+  .site-footer__out { display: inline-flex; align-items: center; gap: 6px; color: var(--ivory-2); }
+  .site-footer__out svg { inline-size: 16px; block-size: 16px; }
+
+  /* ---- floating call tab (the one thing that floats, so the one shadow) ---- */
+  .calltab {
+    position: fixed;
+    z-index: 30;
+    inset-inline-end: var(--s-3);
+    inset-block-end: max(var(--s-3), env(safe-area-inset-bottom));
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-block-size: 52px;
+    padding: 12px 22px;
+    border-radius: var(--r-pill);
+    background: var(--gold);
+    color: var(--field);
+    font: 700 1.0625rem / 1 var(--font-text);
+    text-decoration: none;
+    box-shadow: var(--shadow-float);
+    transition: transform var(--dur-tab) var(--ease-out),
+                opacity 200ms linear,
+                visibility 0s linear 0s,
+                background-color var(--dur-hover) var(--ease-out),
+                color var(--dur-hover) var(--ease-out);
+    touch-action: manipulation;
+  }
+  .calltab svg { inline-size: 18px; block-size: 18px; }
+  @media (hover: hover) { .calltab:hover { background: var(--field); color: var(--ivory); } }
+  .calltab:focus-visible { outline-color: var(--madder); }
+  .calltab.is-hidden {
+    transform: translateY(16px);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform var(--dur-tab) var(--ease-out), opacity 200ms linear, visibility 0s linear 260ms;
+  }
+
+  .skip-link {
+    position: absolute;
+    z-index: 100;
+    inset-inline-start: var(--s-2);
+    inset-block-start: var(--s-2);
+    padding: 12px 20px;
+    border-radius: var(--r-pill);
+    background: var(--gold);
+    color: var(--field);
+    font-weight: 700;
+    text-decoration: none;
+    transform: translateY(-200%);
+  }
+  .skip-link:focus { transform: none; }
+}
+
+/* ----------------------------------------------- phone and tablet layout */
+@layer components {
+  @media (max-width: 960px) {
+    .site-nav, .site-header__phone { display: none; }
+    .site-header__bar { gap: var(--s-1); min-block-size: 72px; padding-block: var(--s-1); }
+    .lockup { margin-inline-end: auto; }
+    .lockup .mark { inline-size: 36px; }
+    .lockup__name { font-size: 1.0625rem; }
+    .site-header__call { display: inline-grid; }
+    .js .site-header__menu { display: inline-grid; }
+    .site-header__menu .icon-close { display: none; }
+    .site-header__menu[aria-expanded="true"] .icon-open { display: none; }
+    .site-header__menu[aria-expanded="true"] .icon-close { display: block; }
+
+    /* Without JS the menu is simply open; with JS it is a disclosure. */
+    .menu { display: block; }
+    .js .menu { display: none; }
+    .js .menu.is-open { display: block; animation: menu-in var(--dur-menu) var(--ease-out); }
+
+    .site-footer__body { grid-template-columns: 1fr; gap: var(--s-6); padding-block: var(--s-8) var(--s-6); }
+    .clinics--1 .clinic { grid-template-columns: 1fr; }
+    .clinics--1 .clinic__facts { grid-column: 1; grid-row: auto; }
+    .site-footer__end { padding-block-end: calc(var(--s-12) + env(safe-area-inset-bottom)); }
+
+    /* On a phone the call tab is a full-width bar at the thumb. */
+    .calltab {
+      inset-inline: 12px;
+      inset-block-end: max(12px, env(safe-area-inset-bottom));
+      justify-content: center;
+      min-block-size: 56px;
+      font-size: 1.125rem;
+    }
+  }
+  /* Below 480px the degrees line would wrap and crowd the bar; the name carries it. */
+  @media (max-width: 480px) {
+    .lockup__degrees { display: none; }
+  }
+  @keyframes menu-in {
+    from { opacity: 0; transform: translateY(-8px); }
+  }
+}
+
+/* ------------------------------------------------------------ pages */
+@layer pages {
+  /* TEMPORARY (Stage 3): the shell preview. Removed with core/shell_preview.html in Stage 4. */
+  .preview-hero { padding-block: var(--s-8) var(--s-12); }
+  .preview-hero .display-1 { margin-block: var(--s-1) var(--s-1); }
+  .preview-hero .lede { margin-block-start: var(--s-3); }
+  .preview-specimen { padding-block: var(--s-12); display: grid; gap: var(--s-3); justify-items: start; }
+  .preview-specimen .display-3 { margin-block-start: var(--s-4); }
+  .preview-dark { padding-block: var(--s-10); }
+  .preview-dark .actions { margin-block-start: var(--s-3); }
+}
+
+/* ------------------------------------------------------------ utilities */
+@layer utilities {
+  .sr-only {
+    position: absolute !important;
+    inline-size: 1px; block-size: 1px;
+    margin: -1px; padding: 0; overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap; border: 0;
+  }
+  .sprite { position: absolute; inline-size: 0; block-size: 0; overflow: hidden; }
+}
+
+/* Reduced motion: nothing moves; state changes stay instant or cross-fade. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; }
+  .calltab.is-hidden { transform: none; }
+  .js .menu.is-open { animation: none; }
+}

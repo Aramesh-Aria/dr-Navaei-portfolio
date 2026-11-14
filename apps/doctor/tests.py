@@ -87,3 +87,101 @@ class ProfilePhotoTests(TestCase):
     def test_uploaded_photo_replaces_placeholder(self):
         profile = DoctorProfile(full_name="دکتر الف", bio="...", photo="doctor/real.jpg")
         self.assertEqual(profile.photo_url, "/public/media/doctor/real.jpg")
+
+
+class ApprovedProfileFieldsTests(AdminTestCase):
+    """Stage 2 gate: council number, practising-since year, Paziresh24 link and
+    a longer credential detail. All optional, so they can start empty."""
+
+    def test_new_profile_fields_are_saved_from_admin_and_may_be_blank(self):
+        profile = DoctorProfile.objects.get()
+        url = reverse("admin:doctor_doctorprofile_change", args=[profile.pk])
+        data = {
+            "full_name": profile.full_name,
+            "intro_tagline": profile.intro_tagline,
+            "bio": profile.bio,
+            "medical_council_number": "51510",
+            "practising_since": "1378",
+            "paziresh24_url": "",
+            "credentials-TOTAL_FORMS": "0",
+            "credentials-INITIAL_FORMS": "0",
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        profile.refresh_from_db()
+        self.assertEqual(profile.medical_council_number, "51510")
+        self.assertEqual(profile.practising_since, 1378)
+        self.assertEqual(profile.paziresh24_url, "")
+
+    def test_new_fields_start_empty_until_the_doctor_confirms_them(self):
+        profile = DoctorProfile.objects.get()
+        self.assertEqual(profile.medical_council_number, "")
+        self.assertIsNone(profile.practising_since)
+        self.assertEqual(profile.paziresh24_url, "")
+
+    def test_credential_detail_is_editable_inline(self):
+        profile = DoctorProfile.objects.get()
+        response = self.client.get(
+            reverse("admin:doctor_doctorprofile_change", args=[profile.pk])
+        )
+        self.assertContains(response, "credentials-0-detail")
+
+
+import io
+import shutil
+import tempfile
+
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
+from PIL import Image
+
+
+def jpeg_upload(width, height, name="portrait.jpg"):
+    buffer = io.BytesIO()
+    Image.new("RGB", (width, height), (200, 160, 120)).save(buffer, "JPEG")
+    return SimpleUploadedFile(name, buffer.getvalue(), content_type="image/jpeg")
+
+
+class ProcessedPhotoTests(TestCase):
+    """Stage 2 gate 7.3a: an unedited phone photo must not be the page's LCP
+    image, so the upload is resized to WebP and the original is kept."""
+
+    def setUp(self):
+        self.media = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.media)
+        override = override_settings(MEDIA_ROOT=self.media)
+        override.enable()
+        self.addCleanup(override.disable)
+
+    def open_url(self, url):
+        return Image.open(self.media + url.removeprefix("/public/media"))
+
+    def test_large_upload_is_served_as_1200px_webp(self):
+        profile = DoctorProfile.objects.create(
+            full_name="دکتر الف", bio="...", photo=jpeg_upload(3000, 4000)
+        )
+        self.assertRegex(profile.photo_url, r"^/public/media/doctor/portrait.*-1200\.webp$")
+        image = self.open_url(profile.photo_url)
+        self.assertEqual((image.format, image.width), ("WEBP", 1200))
+
+    def test_srcset_offers_600_and_1200_widths(self):
+        profile = DoctorProfile.objects.create(
+            full_name="دکتر الف", bio="...", photo=jpeg_upload(3000, 4000)
+        )
+        self.assertRegex(profile.photo_srcset, r"-600\.webp 600w, .*-1200\.webp 1200w$")
+        self.assertEqual(self.open_url(profile.photo_srcset.split(" ")[0]).width, 600)
+
+    def test_original_upload_is_kept(self):
+        profile = DoctorProfile.objects.create(
+            full_name="دکتر الف", bio="...", photo=jpeg_upload(3000, 4000)
+        )
+        self.assertEqual(Image.open(profile.photo.path).width, 3000)
+
+    def test_small_upload_is_never_enlarged(self):
+        profile = DoctorProfile.objects.create(
+            full_name="دکتر الف", bio="...", photo=jpeg_upload(500, 700)
+        )
+        self.assertEqual(self.open_url(profile.photo_url).width, 500)
+
+    def test_placeholder_has_no_srcset(self):
+        self.assertEqual(DoctorProfile(full_name="دکتر الف", bio="...").photo_srcset, "")

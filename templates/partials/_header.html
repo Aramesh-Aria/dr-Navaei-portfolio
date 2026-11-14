@@ -1,0 +1,44 @@
+{% load site %}
+<header class="site-header on-field">
+  <div class="site-header__bar wrap">
+    <a class="lockup" href="/" aria-label="{{ profile.full_name }}، صفحه‌ی اصلی">
+      <span class="mark" aria-hidden="true"></span>
+      <span class="lockup__text">
+        <span class="lockup__name">{{ profile.full_name }}</span>
+        {% if profile.intro_tagline %}<span class="lockup__degrees">{{ profile.intro_tagline|isolate_latin }}</span>{% endif %}
+      </span>
+    </a>
+    <nav class="site-nav" aria-label="اصلی">
+      <ul>{% include "partials/_nav_links.html" %}</ul>
+    </nav>
+    {% if primary_location %}
+    <a class="pill pill--line pill--on-field site-header__phone" href="{{ primary_location.phone|tel_href }}" data-call-anchor>
+      <svg aria-hidden="true"><use href="#i-phone"/></svg>
+      <span class="sr-only">تلفن مطب: </span><span class="num">{{ primary_location.phone|phone_display }}</span>
+    </a>
+    <a class="icon-button icon-button--gold site-header__call" href="{{ primary_location.phone|tel_href }}" data-call-anchor>
+      <svg aria-hidden="true"><use href="#i-phone"/></svg>
+      <span class="sr-only">تماس با مطب، {{ primary_location.phone|phone_display }}</span>
+    </a>
+    {% endif %}
+    <button class="icon-button site-header__menu" type="button" aria-expanded="false" aria-controls="menu" hidden>
+      <svg class="icon-open" aria-hidden="true"><use href="#i-menu"/></svg>
+      <svg class="icon-close" aria-hidden="true"><use href="#i-close"/></svg>
+      <span class="sr-only">منو</span>
+    </button>
+  </div>
+  <div class="menu" id="menu" data-menu>
+    <nav class="menu__nav wrap" aria-label="منوی اصلی">
+      <ul>{% include "partials/_nav_links.html" %}</ul>
+      {% for location in locations %}
+      <div class="menu__clinic">
+        <p class="menu__clinic-name">{{ location.name|isolate_latin }}</p>
+        <p class="menu__phones">
+          <a class="pill pill--gold" href="{{ location.phone|tel_href }}"><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="num">{{ location.phone|phone_display }}</span></a>
+          {% if location.mobile_phone %}<a class="pill pill--line pill--on-field" href="{{ location.mobile_phone|tel_href }}"><span class="sr-only">همراه: </span><span class="num">{{ location.mobile_phone|phone_display }}</span></a>{% endif %}
+        </p>
+      </div>
+      {% endfor %}
+    </nav>
+  </div>
+</header>

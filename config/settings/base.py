@@ -20,12 +20,14 @@ ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
+    "jazzmin",  # must come before django.contrib.admin
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "apps.core",
     "apps.doctor",
     "apps.conditions",
     "apps.locations",
@@ -35,6 +37,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "apps.core.middleware.RevalidateHtmlMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -55,6 +58,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "apps.core.context_processors.site",
             ],
         },
     },
@@ -79,6 +83,9 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# The public address, for canonical links, Open Graph and structured data.
+SITE_URL = "https://dr.safanavaiee.ir"
+
 # Static and media files: same layout as every environment, so dev and prod
 # can't drift. Edit sources in `static_dev/` (gitignored, dev only), then run
 # `collectstatic` locally and commit `public/static/`. Production serves that
@@ -98,4 +105,57 @@ MEDIA_ROOT = BASE_DIR / "public" / "media"
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "config.storage.StaticFilesStorage"},
+}
+
+
+# ── Django admin theme (django-jazzmin), same setup as ArameshMusicAcademy-website ──
+JAZZMIN_SETTINGS = {
+    "site_title": "مدیریت سایت دکتر صفانوایی",
+    "site_header": "سایت دکتر صفانوایی",
+    "site_brand": "سایت دکتر صفانوایی",
+    "welcome_sign": "به پنل مدیریت سایت دکتر سپیده صفانوایی خوش آمدید",
+    "copyright": "دکتر سپیده صفانوایی",
+    # «S» for Safanavaei, on the site's teal and gold (owner request, Stage 3 gate)
+    "site_logo": "assets/img/admin-logo.svg",
+    "search_model": ["conditions.ConditionTreated", "inquiries.Inquiry"],
+    # Top menu: quick link to the live site
+    "topmenu_links": [
+        {"name": "مشاهده سایت", "url": "/", "new_window": True},
+    ],
+    # Order of app sections in the sidebar
+    "order_with_respect_to": ["doctor", "conditions", "locations", "inquiries", "auth"],
+    # FontAwesome icons per model
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "doctor": "fas fa-user-md",
+        "doctor.DoctorProfile": "fas fa-user-md",
+        "conditions": "fas fa-lungs",
+        "conditions.ConditionTreated": "fas fa-lungs",
+        "locations": "fas fa-clinic-medical",
+        "locations.ClinicLocation": "fas fa-map-marker-alt",
+        "inquiries": "fas fa-envelope",
+        "inquiries.Inquiry": "fas fa-envelope-open-text",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-left",
+    "default_icon_children": "fas fa-circle",
+    # RTL fixes, mainly the 10,000px horizontal scroll (static_dev/assets/css/admin.css)
+    "custom_css": "assets/css/admin.css",
+    # Keep the familiar stacked fieldsets instead of tabbed forms
+    "changeform_format": "single",
+    "show_ui_builder": False,
+    "related_modal_active": True,
+    # Load nothing from the internet, so the admin still opens when Iran's international
+    # internet is cut. static_dev/vendor/bootswatch/flatly/ shadows jazzmin's flatly theme
+    # with its Google Fonts @import removed; the admin falls back to system fonts.
+    "use_google_fonts_cdn": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "flatly",
+    "default_theme_mode": "light",
+    "sidebar_nav_flat_style": True,
+    "navbar_fixed": True,
+    "sidebar_fixed": True,
 }

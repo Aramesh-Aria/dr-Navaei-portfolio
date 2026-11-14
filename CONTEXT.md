@@ -30,3 +30,18 @@ _Avoid_: Branch, Office
 
 **Inquiry**: a message a prospective patient submits through the contact form.
 _Avoid_: Lead, Submission, Contact request
+
+**Medical Council Number**: the number the Medical Council of Iran (نظام پزشکی) issued to her, which patients use to verify that a doctor is licensed. Part of the Doctor Profile; shown only once the doctor confirms it.
+_Avoid_: license number, ID
+
+**Practising Since**: the Solar Hijri year she began practising medicine. Her years of experience are counted from it, so they never go stale.
+_Avoid_: experience (as a stored number), start date
+
+**Paziresh24 Profile**: her existing profile on Paziresh24, the Iranian doctor-directory and booking site. The site only links out to it; it never copies its patient reviews and never builds booking.
+_Avoid_: reviews, booking link
+
+**Credential Detail**: an optional longer note about a credential, shown on the back of its card beside the institution.
+_Avoid_: description (ambiguous with a condition's short description)
+
+**Condition Section**: one headed part of a Condition Treated's (or Procedure Performed's) full text, such as its symptoms or its treatment. A short text with no headings is one untitled section.
+_Avoid_: tab, block

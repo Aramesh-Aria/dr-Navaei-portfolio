@@ -1,0 +1,48 @@
+/* Admin fixes for the RTL Jazzmin admin, linked through JAZZMIN_SETTINGS['custom_css']. */
+
+/* AdminLTE hides its screen-reader live region at left: -10000px. In RTL the page
+   scrolls toward the left, so that made every admin page 10,000px wide. Hide it in place. */
+.live-region:not(.live-region-visible) {
+    left: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* Textareas and file inputs keep their fixed width on a phone. */
+#content-main textarea,
+#content-main input[type="file"] {
+    max-width: 100%;
+}
+
+/* A wide tabular inline (the credentials on the Doctor Profile) scrolls in its own box, not the page.
+   position: relative keeps Select2's absolutely positioned hidden selects inside it. */
+.inline-group .tabular {
+    position: relative;
+    overflow-x: auto;
+}
+
+.inline-group .tabular fieldset {
+    min-width: 0;
+}
+
+/* Below 992px AdminLTE hides the closed sidebar with margin-left: -250px. In RTL the
+   sidebar sits on the right, so that left it covering the page on phones. Hide it off
+   the right edge instead, and bring it back when the menu button opens it. */
+@media (max-width: 991.98px) {
+    [dir="rtl"] .sidebar-expand-lg .app-sidebar {
+        margin-left: 0;
+        margin-right: calc(var(--lte-sidebar-width) * -1);
+        transition: margin-right .3s ease-in-out;
+    }
+
+    [dir="rtl"] .sidebar-expand-lg.sidebar-open .app-sidebar {
+        margin-right: 0;
+    }
+}
+
+/* The brand text keeps its 0.5rem gap on the left, which in RTL is the far side, so it
+   ran into the logo. Put the gap between the logo and the text. */
+[dir="rtl"] .brand-link .brand-text {
+    margin-left: 0;
+    margin-right: .5rem;
+}

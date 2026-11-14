@@ -120,7 +120,7 @@ Reference-hunting (Pinterest etc.) → Claude Design mockup with the *real* Fars
 Contact form view + validation, honeypot check, email notification (needs an SMTP/email provider reachable from Iran — open item, see below).
 
 **Phase 5 — Deploy to Runflare**
-Per ADR-0002/0003: `DATABASES['default']['NAME']` under a disk-mounted folder (e.g. `/app/database/db.sqlite3`), `STATIC_ROOT`/`MEDIA_ROOT` under `/app/public/...` with a disk mounted there, `DEBUG=False`, `ALLOWED_HOSTS` set once the domain is picked, verify whether `collectstatic` needs a manual/explicit step in Runflare's deploy flow (undocumented in what we've read — first thing to test hands-on in this phase).
+Per ADR-0002/0003: `DATABASES['default']['NAME']` under a disk-mounted folder (e.g. `/app/database/db.sqlite3`), `STATIC_ROOT`/`MEDIA_ROOT` under `public/` (static is committed and served by WhiteNoise; a disk is mounted at `/app/public/media` only, for uploads), `DEBUG=False`, `ALLOWED_HOSTS` set once the domain is picked, `collectstatic` is never run on Runflare: it runs locally and `public/static/` is committed (decided 2026-11-14, same as ArameshMusicAcademy-website); after a deploy, run only `migrate`.
 
 ## Explicitly out of scope for v1 (backlog)
 

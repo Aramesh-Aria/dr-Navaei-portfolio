@@ -111,11 +111,17 @@ Use the domain vocabulary from `CONTEXT.md` (Doctor Profile, Condition Treated, 
   - or plain modern CSS (custom properties, `@layer`) with small vanilla JS.
 
   Keep the dependency list short either way.
-- **Static files** are currently unresolved, and Stage 2 must propose a fix.
-  - `public/` is gitignored as a whole, and prod's `STATIC_ROOT` is `/app/public/static` (ADR-0003).
-  - So today's favicons in `public/static/assets/img/` are untracked and would be lost on deploy.
-  - Propose a committed source folder (for example `static/` in `STATICFILES_DIRS`) that `collectstatic` copies into `public/static/`, and move the favicons there.
-  - There is no WhiteNoise. Don't add it unless you show why Runflare's disk-mount setup needs it.
+- **Static and media files** are already set up, the same way as in ArameshMusicAcademy-website. Don't change the layout.
+  - Edit sources only in `static_dev/`. It is **gitignored and dev only** (`STATICFILES_DIRS`), and the favicons already live in `static_dev/assets/img/`. App-level static files (for example `apps/doctor/static/doctor/doctor-placeholder.svg`) are collected too.
+  - **After any static change, run `venv/bin/python manage.py collectstatic --noinput` locally.** Its output, `public/static/`, **is committed**: include it in the stage's commit message, together with `staticfiles.json` and the hashed copies. Delete hashed copies the manifest no longer names, so old ones don't pile up.
+  - Production serves that committed `public/static/` through WhiteNoise, with `config.storage.StaticFilesStorage` (compressed manifest).
+    - With `DEBUG` off, `{% static %}` links hashed names cached for a year, and a path missing from the manifest is an error.
+    - **The test runner always runs with `DEBUG` off, so a forgotten `collectstatic` makes tests fail.** Run it before the tests.
+  - **Never run `collectstatic` on Runflare.** `static_dev/` isn't deployed, so running it there would rewrite the manifest without the site's own files.
+  - URLs are `/public/static/` and `/public/media/`.
+    - Uploads go to `public/media/` (gitignored), served by `config/urls.py` whatever `DEBUG` is.
+    - On Runflare a disk is mounted at `/app/public/media` only. A disk at `/app/public` would hide the committed static files.
+  - To try production serving locally, run with `DEBUG=False` and `runserver --nostatic`.
 - **Running locally.**
   - Use `venv/bin/python manage.py runserver 8018`, which uses `config.settings.dev`, or the `django` entry in `.claude/launch.json`.
   - The dev database already holds the seeded real content. If you build a fresh database, `migrate` re-seeds it.
@@ -305,8 +311,7 @@ Use the Playwright MCP tools against the running dev server:
 - **The page and section inventory** for every URL, mapped to the real model fields from Stage 1. Make sure every model has a place to appear.
 - **The proposals that need my approval**, each optional and each with its cost:
   - backend gaps (the medical council number, a Paziresh24 link, `Credential.detail`, condition↔procedure links, a structured condition body),
-  - the frontend stack (Tailwind vs plain CSS),
-  - the static files layout,
+  - the frontend stack (Tailwind vs plain CSS; either way, the output CSS goes in `static_dev/`),
   - image processing for the uploaded photo.
 - The open content questions, restated for me to answer.
 
@@ -323,7 +328,7 @@ Use `prototype` to build one static HTML mockup per direction in `docs/design/mo
 **Work:**
 1. Create the `frontend-design` branch from `main`.
 2. Make the approved backend changes only, test-first, with migrations, and with `CONTEXT.md` updated through `domain-modeling`. Update the seeds if I corrected content (for example the surname spelling or the hours).
-3. Set up the static files layout as approved, and move the favicons into it.
+3. Put the new CSS, JS and font sources in `static_dev/`, and run `collectstatic` (see "Static and media files").
 4. Add the design tokens:
    - fonts (self-hosted woff2, subset), colour, type scale, spacing, radii and motion tokens,
    - a reset and layout primitives,

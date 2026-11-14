@@ -12,7 +12,12 @@ db.sqlite3
 database/
 media/
 staticfiles/
-public/
+
+# Static/media (same layout as ArameshMusicAcademy-website):
+# static_dev/ is the dev-only source; public/static/ is collectstatic's output
+# and IS committed (served by WhiteNoise in prod); uploads stay out of git.
+static_dev/
+public/media/
 
 # Env
 .env

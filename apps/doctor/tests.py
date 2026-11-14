@@ -78,8 +78,12 @@ class ProfilePhotoTests(TestCase):
 
     def test_placeholder_is_used_when_no_photo_uploaded(self):
         profile = DoctorProfile(full_name="دکتر الف", bio="...")
-        self.assertTrue(profile.photo_url.endswith("doctor-placeholder.svg"))
+        # With DEBUG off the manifest storage adds a cache-busting hash.
+        self.assertRegex(
+            profile.photo_url,
+            r"^/public/static/doctor/doctor-placeholder(\.[0-9a-f]{12})?\.svg$",
+        )
 
     def test_uploaded_photo_replaces_placeholder(self):
         profile = DoctorProfile(full_name="دکتر الف", bio="...", photo="doctor/real.jpg")
-        self.assertTrue(profile.photo_url.endswith("doctor/real.jpg"))
+        self.assertEqual(profile.photo_url, "/public/media/doctor/real.jpg")

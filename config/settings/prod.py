@@ -5,21 +5,16 @@ from .base import *  # noqa: F401,F403
 DEBUG = False
 ALLOWED_HOSTS = [h.strip() for h in os.environ["ALLOWED_HOSTS"].split(",") if h.strip()]
 
-# Paths below match Runflare's documented disk-mount setup (ADR-0003):
-# a disk mounted at DATABASE_DISK_PATH keeps the sqlite file across
-# redeploys, and a disk mounted at /app/public covers both static and
-# media so neither is lost when the container restarts.
+# Runflare disk mounts (ADR-0003): one disk at /app/database keeps the
+# sqlite file across redeploys, and one at /app/public/media keeps uploads.
+# Not at /app/public: a disk there would hide the committed public/static/.
+# Static and media paths themselves live in base.py.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.environ.get("DATABASE_PATH", "/app/database/db.sqlite3"),
     }
 }
-
-STATIC_URL = "/public/static/"
-STATIC_ROOT = "/app/public/static"
-MEDIA_URL = "/public/media/"
-MEDIA_ROOT = "/app/public/media"
 
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True

@@ -34,6 +34,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -77,3 +78,24 @@ USE_I18N = True
 USE_TZ = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Static and media files: same layout as every environment, so dev and prod
+# can't drift. Edit sources in `static_dev/` (gitignored, dev only), then run
+# `collectstatic` locally and commit `public/static/`. Production serves that
+# committed directory through WhiteNoise, so collectstatic never runs on
+# Runflare (static_dev/ isn't deployed; running it there would rewrite the
+# manifest without the site's own files).
+STATIC_URL = "/public/static/"
+STATIC_ROOT = BASE_DIR / "public" / "static"
+STATICFILES_DIRS = [BASE_DIR / "static_dev"]
+
+# Uploads (the doctor's photo). Gitignored; on Runflare a disk is mounted at
+# /app/public/media so they survive redeploys (ADR-0003). Served by Django
+# itself, see config/urls.py.
+MEDIA_URL = "/public/media/"
+MEDIA_ROOT = BASE_DIR / "public" / "media"
+
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "config.storage.StaticFilesStorage"},
+}

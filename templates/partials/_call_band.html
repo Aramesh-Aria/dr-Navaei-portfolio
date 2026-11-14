@@ -19,7 +19,7 @@
       {% endfor %}
     </ul>
     <p class="callband__more">
-      <a class="textlink" href="/locations/">نشانی{% if locations|length > 1 %} مطب‌ها{% else %} مطب{% endif %} و مسیر<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
+      <a class="textlink" href="{% url 'locations' %}">نشانی{% if locations|length > 1 %} مطب‌ها{% else %} مطب{% endif %} و مسیر<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
       <a class="textlink" href="/contact/">فرم تماس<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
     </p>
   </div>

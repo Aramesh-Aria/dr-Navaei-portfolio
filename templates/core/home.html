@@ -13,7 +13,7 @@
       <p class="actions hero__actions">
         <a class="pill pill--gold hero__call" href="{{ primary_location.phone|tel_href }}" data-call-anchor><svg aria-hidden="true"><use href="#i-phone"/></svg>تماس با مطب<span class="sr-only">، {{ primary_location.phone|phone_display }}</span></a>
         {% if primary_location.map_url %}<a class="pill pill--line pill--on-field" href="{{ primary_location.map_url }}" rel="noopener" target="_blank"><svg aria-hidden="true"><use href="#i-route"/></svg>مسیر {{ primary_location.name|isolate_latin }}<span class="sr-only"> (در پنجره‌ی تازه)</span></a>
-        {% else %}<a class="pill pill--line pill--on-field" href="/locations/"><svg aria-hidden="true"><use href="#i-route"/></svg>نشانی {{ primary_location.name|isolate_latin }}</a>{% endif %}
+        {% else %}<a class="pill pill--line pill--on-field" href="{% url 'locations' %}"><svg aria-hidden="true"><use href="#i-route"/></svg>نشانی {{ primary_location.name|isolate_latin }}</a>{% endif %}
       </p>
       <p class="hero__where">
         {% for location in locations %}<span><strong>{{ location.name|isolate_latin }}</strong> · {{ location.address|isolate_latin }} · {{ location.hours|fa_digits }}</span>{% endfor %}
@@ -43,16 +43,8 @@
     <header class="section__head">
       <h2 class="display-2" id="conditions-title">بیماری‌هایی که درمان می‌شوند</h2>
     </header>
-    <ul class="threads" role="list">
-      {% for c in conditions %}
-      <li><a class="thread" href="/conditions/{{ c.slug }}/">
-        <span class="thread__title">{{ c.title|isolate_latin }}</span>
-        <span class="thread__desc">{{ c.short_description|fa_digits|isolate_latin }}</span>
-        <svg class="thread__go" aria-hidden="true"><use href="#i-forward"/></svg>
-      </a></li>
-      {% endfor %}
-    </ul>
-    <p class="section__more"><a class="pill pill--line" href="/conditions/">همه‌ی بیماری‌ها و اقدامات<svg aria-hidden="true"><use href="#i-forward"/></svg></a></p>
+    {% include "partials/_threads.html" with items=conditions %}
+    <p class="section__more"><a class="pill pill--line" href="{% url 'conditions' %}">همه‌ی بیماری‌ها و اقدامات<svg aria-hidden="true"><use href="#i-forward"/></svg></a></p>
   </div>
 </section>
 {% endif %}
@@ -62,13 +54,9 @@
   <div class="wrap procedures__grid">
     <header>
       <h2 class="display-2" id="procedures-title">اقدامات درمانی</h2>
-      <p class="lede">اقدامات تشخیصی و درمانی ریه که دکتر صفانوایی انجام می‌دهند.</p>
+      <p class="lede">اقدامات تشخیصی و درمانی ریه که {{ profile.full_name }} انجام می‌دهند.</p>
     </header>
-    <ol class="procedures__list" role="list">
-      {% for p in procedures %}
-      <li><a href="/conditions/{{ p.slug }}/"><span class="procedures__n num">{{ forloop.counter|fa_digits }}</span><span class="procedures__title">{{ p.title|isolate_latin }}</span><svg aria-hidden="true"><use href="#i-forward"/></svg></a></li>
-      {% endfor %}
-    </ol>
+    {% include "partials/_procedures.html" with items=procedures %}
   </div>
 </section>
 {% endif %}

@@ -3,6 +3,8 @@
 // 2. Floating call tab: hidden while any [data-call-anchor] is on screen.
 // 3. Credential flip cards: tap (and Enter/Space) toggle aria-pressed; hover
 //    and keyboard focus turn them in CSS. Escape turns a card back.
+// 4. Copy an address (for a taxi app): the button shows only where the
+//    clipboard is available, confirms in place and through a live region.
 (function () {
   "use strict";
 
@@ -62,4 +64,29 @@
       if (event.key === "Escape") card.setAttribute("aria-pressed", "false");
     });
   });
+
+  // ---- 4. copy an address ---------------------------------------------
+  var status = document.querySelector("[data-copy-status]");
+  if (navigator.clipboard && window.isSecureContext) {
+    document.querySelectorAll("[data-copy]").forEach(function (copy) {
+      var label = copy.querySelector("[data-copy-label]");
+      var icon = copy.querySelector("use");
+      var idle = label.textContent;
+      var timer;
+      copy.hidden = false;
+      copy.addEventListener("click", function () {
+        navigator.clipboard.writeText(copy.getAttribute("data-copy")).then(function () {
+          label.textContent = "نشانی کپی شد";
+          icon.setAttribute("href", "#i-check");
+          if (status) status.textContent = "نشانی کپی شد.";
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            label.textContent = idle;
+            icon.setAttribute("href", "#i-copy");
+            if (status) status.textContent = "";
+          }, 2400);
+        });
+      });
+    });
+  }
 })();

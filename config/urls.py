@@ -5,12 +5,17 @@ from django.urls import path, re_path
 from django.views.generic import RedirectView
 from django.views.static import serve
 
+from apps.conditions.views import ConditionDetailView, ConditionListView
 from apps.core.views import HomeView
 from apps.doctor.views import AboutView
+from apps.locations.views import LocationsView
 
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
     path("about/", AboutView.as_view(), name="about"),
+    path("conditions/", ConditionListView.as_view(), name="conditions"),
+    path("conditions/<slug:slug>/", ConditionDetailView.as_view(), name="condition"),
+    path("locations/", LocationsView.as_view(), name="locations"),
     path("admin/", admin.site.urls),
     path(
         "favicon.ico",

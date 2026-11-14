@@ -686,6 +686,153 @@
   }
 }
 
+/* ------------------------------------------- inner pages (Stage 5) */
+@layer components {
+  /* ---- page head: the band of cloth that opens every inner page ---- */
+  .pagehead { padding-block: var(--s-8) var(--s-10); }
+  .pagehead__inner { display: grid; gap: var(--s-2); justify-items: start; }
+  .pagehead__title { max-inline-size: 15em; }
+  /* Condition titles run long («Ablation تومورهای برونکیال ریه»): one step smaller. */
+  .pagehead__title--long { font-size: clamp(2.375rem, 1.4rem + 4vw, 5rem); }
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--s-1); font-size: var(--fs-small); color: var(--ivory-2); }
+  .crumbs a { display: inline-block; padding-block: 10px; color: var(--ivory); text-decoration-color: rgb(247 242 231 / 0.45); transition: text-decoration-color var(--dur-hover) var(--ease-out); }
+  @media (hover: hover) { .crumbs a:hover { text-decoration-color: currentColor; } }
+
+  /* Jump links to each group, with its count in gold. */
+  .jumps { display: flex; flex-wrap: wrap; gap: var(--s-1); margin-block-start: var(--s-3); }
+  .jumps__n { color: var(--gold); transition: color var(--dur-hover) var(--ease-out); }
+  @media (hover: hover) { .jumps .pill:hover .jumps__n { color: inherit; } }
+
+  .on-field .textlink { text-decoration-color: rgb(247 242 231 / 0.45); }
+
+  /* Procedures with their short description (the conditions page). */
+  .procedures__text { display: grid; gap: 2px; }
+  .procedures__desc { font-size: var(--fs-small); line-height: 1.7; color: var(--ivory-2); }
+  @media (hover: hover) { .procedures__list a:hover .procedures__desc { color: inherit; } }
+
+  /* ---- "when to see a doctor": a teal swatch with the woven edge ---- */
+  .seedoc {
+    display: grid;
+    gap: var(--s-2);
+    justify-items: start;
+    padding: var(--s-4) var(--s-4) var(--s-6);
+    background: linear-gradient(to top,
+      var(--field-2) 0 6px, var(--madder) 6px 9px, var(--gold) 9px 15px, var(--field) 15px);
+  }
+  .seedoc > p { color: var(--ivory-2); }
+  .seedoc h2 { color: var(--ivory); }
+  .seedoc__phones { display: flex; flex-wrap: wrap; gap: var(--s-1); margin-block: var(--s-1); }
+  .seedoc .seedoc__phones .pill { font-size: 1.1875rem; }
+  .seedoc__hours { font-size: var(--fs-small); }
+  .seedoc__links { display: flex; flex-wrap: wrap; gap: 0 var(--s-3); }
+  .seedoc .seedoc__links { color: var(--ivory); }
+  .seedoc__urgent {
+    justify-self: stretch;
+    padding-block-start: var(--s-2);
+    border-block-start: 1px solid rgb(247 242 231 / 0.18);
+    font-size: var(--fs-small);
+  }
+  .seedoc__urgent a { color: var(--gold); font-weight: 700; text-decoration: none; }
+
+  /* ---- Clinic Locations: one is a wide composition; 2+ are equal columns ---- */
+  .places { display: grid; gap: var(--s-3); }
+  .places--many { grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); }
+  .place > section {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+    block-size: 100%;
+    padding: var(--s-5) var(--s-4) var(--s-5);
+    /* The woven edge, on top this time: the cloth's selvedge over an ivory panel. */
+    background: linear-gradient(to bottom,
+      var(--gold) 0 8px, var(--madder) 8px 12px, var(--field-2) 12px 20px, var(--ivory) 20px);
+  }
+  .place__name { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); }
+  .place__name bdi { font-family: var(--font-text); font-weight: 700; }
+  .place__address { font-size: var(--fs-lede); font-weight: 500; line-height: 1.8; max-inline-size: 24em; }
+  .place__route { margin-block-start: var(--s-3); }
+  .place__route [data-copy] { min-inline-size: 11.5em; }
+  .place__facts { display: grid; gap: var(--s-3); align-content: start; }
+  .place__facts dt { font-size: var(--fs-small); color: var(--ink-2); }
+  .place__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-1);
+    min-block-size: var(--tap);
+    font: 700 1.5rem / 1.2 var(--font-text);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    transition: text-decoration-color var(--dur-hover) var(--ease-out);
+    touch-action: manipulation;
+  }
+  .place__phone svg { inline-size: 22px; block-size: 22px; color: var(--field-2); flex: none; }
+  @media (hover: hover) { .place__phone:hover { text-decoration-color: currentColor; } }
+  .place__hours { font-weight: 500; }
+  .places__more { display: flex; flex-wrap: wrap; gap: 0 var(--s-4); margin-block-start: var(--s-5); }
+}
+
+@layer pages {
+  /* ---- Condition page (Mayo's order) ---- */
+  .article { padding-block: var(--s-10) var(--s-12); }
+  .article__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-8); align-items: start; }
+  .article--toc .article__grid { grid-template-columns: minmax(0, 3fr) minmax(0, 8fr); }
+  .article__body { display: grid; gap: var(--s-6); max-inline-size: var(--measure); }
+  .article__section { display: grid; gap: var(--s-2); }
+  /* Today's bodies are one or two sentences: the overview is set as a lede, not a stub. */
+  .article__section--intro p { font-size: var(--fs-lede); line-height: 1.85; }
+  .article__aside, .toc { position: sticky; inset-block-start: var(--s-4); }
+  .toc ol { list-style: none; padding: 0; }
+  .toc__title { font: 500 var(--fs-small) / 1.6 var(--font-text); color: var(--ink-2); margin-block-end: var(--s-1); }
+  .toc a {
+    display: block;
+    padding-block: 10px;
+    padding-inline-start: var(--s-2);
+    border-inline-start: 2px solid rgb(12 52 56 / 0.2);
+    font-weight: 500;
+    text-decoration: none;
+    transition: border-color var(--dur-hover) var(--ease-out);
+  }
+  @media (hover: hover) { .toc a:hover { border-color: var(--field); } }
+
+  /* ---- Locations ---- */
+  .places-section { padding-block: var(--s-10) var(--s-12); }
+  .places--1 .place > section {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-areas: "name facts" "where facts";
+    grid-template-rows: auto 1fr;
+    column-gap: var(--s-8);
+    padding: var(--s-6) var(--s-6) var(--s-8);
+  }
+  .places--1 .place__name { grid-area: name; font-size: var(--fs-h2); line-height: 1.3; }
+  .places--1 .place__where { grid-area: where; }
+  .places--1 .place__facts { grid-area: facts; padding-inline-start: var(--s-6); border-inline-start: 2px solid var(--field); }
+
+  @media (max-width: 960px) {
+    .pagehead { padding-block: var(--s-4) var(--s-8); }
+    .article { padding-block: var(--s-8); }
+    .article__grid, .article--toc .article__grid { grid-template-columns: 1fr; gap: var(--s-6); }
+    .article__aside, .toc { position: static; }
+    .places-section { padding-block: var(--s-6) var(--s-8); }
+    .places--1 .place > section { column-gap: var(--s-5); padding: var(--s-5) var(--s-4) var(--s-6); }
+    .places--1 .place__facts { padding-inline-start: var(--s-4); }
+  }
+  /* One location stacks only once two columns no longer fit. */
+  @media (max-width: 700px) {
+    .places--1 .place > section { grid-template-columns: 1fr; grid-template-areas: "name" "where" "facts"; grid-template-rows: none; padding: var(--s-5) var(--s-4) var(--s-5); }
+    .places--1 .place__name { font-size: var(--fs-h3); }
+    .places--1 .place__facts { padding-inline-start: 0; border-inline-start: 0; padding-block-start: var(--s-3); border-block-start: 2px solid var(--field); }
+  }
+  @media (max-width: 600px) {
+    .seedoc { padding-inline: var(--s-3); }
+    .seedoc__phones, .place__route { inline-size: 100%; }
+    .seedoc__phones .pill, .place__route .pill { flex: 1 1 100%; min-block-size: 56px; font-size: 1.125rem; }
+    .place > section { padding-inline: var(--s-3); }
+    .jumps { inline-size: 100%; }
+    .jumps .pill { flex: 1 1 0; padding-inline: 16px; }
+  }
+}
+
 /* ------------------------------------------------------------ utilities */
 @layer utilities {
   .sr-only {

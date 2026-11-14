@@ -15,8 +15,8 @@ Kickoff line for every new chat:
 | 2 | Direction and mockups | ✅ done 2026-11-14, gate passed | **required:** choose a direction, answer the proposals and content questions |
 | 3 | Foundation (branch, approved backend changes, tokens, `base.html`) | ✅ done 2026-11-14, gate passed | **required:** approve the shell |
 | 4 | Home and About (credential flip cards) | ✅ done 2026-11-14, gate passed | **required:** confirm the direction holds |
-| 5 | Conditions and Locations | ⬜ next | — |
-| 6 | Contact and error pages | ⬜ | — |
+| 5 | Conditions and Locations | ✅ done 2026-11-14 | — |
+| 6 | Contact and error pages | ⬜ next | — |
 | 7 | Motion, mobile and cleanup | ⬜ | — |
 | 8 | Final review and report | ⬜ | **required:** decide on the merge |
 
@@ -132,6 +132,19 @@ Append one line per decision, with the stage it was made in. Never delete a line
 
 - **Stage 4 gate (owner, 2026-11-14):** Home and About are **approved** as built; the direction holds. No notes for Stage 5.
 
+- **Stage 5:** `/conditions/` is `apps.conditions.views.ConditionListView` (`conditions/list.html`), `/conditions/<slug>/` is `ConditionDetailView` (`conditions/detail.html`, URL name `condition`), `/locations/` is `apps.locations.views.LocationsView` (`locations/list.html`; the locations come from the context processor). Every internal link now uses `{% url %}` except `/contact/` (Stage 6).
+- **Stage 5:** the list page opens with a cloth band (`.pagehead`): the `h1`, one line of copy, and two jump pills with each group's count in gold. The jumps appear only when both groups have rows; an empty group disappears with its jump. Conditions reuse the named threads; procedures reuse Home's numbered list on the cloth, now with their short descriptions.
+- **Stage 5:** the threads and the numbered procedures are shared partials now (`_threads.html`, `_procedures.html` with `describe=True`); Home uses them too.
+- **Stage 5:** the condition page, in Mayo's order: crumbs (list / category) → `h1` title (a smaller display size, `.pagehead__title--long`) → `short_description` as the lede → selvedge → body → "when to see a doctor" → back link. The body's untitled opening section is set at lede size, so today's one or two sentences read as an overview, not a stub.
+- **Stage 5:** two layouts, chosen by the view's `toc` (the body's `## ` sections, only when there are 2 or more): **without an index** (today), the body sits beside a sticky "when to see a doctor" panel; **with an index**, a sticky "در این صفحه" sits at the start, and the panel follows the body. Phones stack both.
+- **Stage 5:** the "when to see a doctor" panel (`conditions/_see_doctor.html`) is a teal swatch with the flip card's woven edge: the first location's phone (gold, a `data-call-anchor`) and mobile, its name and hours, links to `/locations/` and `/contact/`, and an emergency line. Procedures get «نوبت و مشاوره» instead. The detail page has no call band (the panel is its call to action).
+- **Stage 5:** UI copy written for the doctor's review (formal, no claims about her): condition «اگر این علائم را دارید، یا با درمان فعلی بهتر نشده‌اید، برای گرفتن نوبت ویزیت با مطب تماس بگیرید.»; procedure «تصمیم به انجام این اقدام پس از ویزیت و بررسی پرونده گرفته می‌شود…»; emergency «در شرایط اورژانسی، مانند تنگی نفس شدید یا درد قفسه‌ی سینه، با ۱۱۵ تماس بگیرید یا به نزدیک‌ترین اورژانس بروید.» (`tel:115`). The emergency line is general safety guidance; it goes on the doctor's pre-launch review list.
+- **Stage 5:** structured data: condition pages add `MedicalCondition`, procedure pages add `MedicalProcedure` (the correct schema.org type for them), with `name`, `description`, `url`, beside the site-wide `Physician`. `og:type` is `article`.
+- **Stage 5:** `/locations/`: one location is a single wide ivory panel under a woven top edge, with the name (display size) and address plus actions on one side and the phones and hours on the other, split by a teal rule. It stays two columns down to 700 px. 2+ locations are equal columns (`auto-fit`, min 340 px). The `h1` reads «مطب» / «مطب‌ها». No map link → no route button, address only.
+- **Stage 5:** a **«کپی نشانی»** button per location (for pasting into a taxi or map app): shown only where the async clipboard is available, it turns into «نشانی کپی شد» with a check icon for 2.4 s and announces it through a live region. Icons added: `#i-copy`, `#i-check`.
+- **Stage 5:** Home's procedures lede hardcoded «دکتر صفانوایی»; it now uses `profile.full_name`, so the surname answer stays an admin edit.
+- **Stage 5:** verified at 1440 / 768 / 390: one `h1` per page, no horizontal scroll, zero console messages, every internal link resolves except `/contact/` (Stage 6), focus ring visible (madder on the light ground, gold on the panel), tab order follows the reading order. Worst cases checked in the dev DB (restored from a backup afterwards): a 4-section body with Latin (PFT), the long Latin procedure title, 2 and 3 locations (a long name, no mobile, Persian digits and spaces in a phone, two-line hours, a map link). Zero procedures, zero locations and unpublished/unknown slugs (404) are covered by tests.
+
 ## Open questions for the owner
 
 Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.md)). Record each answer under Decisions when it comes back, then update the seeds or tell the Content Editor what to change in the admin.
@@ -152,29 +165,29 @@ Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.
 
 ## Handoff to next stage
 
-**Stage 5 (Conditions and Locations) is next.** The Stage 4 gate is passed: the owner approved Home and About with no notes.
+**Stage 6 (Contact and error pages) is next.** Stage 5 has no gate.
 
-Screenshots (`docs/design/screens/stage4/`):
-- Home: `home-1440-top.png`, `home-1440-full.png`, `home-768-top.png`, `home-768-full.png`, `home-390-top.png`, `home-390-full.png`;
-- About: `about-1440-top.png`, `about-1440-full.png`, `about-768-top.png`, `about-768-full.png`, `about-390-top.png`, `about-390-full.png`;
-- the flip card: `home-1440-card-focus.png` (keyboard focus), `home-1440-card-midturn.png`, `home-1440-card-turned.png`, `home-1440-card-reduced-motion.png`, `about-390-card-tapped-detail.png`, `about-1440-card-detail.png`;
-- worst case: `home-768-worst-case.png`, `home-390-worst-case.png`, `home-390-worst-case-top.png`, `about-768-worst-case.png`, `about-390-worst-case.png`, `about-390-intro-facts.png` (chips), `home-1440-real-photo-landscape.png`, `home-390-real-photo-landscape.png`.
+Screenshots (`docs/design/screens/stage5/`):
+- Conditions list: `conditions-1440-full.png`, `conditions-768-full.png`, `conditions-390-top.png`, `conditions-390-full.png`;
+- condition page: `procedure-ablation-1440-full.png` (today's short body, long Latin title, the panel beside it); with a 4-section test body and the index: `condition-sections-1440-full.png`, `condition-sections-768-full.png`, `condition-sections-390-full.png`;
+- locations: `locations-1440-full.png` (one), `locations-1440-two.png`, `locations-1440-three.png`, `locations-768-top.png`, `locations-390-full.png`;
+- `home-768-procedures-regression.png` (Home after the shared partial).
 
 ### Template structure (updated)
-- `base.html` blocks: `title`, `description`, `og_type`, `og_title`, `og_description` (now **in `base.html` itself**), `head`, `body_class`, `content`.
-- Partials: `_icons.html` (sprite: `#i-phone`, `#i-route`, `#i-menu`, `#i-close`, `#i-out`, `#i-turn`, `#i-forward`), `_header.html`, `_nav_links.html`, `_footer.html`, `_calltab.html`, `_weave.html`, and new: `_portrait.html` (`with caption=True eager=True`), `_facts.html`, `_credentials.html` (needs `cards`, `rows`), `_call_band.html`.
-- Filters added (`{% load site %}`): `years_since`, `lead_sentence`, `first_year`. Python helper: `solar_hijri_year(date)`.
-- Shared components (in `@layer components`): `.section`, `.section__head`, `.section__more`, `.textlink`, `.founder`, `.portrait`, `.facts`, `.cards` / `.flip`, `.ribbons`, `.threads` / `.thread`, `.callband`. Page layouts in `@layer pages`: `.hero`, `.procedures`, `.intro`, `.bio`.
-- Every partial that uses a filter needs its own `{% load site %}` (load doesn't carry into an include).
+- `base.html` blocks: unchanged (`title`, `description`, `og_type`, `og_title`, `og_description`, `head`, `body_class`, `content`).
+- Partials: `_icons.html` (sprite: `#i-phone`, `#i-route`, `#i-menu`, `#i-close`, `#i-out`, `#i-turn`, `#i-forward`, `#i-copy`, `#i-check`), `_header.html`, `_nav_links.html`, `_footer.html`, `_calltab.html`, `_weave.html`, `_portrait.html`, `_facts.html`, `_credentials.html`, `_call_band.html`, and new: `_threads.html` (`with items=…`), `_procedures.html` (`with items=… describe=True`). Page-local: `conditions/_see_doctor.html`, `conditions/_list_description.txt`.
+- Template tags: `{% medical_entity_json_ld item site_url %}` (new, in `site.py`; both JSON-LD tags share `_json_ld_script`).
+- New components: `.pagehead` (+ `__title--long`), `.crumbs`, `.jumps`, `.seedoc`, `.places` / `.place`, `.toc`; page layouts `.article` (`--toc`), `.places-section`.
+- `site.js` part 4: `[data-copy]` buttons with `[data-copy-label]`, and one `[data-copy-status]` live region per page.
 
-### For Stage 5
-- **Links already point at Stage 5 URLs:** Home's threads and procedures link to `/conditions/<slug>/`, and `/conditions/`, `/locations/` and `/contact/` are linked from the nav, the hero and the call band. They 404 until built. Switch them to `{% url %}` as each view lands (`home` and `about` already are).
-- Reuse `.threads` / `.thread` for the conditions list and `.clinics` (footer) or the call band for `/locations/`; the hero's route-or-address button points at `/locations/`.
-- The Home conditions count is `HOME_CONDITIONS = 6` in `apps/core/views.py`.
+### For Stage 6
+- **`/contact/` is still a hard-coded path** in `_nav_links.html`, `_call_band.html`, `conditions/_see_doctor.html` and `locations/list.html`. Switch each to `{% url 'contact' %}` when the view lands. It is the only 404 left among internal links.
+- Reuse `.pagehead` + `_weave.html` to open the contact page, and `.place` (or the call band) for "the phones and the address beside the form".
+- The 404 page can reuse `.pagehead` and `_threads.html`.
 
 Pending, but not blocking:
 - The doctor's answers ([`questions-for-doctor.md`](questions-for-doctor.md)). Record them under Decisions when they arrive.
-- The medical review of the condition texts, before launch.
+- The medical review of the condition texts before launch, **now also the "when to see a doctor", procedure and emergency lines** written in Stage 5.
 - The email provider.
 
-Tooling: the Playwright MCP server works against `http://127.0.0.1:8018`. Another chat's `runserver 8018` was already running on this checkout in Stage 4, so `preview_start` refused the port; Playwright used it as is (autoreload picks up edits; a screenshot right after an edit can race the reload). Worst-case content was set up in the dev DB from a backup copy and restored afterwards.
+Tooling: the Playwright MCP server works against `http://127.0.0.1:8018` (a `runserver 8018` was already running). Worst-case content was set up in the dev DB from a backup copy and restored afterwards.

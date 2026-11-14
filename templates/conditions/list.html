@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load site %}
+{% block title %}بیماری‌ها و اقدامات درمانی · {{ profile.full_name }}{% endblock %}
+{% block og_title %}بیماری‌ها و اقدامات درمانی · {{ profile.full_name }}{% endblock %}
+{% block description %}{% include "conditions/_list_description.txt" %}{% endblock %}
+{% block og_description %}{% include "conditions/_list_description.txt" %}{% endblock %}
+{% block body_class %}page-conditions{% endblock %}
+{% block content %}
+<section class="pagehead on-field" aria-labelledby="page-title">
+  <div class="wrap pagehead__inner">
+    <h1 class="display-1 pagehead__title" id="page-title">بیماری‌ها و اقدامات</h1>
+    <p class="lede">هر مورد صفحه‌ی خودش را دارد، با توضیح و راه تماس با مطب.</p>
+    {% if conditions and procedures %}
+    <nav class="jumps" aria-label="گروه‌های این صفحه">
+      <a class="pill pill--line pill--on-field" href="#conditions">بیماری‌ها <span class="jumps__n num">{{ conditions|length|fa_digits }}</span></a>
+      <a class="pill pill--line pill--on-field" href="#procedures">اقدامات درمانی <span class="jumps__n num">{{ procedures|length|fa_digits }}</span></a>
+    </nav>
+    {% endif %}
+  </div>
+</section>
+{% include "partials/_weave.html" %}
+
+{% if conditions %}
+<section class="section topics" id="conditions" aria-labelledby="conditions-title">
+  <div class="wrap">
+    <header class="section__head">
+      <h2 class="display-2" id="conditions-title">بیماری‌هایی که درمان می‌شوند</h2>
+    </header>
+    {% include "partials/_threads.html" with items=conditions %}
+  </div>
+</section>
+{% endif %}
+
+{% if procedures %}
+<section class="procedures on-field" id="procedures" aria-labelledby="procedures-title">
+  <div class="wrap procedures__grid">
+    <header>
+      <h2 class="display-2" id="procedures-title">اقدامات درمانی</h2>
+      <p class="lede">اقدامات تشخیصی و درمانی ریه که {{ profile.full_name }} انجام می‌دهند.</p>
+    </header>
+    {% include "partials/_procedures.html" with items=procedures describe=True %}
+  </div>
+</section>
+{% endif %}
+
+{% include "partials/_call_band.html" %}
+{% endblock %}

@@ -164,6 +164,13 @@ def body_sections(value):
     return sections
 
 
+def _json_ld_script(data):
+    payload = json.dumps(data, ensure_ascii=False, indent=None)
+    # Never let content close the script element early.
+    payload = payload.replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
+    return mark_safe(f'<script type="application/ld+json">{payload}</script>')
+
+
 def _absolute(site_url, url):
     return url if url.startswith("http") else site_url + url
 
@@ -211,7 +218,18 @@ def physician_json_ld(profile, locations, site_url):
             clinic["hasMap"] = location.map_url
         clinics.append(clinic)
     data["location"] = clinics
-    payload = json.dumps(data, ensure_ascii=False, indent=None)
-    # Never let content close the script element early.
-    payload = payload.replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
-    return mark_safe(f'<script type="application/ld+json">{payload}</script>')
+    return _json_ld_script(data)
+
+
+@register.simple_tag
+def medical_entity_json_ld(item, site_url):
+    """`MedicalCondition` for a Condition Treated, `MedicalProcedure` for a
+    Procedure Performed, as a JSON-LD script."""
+    kind = "MedicalProcedure" if item.category == "procedure" else "MedicalCondition"
+    return _json_ld_script({
+        "@context": "https://schema.org",
+        "@type": kind,
+        "name": item.title,
+        "description": item.short_description,
+        "url": f"{site_url}/conditions/{item.slug}/",
+    })

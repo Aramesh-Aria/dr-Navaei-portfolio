@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load site %}
+{% block title %}{{ item.title }} · {{ profile.full_name }}{% endblock %}
+{% block og_title %}{{ item.title }}{% endblock %}
+{% block description %}{{ item.short_description }}{% endblock %}
+{% block og_description %}{{ item.short_description }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block head %}{% medical_entity_json_ld item site_url %}{% endblock %}
+{% block body_class %}page-condition{% endblock %}
+{% block content %}
+<section class="pagehead on-field" aria-labelledby="page-title">
+  <div class="wrap pagehead__inner">
+    <nav class="crumbs" aria-label="مسیر صفحه"><a href="{% url 'conditions' %}">بیماری‌ها و اقدامات</a><span aria-hidden="true">/</span><span>{{ item.get_category_display }}</span></nav>
+    <h1 class="display-1 pagehead__title pagehead__title--long" id="page-title">{{ item.title|isolate_latin }}</h1>
+    <p class="lede">{{ item.short_description|fa_digits|isolate_latin }}</p>
+  </div>
+</section>
+{% include "partials/_weave.html" %}
+
+<div class="section article{% if toc %} article--toc{% endif %}">
+  <div class="wrap article__grid">
+    {% if toc %}
+    <nav class="toc" aria-labelledby="toc-title">
+      <h2 class="toc__title" id="toc-title">در این صفحه</h2>
+      <ol role="list">
+        {% for s in toc %}<li><a href="#{{ s.id }}">{{ s.heading|isolate_latin }}</a></li>{% endfor %}
+        <li><a href="#see-a-doctor">{% if is_procedure %}نوبت و مشاوره{% else %}چه زمانی به پزشک مراجعه کنید{% endif %}</a></li>
+      </ol>
+    </nav>
+    {% endif %}
+    <article class="article__body" aria-labelledby="page-title">
+      {% for s in sections %}
+      <section class="article__section{% if not s.heading %} article__section--intro{% endif %}"{% if s.id %} id="{{ s.id }}" aria-labelledby="{{ s.id }}-title"{% endif %}>
+        {% if s.heading %}<h2 class="display-3" id="{{ s.id }}-title">{{ s.heading|isolate_latin }}</h2>{% endif %}
+        {% for p in s.paragraphs %}<p>{{ p|fa_digits|isolate_latin }}</p>{% endfor %}
+      </section>
+      {% endfor %}
+      {% if toc %}{% include "conditions/_see_doctor.html" %}{% endif %}
+      <p class="article__back"><a class="textlink" href="{% url 'conditions' %}">همه‌ی بیماری‌ها و اقدامات<svg aria-hidden="true"><use href="#i-forward"/></svg></a></p>
+    </article>
+    {% if not toc %}<div class="article__aside">{% include "conditions/_see_doctor.html" %}</div>{% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -91,7 +91,7 @@ Use the domain vocabulary from `CONTEXT.md` (Doctor Profile, Condition Treated, 
 
   Build the views **test-first** with the `tdd` skill, and keep the existing test suite passing.
 - **Backend: what needs approval.** Don't change models, migrations or the admin unless you propose the change in Stage 2 and I approve it. `docs/design/references/README.md` already lists candidate model changes ("Backend gaps"). They are proposals, not approvals.
-- **Admin.** Leave the Django admin's look alone.
+- **Admin.** The admin gets the same **django-jazzmin** theme as ArameshMusicAcademy-website (owner decision, Stage 2 gate), installed in Stage 3. That is its only look change: don't restyle it to match the public site.
 - **Language and direction.** The site is `lang="fa" dir="rtl"` (ADR-0001). Every layout, icon direction, animation direction and number format must be right for RTL Persian.
   - Embedded Latin terms must be wrapped so mixed sentences stay readable. Seeded titles already contain them: "COPD (بیماری انسدادی مزمن ریه)", "Ablation تومورهای برونکیال ریه", "ERS", "ATS", "ICU".
   - Show Persian digits everywhere through one template filter, never by hand. Phone `tel:` links keep ASCII digits.
@@ -104,7 +104,8 @@ Use the domain vocabulary from `CONTEXT.md` (Doctor Profile, Condition Treated, 
   - Design for 1 to N locations. One location must not look like a lonely card in a grid built for three.
 - **Contact form (Inquiry).** This pulls Phase 4 of `docs/plan.md` forward into Stage 6, because the contact page can't be designed and verified without it.
   - Build the form, its validation and the honeypot check (the `website` field: drop the submission silently if it's filled), test-first.
-  - Send an email only when `INQUIRY_NOTIFICATION_EMAIL` is set. No email provider is chosen yet, and prod uses the dummy backend. The submission must always be saved and never fail because of email.
+  - Send an email only when `INQUIRY_NOTIFICATION_EMAIL` is set.
+  - Show the unread Inquiry count in the admin sidebar, test-first, as the academy does for contact messages (a custom `AdminSite.get_app_list`, through an `AdminConfig` that replaces `django.contrib.admin`). No email provider is chosen yet, and prod uses the dummy backend. The submission must always be saved and never fail because of email.
   - No medical-detail field, by design.
 - **Frontend stack.** `docs/plan.md` proposes Tailwind, Vazirmatn, and htmx only if needed. Treat that as a starting point, not a decision. In Stage 2, recommend one of:
   - Tailwind (the standalone CLI binary; **Node.js is not installed on this machine**),
@@ -328,22 +329,32 @@ Use `prototype` to build one static HTML mockup per direction in `docs/design/mo
 **Work:**
 1. Create the `frontend-design` branch from `main`.
 2. Make the approved backend changes only, test-first, with migrations, and with `CONTEXT.md` updated through `domain-modeling`. Update the seeds if I corrected content (for example the surname spelling or the hours).
-3. Put the new CSS, JS and font sources in `static_dev/`, and run `collectstatic` (see "Static and media files").
+3. Put the new CSS, JS and font sources in `static_dev/`, and run `collectstatic` (see "Static and media files"). The stack is plain modern CSS + small vanilla JS (owner decision, Stage 2).
+   - **No hard refresh, ever** (owner decision). A CSS or JS change must reach a visitor on a normal page load. Build it test-first:
+     - keep the hashed manifest names;
+     - send `Cache-Control: no-cache` on HTML responses;
+     - in dev, serve static through WhiteNoise (`whitenoise.runserver_nostatic`) with `WHITENOISE_MAX_AGE = 0`.
 4. Add the design tokens:
    - fonts (self-hosted woff2, subset), colour, type scale, spacing, radii and motion tokens,
    - a reset and layout primitives,
    - the Persian-digits template filter, test-first.
-5. Build `base.html` and the shared parts:
+5. Install the admin theme, the same way as ArameshMusicAcademy-website (see "Admin theme" under `docs/plan.md` Phase 3):
+   - add `django-jazzmin` to `requirements.txt`, with `jazzmin` first in `INSTALLED_APPS`;
+   - add `JAZZMIN_SETTINGS` (Persian branding, sidebar order, per-model icons, `custom_css`, `use_google_fonts_cdn: False`) and `JAZZMIN_UI_TWEAKS` (`flatly`, light);
+   - copy the RTL fix stylesheet into `static_dev/assets/css/admin.css`;
+   - add the local `static_dev/vendor/bootswatch/flatly/bootstrap.min.css` with its Google Fonts `@import` removed, and `"vendor/"` in `config/storage.py`'s `VENDOR_PREFIXES`;
+   - keep the existing admin tests passing (singleton, credential inline, read-only inquiries), and check the admin at 1440 and 390 in RTL.
+6. Build `base.html` and the shared parts:
    - the header with the name and degrees lockup and the navigation, for desktop and mobile,
    - the always-reachable contact path (tap-to-call on mobile),
    - the footer with every Clinic Location's address, phones, hours and map link,
    - the default meta tags and structured data.
-6. Add a temporary home view that renders only the shell, so it can be verified.
-7. Run the verification loop on the shell.
+7. Add a temporary home view that renders only the shell, so it can be verified.
+8. Run the verification loop on the shell.
 
-**Done when:** the shell passes the verification loop at all three widths, the tests pass, the commit message is written in chat, and `PROGRESS.md` lists the tokens and the template structure (blocks and partials) the page stages must use.
+**Done when:** the shell passes the verification loop at all three widths, the Jazzmin admin works in RTL with no horizontal scroll at 1440 and 390, the tests pass, the commit message is written in chat, and `PROGRESS.md` lists the tokens and the template structure (blocks and partials) the page stages must use.
 
-**Gate (required):** I review the shell screenshots (header, footer, mobile navigation) and approve the look before any page is built.
+**Gate (required):** I review the shell screenshots (header, footer, mobile navigation) and the admin, and approve the look before any page is built.
 
 ## Stage 4: Home and About
 
@@ -411,7 +422,8 @@ Use `prototype` to build one static HTML mockup per direction in `docs/design/mo
    - Playwright-measured LCP and transfer size,
    - the known gaps,
    - the photo shot list for the doctor,
-   - anything I need to do in the admin.
+   - anything I need to do in the admin,
+   - the pre-launch content tasks for the doctor, starting with the medical review of the condition and procedure texts on the built pages.
 
 **Done when:** everything above exists on `frontend-design`, the tests pass, `PROGRESS.md` marks the design work complete, and the commit message is written in chat.
 

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<!-- PROTOTYPE (Stage 2, throwaway): Direction B «سربرگ», home hero + credentials. Not production code. -->
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>B · سربرگ · دکتر سپیده صفانوایی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Direction B tokens: a doctor's printed letterhead — teal ink, a gold band, white sheet on a pale ground */
+  --sheet: #FFFFFF;
+  --ground: #E9EFEB;     /* the desk the sheet lies on: pale teal-grey */
+  --ink: #0F3A3E;        /* letterhead ink, also the filled back of a credential */
+  --ink-2: #3E5F62;      /* secondary text, tinted from the ink (AA on white and on ground) */
+  --gold: #C29A45;       /* the printed band: fills only, never small text */
+  --gold-ink: #8A6A24;   /* gold for large numerals on white (AA large) */
+
+  --display: 'Amiri', 'Vazirmatn', serif;
+  --text: 'Vazirmatn', system-ui, sans-serif;
+  --margin: clamp(20px, 4vw, 64px);
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--ground); color: var(--ink); font: 400 18px/1.85 var(--text); }
+::selection { background: var(--ink); color: var(--sheet); }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+a { color: inherit; }
+.ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+img { display: block; max-width: 100%; }
+
+.page { display: grid; grid-template-columns: minmax(380px, 42%) minmax(0, 1fr); min-height: 100svh; }
+
+/* ---- the letterhead: stays put while the page scrolls beside it ---- */
+.sheet { position: sticky; top: 0; height: 100svh; background: var(--sheet); display: flex; flex-direction: column;
+  padding: 0 var(--margin) 40px; overflow: auto; }
+.sheet::before { content: ""; display: block; height: 14px; background: var(--ink); margin-inline: calc(var(--margin) * -1); }
+.band { height: 5px; background: var(--gold); margin-inline: calc(var(--margin) * -1); }
+.who { display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: start; margin-top: 48px; }
+.who h1 { font: 700 clamp(44px, 3.6vw, 58px)/1.35 var(--display); margin: 0; }
+.who .tagline { font: 500 19px/1.7 var(--text); margin: 10px 0 0; color: var(--ink-2); text-wrap: balance; }
+.photo34 { width: 132px; aspect-ratio: 3 / 4; background: var(--ground); display: grid; place-items: center; overflow: hidden; }
+.photo34 img.ph { width: 72%; opacity: .9; }
+.photo34 img.photo { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; }
+.rule { width: 72px; height: 6px; background: var(--gold); margin: 32px 0 24px; }
+.lines { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 10px 20px; font-size: 17px; }
+.lines dt { color: var(--ink-2); }
+.lines dd { margin: 0; font-weight: 500; }
+.phones { margin-top: auto; padding-top: 32px; display: grid; gap: 4px; }
+.phones a { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; text-decoration: none; padding: 10px 0; }
+.phones a span:first-child { font-size: 16px; color: var(--ink-2); }
+.phones a .num { font: 700 36px/1.3 var(--display); transition: color .15s var(--ease-out); }
+.phones a:hover .num { color: var(--gold-ink); }
+.call { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 16px; min-height: 56px; border-radius: 999px;
+  background: var(--ink); color: var(--sheet); border: 2px solid var(--ink); text-decoration: none; font: 700 18px/1 var(--text);
+  transition: background-color .15s var(--ease-out), color .15s var(--ease-out); }
+.call:hover { background: var(--sheet); color: var(--ink); }
+.phones a.call { justify-content: center; }
+.call svg { width: 20px; height: 20px; }
+
+/* ---- the scrolling column ---- */
+.col { padding: 0 var(--margin) 120px; min-width: 0; }
+.col nav { display: flex; align-items: center; gap: 28px; padding: 28px 0; font-weight: 500; font-size: 17px; }
+.col nav a { text-decoration: none; padding-block: 6px; border-bottom: 3px solid transparent; transition: border-color .15s var(--ease-out); }
+.col nav a:hover { border-color: var(--gold); }
+.col nav .mark { margin-inline-start: auto; }
+.col nav .mark img { width: 40px; }
+.statement { padding: 72px 0 96px; }
+.statement h2 { font: 700 clamp(48px, 4.6vw, 76px)/1.45 var(--display); margin: 0; max-width: 11em; text-wrap: balance; }
+.statement p { max-width: 34em; margin: 28px 0 36px; font-size: 19px; }
+.topics { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding: 0; margin: 0; }
+.topics a { display: inline-block; padding: 10px 20px; border-radius: 999px; background: var(--sheet); text-decoration: none; font-weight: 500; font-size: 16px; border: 2px solid var(--sheet);
+  transition: background-color .15s var(--ease-out), border-color .15s var(--ease-out); }
+.topics a:hover { background: transparent; border-color: var(--ink); }
+
+.creds h2 { font: 700 clamp(40px, 3.6vw, 56px)/1.45 var(--display); margin: 0 0 12px; }
+.creds > p { margin: 0 0 40px; max-width: 36em; color: var(--ink-2); }
+.cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.flip { all: unset; box-sizing: border-box; display: block; width: 100%; aspect-ratio: 16 / 10; perspective: 1200px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.flip:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+.flip .turn { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 380ms var(--ease-out); }
+@media (hover: hover) { .flip:hover .turn { transform: rotateY(-180deg); transition-duration: 560ms; } }
+.flip:focus-visible .turn, .flip[aria-pressed="true"] .turn { transform: rotateY(-180deg); transition-duration: 560ms; }
+.face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; padding: 28px 32px; }
+.front { background: var(--sheet); }
+.front::before { content: ""; position: absolute; inset-inline: 0; top: 0; height: 6px; background: var(--gold); }
+.front .yr { font: 700 64px/1.2 var(--display); color: var(--gold-ink); }
+.front .t { font: 700 22px/1.6 var(--text); margin-top: auto; }
+.front .cue { position: absolute; inset-inline-end: 24px; top: 28px; width: 24px; height: 24px; color: var(--ink-2); }
+.back { background: var(--ink); color: var(--sheet); transform: rotateY(180deg); justify-content: flex-end; }
+.back .t { font: 500 16px/1.6 var(--text); color: #BFD0CF; }
+.back .inst { font: 700 30px/1.5 var(--display); }
+@media (prefers-reduced-motion: reduce) {
+  .flip .turn { transform: none !important; transition: none; }
+  .face { backface-visibility: visible; transition: opacity 200ms linear; }
+  .back { transform: none; opacity: 0; }
+  @media (hover: hover) { .flip:hover .back { opacity: 1; } }
+  .flip:focus-visible .back, .flip[aria-pressed="true"] .back { opacity: 1; }
+}
+.members { margin: 48px 0 0; padding: 32px; background: var(--sheet); display: grid; grid-template-columns: auto 1fr; gap: 14px 28px; }
+.members dt { font: 700 24px/1.3 var(--display); color: var(--gold-ink); }
+.members dd { margin: 0; font-weight: 500; }
+
+.calltab { display: none; }
+.menu { display: none; }
+
+/* ---- phone: the letterhead becomes the first screen, not a squeezed column ---- */
+@media (max-width: 900px) {
+  .page { grid-template-columns: 1fr; }
+  .sheet { position: static; height: auto; padding-bottom: 28px; overflow: visible; }
+  .who { grid-template-columns: 1fr 96px; gap: 16px; margin-top: 28px; }
+  .who h1 { font-size: clamp(38px, 10vw, 48px); }
+  .who .tagline { font-size: 17px; }
+  .photo34 { width: 96px; }
+  .rule { margin: 22px 0 18px; }
+  .lines { font-size: 16px; gap: 6px 14px; }
+  .phones { padding-top: 20px; }
+  .phones a { padding: 14px 0; }
+  .phones a .num { font-size: 32px; }
+  .col nav { display: none; }
+  .menu { display: grid; position: absolute; top: 26px; inset-inline-end: 12px; all: unset; }
+  .statement { padding: 56px 0 64px; }
+  .statement h2 { font-size: clamp(38px, 10vw, 48px); }
+  .cards { grid-template-columns: 1fr; gap: 14px; }
+  .flip { aspect-ratio: 16 / 9; }
+  .face { padding: 22px 24px; }
+  .front .yr { font-size: 48px; }
+  .front .t { font-size: 19px; }
+  .back .inst { font-size: 26px; }
+  .members { padding: 22px; gap: 10px 18px; }
+  .calltab { display: flex; position: fixed; inset-inline: 12px; bottom: max(12px, env(safe-area-inset-bottom)); z-index: 50; justify-content: center; align-items: center; gap: 10px;
+    min-height: 58px; border-radius: 999px; background: var(--ink); color: var(--sheet); text-decoration: none; font: 700 18px/1 var(--text); box-shadow: 0 8px 24px rgba(15, 58, 62, .3); }
+  .calltab svg { width: 20px; height: 20px; }
+}
+
+.calltab { transition: transform 260ms cubic-bezier(.2,.8,.2,1), opacity 200ms linear, background-color .15s, color .15s; }
+.calltab.is-hidden { transform: translateY(16px); opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .calltab.is-hidden { transform: none; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 3h3.5l2 5-2.5 1.5a11 11 0 0 0 6.5 6.5L16 13.5l5 2V19a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2Z"/></symbol>
+  <symbol id="i-turn" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4"/></symbol>
+</svg>
+<div class="page">
+  <header class="sheet" aria-label="دکتر سپیده صفانوایی">
+    <div class="band" aria-hidden="true"></div>
+    <div class="who">
+      <div>
+        <h1>دکتر سپیده صفانوایی</h1>
+        <p class="tagline">متخصص داخلی و فوق تخصص بیماری‌های ریه</p>
+      </div>
+      <div class="photo34"><img class="ph" src="assets/lungs-teal.png" alt="جای عکس دکتر صفانوایی"></div>
+    </div>
+    <div class="rule" aria-hidden="true"></div>
+    <dl class="lines">
+      <dt>نظام پزشکی</dt><dd>۵۱۵۱۰</dd>
+      <dt>مطب آمل</dt><dd>سبزه میدان، روبروی مخابرات مرکزی، ساختمان پزشکان آنیتا، طبقه اول، واحد ۳</dd>
+      <dt>پذیرش</dt><dd>روزانه، شیفت عصر</dd>
+    </dl>
+    <div class="phones">
+      <a href="tel:+981144229270"><span>تلفن مطب</span><span class="num ltr">۰۱۱-۴۴۲۲۹۲۷۰</span></a>
+      <a href="tel:+989119970828"><span>همراه</span><span class="num ltr">۰۹۱۱-۹۹۷-۰۸۲۸</span></a>
+      <a class="call" href="tel:+981144229270"><svg aria-hidden="true"><use href="#i-phone"/></svg>تماس با مطب</a>
+    </div>
+  </header>
+
+  <main class="col">
+    <nav aria-label="اصلی">
+      <a href="#">درباره‌ی دکتر</a>
+      <a href="#">بیماری‌ها و اقدامات</a>
+      <a href="#">مطب</a>
+      <a href="#">تماس</a>
+      <span class="mark"><img src="assets/lungs-teal.png" alt="" width="40"></span>
+    </nav>
+
+    <section class="statement" aria-labelledby="st">
+      <h2 id="st">بیماری‌های ریه، از تشخیص تا برونکوسکوپی</h2>
+      <p>دکتر صفانوایی فوق تخصص ریه و <bdi>ICU</bdi> از بیمارستان مسیح دانشوری است و دوره‌ی تکمیلی اینترونشنال ریه را در همان‌جا گذرانده است. بیماران داخلی و دیابت نیز در مطب آمل پذیرش می‌شوند.</p>
+      <ul class="topics" aria-label="بیماری‌ها و اقدامات">
+        <li><a href="#">آسم</a></li>
+        <li><a href="#"><bdi>COPD</bdi> (بیماری انسدادی مزمن ریه)</a></li>
+        <li><a href="#">فیبروز ریه</a></li>
+        <li><a href="#">سرفه مزمن</a></li>
+        <li><a href="#">برونکوسکوپی</a></li>
+        <li><a href="#">دیابت</a></li>
+        <li><a href="#">همه‌ی ۲۰ مورد</a></li>
+      </ul>
+    </section>
+
+    <section class="creds" aria-labelledby="cr">
+      <h2 id="cr">سوابق علمی و حرفه‌ای</h2>
+      <p>چهار مدرک و سمت اصلی، به ترتیب سال؛ پشت هر کارت، محل آن.</p>
+      <ul class="cards">
+        <li><button class="flip" data-flip aria-pressed="false"><span class="turn">
+          <span class="face front"><svg class="cue" aria-hidden="true"><use href="#i-turn"/></svg><span class="yr">۱۳۷۸</span><span class="t">متخصص داخلی</span></span>
+          <span class="face back"><span class="t">محل</span><span class="inst">دانشگاه علوم پزشکی شهید بهشتی، تهران</span></span>
+        </span></button></li>
+        <li><button class="flip" data-flip aria-pressed="false"><span class="turn">
+          <span class="face front"><svg class="cue" aria-hidden="true"><use href="#i-turn"/></svg><span class="yr">۱۳۸۷</span><span class="t">فوق تخصص بیماری‌های ریه و <bdi>ICU</bdi></span></span>
+          <span class="face back"><span class="t">محل</span><span class="inst">دانشگاه علوم پزشکی شهید بهشتی - بیمارستان مسیح دانشوری</span></span>
+        </span></button></li>
+        <li><button class="flip" data-flip aria-pressed="false"><span class="turn">
+          <span class="face front"><svg class="cue" aria-hidden="true"><use href="#i-turn"/></svg><span class="yr">۱۳۹۵</span><span class="t">دوره تخصصی اینترونشن ریه</span></span>
+          <span class="face back"><span class="t">محل</span><span class="inst">بیمارستان مسیح دانشوری</span></span>
+        </span></button></li>
+        <li><button class="flip" data-flip aria-pressed="false"><span class="turn">
+          <span class="face front"><svg class="cue" aria-hidden="true"><use href="#i-turn"/></svg><span class="yr">۱۳۹۵</span><span class="t">هیات علمی</span></span>
+          <span class="face back"><span class="t">محل</span><span class="inst">دانشگاه علوم پزشکی مازندران</span></span>
+        </span></button></li>
+      </ul>
+      <dl class="members" aria-label="عضویت‌ها و آثار">
+        <dt>۱۳۸۷</dt><dd>عضو انجمن علمی ریه اروپا (<bdi>ERS</bdi>)</dd>
+        <dt>۱۳۸۷</dt><dd>عضو انجمن علمی ریه آمریکا (<bdi>ATS</bdi>)</dd>
+        <dt>۱۳۸۷</dt><dd>عضو انجمن علمی ریه ایران</dd>
+        <dt aria-hidden="true">—</dt><dd>بیش از ۳۰ مقاله علمی و ۲ کتاب در مجلات معتبر خارجی</dd>
+      </dl>
+    </section>
+  </main>
+</div>
+<a class="calltab" href="tel:+981144229270"><svg aria-hidden="true"><use href="#i-phone"/></svg>تماس با مطب · <span class="ltr">۰۱۱-۴۴۲۲۹۲۷۰</span></a>
+<script src="mockup.js"></script>
+</body>
+</html>

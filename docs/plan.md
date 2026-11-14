@@ -116,8 +116,32 @@ Once the asset checklist comes back from your aunt, populate real data through t
 **Phase 3 — Frontend design & build**
 Reference-hunting (Pinterest etc.) → Claude Design mockup with the *real* Farsi content from Phase 2 → Tailwind + Vazirmatn templates (`base.html` + blocks), RTL by default with explicit LTR spans for embedded English/Latin terms, htmx only if a specific interaction needs it.
 
+The staged design work decided the rest (see [`docs/design/PROGRESS.md`](design/PROGRESS.md)):
+- the stack is **plain modern CSS + small vanilla JS**, not Tailwind, and no htmx;
+- the fonts are **Lalezar + Vazirmatn**, self-hosted;
+- **a CSS or JS change must never need a hard refresh.** Hashed static names, `no-cache` HTML, and a dev server that doesn't cache static.
+
+**Admin theme (owner decision, 2026-11-14, built in design Stage 3).** The admin uses **django-jazzmin**, set up the same way as ArameshMusicAcademy-website (`config/settings.py` there, "Django admin theme"):
+- `jazzmin` first in `INSTALLED_APPS`;
+- `JAZZMIN_SETTINGS`:
+  - Persian `site_title` / `site_header` / `site_brand` / `welcome_sign`, and a «مشاهده سایت» top-menu link;
+  - `order_with_respect_to`: doctor, conditions, locations, inquiries, auth;
+  - FontAwesome icons per model;
+  - `custom_css: assets/css/admin.css`;
+  - `changeform_format: single`, `show_ui_builder: False`, `related_modal_active: True`;
+- `JAZZMIN_UI_TWEAKS`: `flatly`, light, flat sidebar, fixed navbar and sidebar.
+
+Two pieces that keep it working in Iran and in RTL, both copied from the academy:
+- **Offline.** `use_google_fonts_cdn: False`, plus a local `static_dev/vendor/bootswatch/flatly/bootstrap.min.css` with the Google Fonts `@import` removed. The admin must open when international internet is cut. Jazzmin asks `{% static %}` for `vendor/bootswatch`, so `config/storage.py` adds `"vendor/"` to `VENDOR_PREFIXES`.
+- **RTL fixes** in `static_dev/assets/css/admin.css`:
+  - AdminLTE's live region sits at `left: -10000px` and makes every RTL page 10,000px wide; it is clipped in place instead;
+  - textareas and file inputs are capped on phones;
+  - wide tabular inlines (credentials) scroll in their own box.
+
+The unread Inquiry count in the sidebar (a custom `AdminSite.get_app_list`, as the academy does for contact messages) belongs to Phase 4. The admin is not restyled beyond this.
+
 **Phase 4 — Inquiry flow**
-Contact form view + validation, honeypot check, email notification (needs an SMTP/email provider reachable from Iran — open item, see below).
+Contact form view + validation, honeypot check, email notification (needs an SMTP/email provider reachable from Iran — open item, see below), and the unread Inquiry count in the Jazzmin sidebar.
 
 **Phase 5 — Deploy to Runflare**
 Per ADR-0002/0003: `DATABASES['default']['NAME']` under a disk-mounted folder (e.g. `/app/database/db.sqlite3`), `STATIC_ROOT`/`MEDIA_ROOT` under `public/` (static is committed and served by WhiteNoise; a disk is mounted at `/app/public/media` only, for uploads), `DEBUG=False`, `ALLOWED_HOSTS` set once the domain is picked, `collectstatic` is never run on Runflare: it runs locally and `public/static/` is committed (decided 2026-11-14, same as ArameshMusicAcademy-website); after a deploy, run only `migrate`.
@@ -130,5 +154,6 @@ Blog/announcements, testimonials, FAQ, real booking/calendar system, analytics, 
 
 - Photo(s) — not yet provided; `DoctorProfile.photo` stays blank until they arrive, and templates use `DoctorProfile.photo_url`, which falls back to a neutral placeholder (`apps/doctor/static/doctor/doctor-placeholder.svg`).
 - Domain name — resolved: `dr.safanavaiee.ir`.
+- Medical review of the condition and procedure texts — the seeded bodies are starter copy. The doctor reviews them on the built condition pages before launch, not before (decided 2026-11-14).
 - Email provider for Inquiry notifications, reachable from Iran — needs picking before Phase 4. Until then `EMAIL_*` env vars stay empty and prod uses the dummy email backend (inquiries are still saved in the admin).
 - Second clinic location — Q9 assumed multiple locations, but the asset text only gives one concrete address (the Amol private clinic). Her morning academic affiliation (Mazandaran University of Medical Sciences) may or may not be a second patient-facing location — confirm before adding a second `ClinicLocation` row. No code change needed to add one: it's a new row in the admin.

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!-- PROTOTYPE (Stage 2, throwaway): Direction A «چادرشب», home hero + credentials. Not production code. -->
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A · چادرشب · دکتر سپیده صفانوایی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Direction A tokens: the colours of a Mazandarani chadorshab, re-dyed in the logo's teal and gold */
+  --field: #0C3438;      /* deep teal: the cloth's ground */
+  --field-2: #165257;    /* second teal thread */
+  --gold: #D4A84E;       /* saffron gold thread */
+  --madder: #A23B2C;     /* madder-red thread: stripes only, never text or buttons */
+  --sea: #E3ECE6;        /* page ground: pale Caspian green, not cream */
+  --ivory: #F7F2E7;      /* text on teal */
+  --ink: #0C3438;
+
+  --display: 'Lalezar', 'Vazirmatn', sans-serif;
+  --text: 'Vazirmatn', system-ui, sans-serif;
+  --u: 8px;              /* the thread: every band and gap is a multiple */
+  --margin: clamp(20px, 4vw, 64px);
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--sea); color: var(--ink); font: 400 18px/1.8 var(--text); }
+::selection { background: var(--gold); color: var(--field); }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+a { color: inherit; }
+.ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+img { display: block; max-width: 100%; }
+
+/* ---- the weave: horizontal bands, flat colour, hard edges ---- */
+.weave { display: grid; }
+.weave i { display: block; }
+.w-gold { background: var(--gold); } .w-red { background: var(--madder); }
+.w-teal { background: var(--field-2); } .w-ivory { background: var(--ivory); } .w-field { background: var(--field); }
+
+/* ---- header (sits on the cloth) ---- */
+.top { background: var(--field); color: var(--ivory); }
+.bar { display: flex; align-items: center; gap: calc(var(--u) * 4); padding: calc(var(--u) * 2.5) var(--margin); }
+.lockup { display: flex; align-items: center; gap: calc(var(--u) * 1.5); text-decoration: none; }
+.lockup img { width: 44px; height: auto; }
+.lockup b { display: block; font: 700 18px/1.3 var(--text); }
+.lockup small { display: block; font: 400 14px/1.4 var(--text); color: #C9D6D1; }
+nav ul { display: flex; gap: calc(var(--u) * 3); list-style: none; margin: 0; padding: 0; font-weight: 500; font-size: 16px; }
+nav a { text-decoration: none; padding-block: 6px; border-bottom: 2px solid transparent; transition: border-color .15s var(--ease-out); }
+nav a:hover { border-color: var(--gold); }
+.bar .phone { margin-inline-start: auto; }
+
+.pill { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 10px 24px; border-radius: 999px;
+  font: 700 17px/1 var(--text); text-decoration: none; border: 2px solid var(--gold);
+  transition: background-color .15s var(--ease-out), color .15s var(--ease-out); }
+.pill svg { width: 18px; height: 18px; flex: none; }
+.pill--gold { background: var(--gold); color: var(--field); }
+.pill--gold:hover { background: var(--ivory); border-color: var(--ivory); }
+.pill--line { background: transparent; color: var(--ivory); }
+.pill--line:hover { background: var(--gold); color: var(--field); }
+
+/* ---- hero ---- */
+.hero { background: var(--field); color: var(--ivory); padding: calc(var(--u) * 6) var(--margin) calc(var(--u) * 10);
+  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: calc(var(--u) * 8); align-items: center; }
+.hero h1 { font: 400 clamp(52px, 6.6vw, 104px)/1.2 var(--display); margin: 0; color: var(--ivory); text-wrap: balance; }
+.hero .tagline { font: 400 clamp(26px, 2.6vw, 38px)/1.5 var(--display); color: var(--gold); margin: calc(var(--u) * 1) 0 calc(var(--u) * 3); }
+.hero .lede { max-width: 34em; margin: 0 0 calc(var(--u) * 4); color: #DCE6E1; font-size: 19px; }
+.facts { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 calc(var(--u) * 5); padding: 0; list-style: none; }
+.facts li { padding: 10px 20px; font-size: 16px; font-weight: 500; background: var(--field-2); }
+.facts li:nth-child(2) { background: var(--gold); color: var(--field); }
+.facts li strong { font-weight: 700; }
+.actions { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 2); align-items: center; }
+.where { margin: calc(var(--u) * 3) 0 0; font-size: 16px; color: #C9D6D1; }
+
+/* founder card: the portrait framed in a woven border (concentric thread bands) */
+.founder { justify-self: end; width: min(100%, 400px); }
+.frame { background: var(--gold); padding: calc(var(--u) * 1.5); }
+.frame > div { background: var(--madder); padding: calc(var(--u) * .5); }
+.frame > div > div { background: var(--ivory); padding: calc(var(--u) * 1); }
+.portrait { aspect-ratio: 4 / 5; background: var(--field-2); display: grid; place-items: center; overflow: hidden; }
+.portrait img.ph { width: 58%; }
+.portrait img.photo { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+.founder figcaption { background: var(--ivory); color: var(--field); padding: calc(var(--u) * 2) calc(var(--u) * 2.5); }
+.founder figcaption b { display: block; font: 400 26px/1.4 var(--display); }
+.founder figcaption span { font-size: 15px; }
+
+/* ---- credentials ---- */
+.creds { padding: calc(var(--u) * 15) var(--margin) calc(var(--u) * 12); }
+.creds h2 { font: 400 clamp(40px, 4.4vw, 64px)/1.3 var(--display); margin: 0 0 calc(var(--u) * 1); }
+.creds .intro { margin: 0 0 calc(var(--u) * 6); max-width: 40em; }
+.cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(var(--u) * 3); }
+
+.flip { all: unset; box-sizing: border-box; display: block; width: 100%; aspect-ratio: 5 / 4; perspective: 1100px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.flip:focus-visible { outline: 3px solid var(--madder); outline-offset: 4px; }
+.flip .turn { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d;
+  transition: transform 380ms var(--ease-out); }
+/* RTL: the card turns the mirror way (its right edge comes toward you) */
+@media (hover: hover) { .flip:hover .turn { transform: rotateY(-180deg); transition-duration: 560ms; } }
+.flip:focus-visible .turn, .flip[aria-pressed="true"] .turn { transform: rotateY(-180deg); transition-duration: 560ms; }
+.face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; padding: calc(var(--u) * 3); }
+.front { background: var(--field); color: var(--ivory); }
+.front .yr { font: 400 56px/1.1 var(--display); color: var(--gold); }
+.front .t { font: 700 20px/1.6 var(--text); margin-top: auto; margin-bottom: 16px; }
+.front .cue { position: absolute; inset-inline-end: calc(var(--u) * 3); inset-block-start: calc(var(--u) * 3); width: 24px; height: 24px; color: var(--gold); }
+.back { background: var(--gold); color: var(--field); transform: rotateY(180deg); justify-content: flex-end; }
+.back .t { font: 500 15px/1.6 var(--text); }
+.back .inst { font: 400 26px/1.5 var(--display); }
+.front .weave, .back .weave { position: absolute; inset-inline: 0; inset-block-end: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .flip .turn { transform: none !important; transition: none; }
+  .face { backface-visibility: visible; transition: opacity 200ms linear; }
+  .back { transform: none; opacity: 0; }
+  @media (hover: hover) { .flip:hover .back { opacity: 1; } }
+  .flip:focus-visible .back, .flip[aria-pressed="true"] .back { opacity: 1; }
+}
+
+.ribbons { list-style: none; margin: calc(var(--u) * 6) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ribbons li { display: flex; gap: calc(var(--u) * 3); align-items: baseline; padding: calc(var(--u) * 2.5) calc(var(--u) * 3); background: #F2F6F3; font-weight: 500; }
+.ribbons li:nth-child(4n+2), .ribbons li:nth-child(4n+3) { background: #D3E1DA; }
+.ribbons .yr { font: 400 24px/1 var(--display); color: var(--madder); min-width: 3.2em; }
+
+/* ---- the always-reachable call tab ---- */
+.calltab { position: fixed; inset-inline-start: auto; inset-inline-end: 20px; inset-block-end: 20px; z-index: 50;
+  display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 999px; text-decoration: none;
+  background: var(--gold); color: var(--field); font: 700 16px/1 var(--text);
+  box-shadow: 0 8px 24px rgba(12, 52, 56, .28); transition: background-color .15s var(--ease-out); }
+.calltab:hover { background: var(--field); color: var(--ivory); }
+.calltab svg { width: 18px; height: 18px; }
+
+/* ---- phone composition ---- */
+@media (max-width: 900px) {
+  nav { display: none; }
+  .bar { padding-block: calc(var(--u) * 2); }
+  .bar .phone { display: none; }
+  .menu { margin-inline-start: auto; all: unset; margin-inline-start: auto; width: 48px; height: 48px; display: grid; place-items: center; cursor: pointer; }
+  .hero { grid-template-columns: 1fr; padding-block: calc(var(--u) * 2) calc(var(--u) * 7); gap: calc(var(--u) * 4); }
+  .hero .head { display: grid; grid-template-columns: minmax(0, 1fr); gap: calc(var(--u) * 2); }
+  .hero .head .founder.mob { order: -1; width: 104px; }
+  .founder { order: -1; }
+  .founder.desk { display: none; }
+  .hero h1 { font-size: clamp(40px, 12vw, 60px); }
+  .hero .tagline { font-size: 24px; }
+  .facts li { font-size: 15px; padding: 8px 14px; }
+  .actions .pill { flex: 1 1 100%; justify-content: center; min-height: 56px; font-size: 18px; }
+  .cards { grid-template-columns: 1fr 1fr; gap: calc(var(--u) * 1.5); }
+  .flip { aspect-ratio: 4 / 5; }
+  .face { padding: calc(var(--u) * 2); }
+  .front .yr { font-size: 40px; }
+  .front .t { font-size: 17px; }
+  .back .inst { font-size: 19px; }
+  .ribbons { grid-template-columns: 1fr; }
+  .ribbons li:nth-child(n) { background: #F2F6F3; }
+  .ribbons li:nth-child(even) { background: #D3E1DA; }
+  .creds { padding-block: calc(var(--u) * 9) calc(var(--u) * 14); }
+  .calltab { inset-inline: 12px; inset-block-end: max(12px, env(safe-area-inset-bottom)); justify-content: center; padding: 18px; font-size: 18px; }
+}
+@media (min-width: 901px) { .menu, .founder.mob { display: none; } }
+.mini { width: 112px; }
+.mini .frame { padding: 6px; } .mini .frame > div { padding: 2px; } .mini .frame > div > div { padding: 4px; }
+
+.calltab { transition: transform 260ms cubic-bezier(.2,.8,.2,1), opacity 200ms linear, background-color .15s, color .15s; }
+.calltab.is-hidden { transform: translateY(16px); opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .calltab.is-hidden { transform: none; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 3h3.5l2 5-2.5 1.5a11 11 0 0 0 6.5 6.5L16 13.5l5 2V19a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2Z"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-turn" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="bar">
+    <a class="lockup" href="#">
+      <img src="assets/lungs-ivory.png" alt="" width="44" height="44">
+      <span><b>دکتر سپیده صفانوایی</b><small>فوق تخصص ریه · متخصص داخلی</small></span>
+    </a>
+    <nav aria-label="اصلی"><ul>
+      <li><a href="#">درباره‌ی دکتر</a></li>
+      <li><a href="#">بیماری‌ها و اقدامات</a></li>
+      <li><a href="#">مطب</a></li>
+      <li><a href="#">تماس</a></li>
+    </ul></nav>
+    <a class="pill pill--line phone" href="tel:+981144229270"><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="ltr">۰۱۱-۴۴۲۲۹۲۷۰</span></a>
+    <button class="menu" aria-label="منو"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 12h18M9 17h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="h1">
+    <div>
+      <div class="head">
+        <div>
+          <h1 id="h1">دکتر سپیده صفانوایی</h1>
+          <p class="tagline">متخصص داخلی و فوق تخصص بیماری‌های ریه</p>
+        </div>
+        <figure class="founder mob mini" style="margin:0">
+          <div class="frame"><div><div><div class="portrait"><img class="ph" src="assets/lungs-gold.png" alt="جای عکس دکتر صفانوایی"></div></div></div></div>
+        </figure>
+      </div>
+      <p class="lede">فوق تخصص ریه و <bdi>ICU</bdi> از بیمارستان مسیح دانشوری، با دوره‌ی تکمیلی اینترونشنال ریه؛ عضو هیات علمی دانشگاه علوم پزشکی مازندران. پذیرش بیماران ریه، داخلی و دیابت در مطب آمل.</p>
+      <ul class="facts" aria-label="در یک نگاه">
+        <li>پزشک از <strong>۱۳۷۸</strong></li>
+        <li>نظام پزشکی <strong>۵۱۵۱۰</strong></li>
+        <li>عضو <bdi>ERS</bdi> و <bdi>ATS</bdi></li>
+      </ul>
+      <div class="actions">
+        <a class="pill pill--gold" href="tel:+981144229270"><svg aria-hidden="true"><use href="#i-phone"/></svg>تماس با مطب</a>
+        <a class="pill pill--line" href="#"><svg aria-hidden="true"><use href="#i-route"/></svg>مسیر مطب آمل</a>
+      </div>
+      <p class="where">مطب آمل · سبزه میدان، ساختمان پزشکان آنیتا · پذیرش روزانه، شیفت عصر</p>
+    </div>
+    <figure class="founder desk" style="margin:0">
+      <div class="frame"><div><div><div class="portrait"><img class="ph" src="assets/lungs-gold.png" alt="جای عکس دکتر صفانوایی"></div></div></div></div>
+      <figcaption><b>دکتر سپیده صفانوایی</b><span>عضو هیات علمی دانشگاه علوم پزشکی مازندران</span></figcaption>
+    </figure>
+  </section>
+  <div class="weave" aria-hidden="true" style="grid-template-rows: 16px 8px 4px 8px 24px 8px 4px">
+    <i class="w-gold"></i><i class="w-field"></i><i class="w-red"></i><i class="w-ivory"></i><i class="w-teal"></i><i class="w-gold"></i><i class="w-field"></i>
+  </div>
+
+  <section class="creds" aria-labelledby="creds-h">
+    <h2 id="creds-h">سوابق علمی و حرفه‌ای</h2>
+    <p class="intro">از تخصص داخلی در ۱۳۷۸ تا دوره‌ی اینترونشنال ریه در بیمارستان مسیح دانشوری؛ پشت هر کارت، محل آن آمده است.</p>
+    <ul class="cards">
+      <li><button class="flip" data-flip aria-pressed="false"><span class="turn">
+        <span class="face front"><svg class="cue" aria-hidden="true"><use href="#i-turn"/></svg><span class="yr">۱۳۷۸</span><span class="t">متخصص داخلی</span><span class="weave" aria-hidden="true" style="grid-template-rows:6px 3px 6px"><i class="w-gold"></i><i class="w-red"></i><i class="w-teal"></i></span></span>
+        <span class="face back"><span class="t">محل:</span><span class="inst">دانشگاه علوم پزشکی شهید بهشتی، تهران</span></span>
+      </span></button></li>
+      <li><button class="flip" data-flip aria-pressed="false"><span class="turn">
+        <span class="face front"><svg class="cue" aria-hidden="true"><use href="#i-turn"/></svg><span class="yr">۱۳۸۷</span><span class="t">فوق تخصص بیماری‌های ریه و <bdi>ICU</bdi></span><span class="weave" aria-hidden="true" style="grid-template-rows:6px 3px 6px"><i class="w-gold"></i><i class="w-red"></i><i class="w-teal"></i></span></span>
+        <span class="face back"><span class="t">محل:</span><span class="inst">دانشگاه علوم پزشکی شهید بهشتی - بیمارستان مسیح دانشوری</span></span>
+      </span></button></li>
+      <li><button class="flip" data-flip aria-pressed="false"><span class="turn">
+        <span class="face front"><svg class="cue" aria-hidden="true"><use href="#i-turn"/></svg><span class="yr">۱۳۹۵</span><span class="t">دوره تخصصی اینترونشن ریه</span><span class="weave" aria-hidden="true" style="grid-template-rows:6px 3px 6px"><i class="w-gold"></i><i class="w-red"></i><i class="w-teal"></i></span></span>
+        <span class="face back"><span class="t">محل:</span><span class="inst">بیمارستان مسیح دانشوری</span></span>
+      </span></button></li>
+      <li><button class="flip" data-flip aria-pressed="false"><span class="turn">
+        <span class="face front"><svg class="cue" aria-hidden="true"><use href="#i-turn"/></svg><span class="yr">۱۳۹۵</span><span class="t">هیات علمی</span><span class="weave" aria-hidden="true" style="grid-template-rows:6px 3px 6px"><i class="w-gold"></i><i class="w-red"></i><i class="w-teal"></i></span></span>
+        <span class="face back"><span class="t">محل:</span><span class="inst">دانشگاه علوم پزشکی مازندران</span></span>
+      </span></button></li>
+    </ul>
+    <ul class="ribbons" aria-label="عضویت‌ها و آثار">
+      <li><span class="yr">۱۳۸۷</span><span>عضو انجمن علمی ریه اروپا (<bdi>ERS</bdi>)</span></li>
+      <li><span class="yr">۱۳۸۷</span><span>عضو انجمن علمی ریه آمریکا (<bdi>ATS</bdi>)</span></li>
+      <li><span class="yr">۱۳۸۷</span><span>عضو انجمن علمی ریه ایران</span></li>
+      <li><span class="yr" aria-hidden="true"></span><span>بیش از ۳۰ مقاله علمی و ۲ کتاب در مجلات معتبر خارجی</span></li>
+    </ul>
+  </section>
+</main>
+
+<a class="calltab" href="tel:+981144229270"><svg aria-hidden="true"><use href="#i-phone"/></svg>تماس با مطب</a>
+<script src="mockup.js"></script>
+</body>
+</html>

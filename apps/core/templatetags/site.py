@@ -6,6 +6,7 @@ only, never by hand in a template (DESIGN_PROMPT ground rules).
 
 import json
 import re
+from datetime import date
 
 from django import template
 from django.utils.html import conditional_escape
@@ -72,11 +73,63 @@ def isolate_latin(value, autoescape=True):
     return mark_safe("".join(out))
 
 
+def solar_hijri_year(day):
+    """The Solar Hijri (Jalali) year a Gregorian date falls in.
+
+    The arithmetic calendar (jdf.scr.ir's conversion), exact for 1300–1500.
+    """
+    g_days_before = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
+    gy = day.year - 1600
+    days = (
+        365 * gy + (gy + 3) // 4 - (gy + 99) // 100 + (gy + 399) // 400
+        + g_days_before[day.month - 1] + day.day - 1
+    )
+    if day.month > 2 and (day.year % 4 == 0 and (day.year % 100 != 0 or day.year % 400 == 0)):
+        days += 1
+    days -= 79
+    j_np = days // 12053
+    days %= 12053
+    jy = 979 + 33 * j_np + 4 * (days // 1461)
+    days %= 1461
+    if days >= 366:
+        jy += (days - 1) // 365
+    return jy
+
+
+@register.filter
+def years_since(year, today=None):
+    """Whole Solar Hijri years since `year` (practising_since → experience)."""
+    if not year:
+        return None
+    return solar_hijri_year(today or date.today()) - int(year)
+
+
 @register.filter
 def paragraphs(value):
     """Split free text on blank lines into its paragraphs."""
     text = str(value or "").replace("\r\n", "\n")
     return [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+
+
+_SENTENCE_END = re.compile(r"(.+?[.؟!])\s+(.+)", re.S)
+_YEAR = re.compile(r"(?<![0-9۰-۹])(1[34][0-9]{2}|۱[۳۴][۰-۹]{2})(?![0-9۰-۹])")
+
+
+@register.filter
+def lead_sentence(value):
+    """{lead, rest}: the opening sentence of a paragraph, and what follows."""
+    text = str(value or "").strip()
+    match = _SENTENCE_END.match(text)
+    if not match:
+        return {"lead": text, "rest": ""}
+    return {"lead": match.group(1), "rest": match.group(2)}
+
+
+@register.filter
+def first_year(value):
+    """The first Solar Hijri year (13xx/14xx) in a text, in Persian digits, or ""."""
+    match = _YEAR.search(str(value or "").translate(_TO_ASCII))
+    return fa_digits(match.group(1)) if match else ""
 
 
 @register.filter

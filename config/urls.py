@@ -5,10 +5,12 @@ from django.urls import path, re_path
 from django.views.generic import RedirectView
 from django.views.static import serve
 
-from apps.core.views import ShellPreviewView
+from apps.core.views import HomeView
+from apps.doctor.views import AboutView
 
 urlpatterns = [
-    path("", ShellPreviewView.as_view(), name="home"),  # TEMPORARY until Stage 4
+    path("", HomeView.as_view(), name="home"),
+    path("about/", AboutView.as_view(), name="about"),
     path("admin/", admin.site.urls),
     path(
         "favicon.ico",

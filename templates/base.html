@@ -4,7 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script>document.documentElement.classList.add("js")</script>
-{% include "partials/_meta.html" %}
+{# Default meta tags. They live here, not in a partial, because blocks inside an include cannot be overridden. #}
+<title>{% block title %}{% if profile %}{{ profile.full_name }}{% if profile.intro_tagline %} · {{ profile.intro_tagline }}{% endif %}{% endif %}{% endblock %}</title>
+<meta name="description" content="{% block description %}{{ default_description }}{% endblock %}">
+<link rel="canonical" href="{{ site_url }}{{ request.path }}">
+<meta property="og:type" content="{% block og_type %}website{% endblock %}">
+<meta property="og:locale" content="fa_IR">
+<meta property="og:site_name" content="{{ profile.full_name }}">
+<meta property="og:title" content="{% block og_title %}{{ profile.full_name }}{% endblock %}">
+<meta property="og:description" content="{% block og_description %}{{ default_description }}{% endblock %}">
+<meta property="og:url" content="{{ site_url }}{{ request.path }}">
+<meta property="og:image" content="{{ site_url }}{% static 'assets/img/icon.jpg' %}">
+<meta property="og:image:width" content="1080">
+<meta property="og:image:height" content="1080">
+<meta name="twitter:card" content="summary">
 <link rel="preload" href="{% static 'assets/fonts/vazirmatn-400.woff2' %}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{% static 'assets/fonts/lalezar-400.woff2' %}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{% static 'assets/css/site.css' %}">

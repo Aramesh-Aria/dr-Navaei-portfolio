@@ -1,7 +1,7 @@
 {% load site %}
 <header class="site-header on-field">
   <div class="site-header__bar wrap">
-    <a class="lockup" href="/" aria-label="{{ profile.full_name }}، صفحه‌ی اصلی">
+    <a class="lockup" href="{% url 'home' %}" aria-label="{{ profile.full_name }}، صفحه‌ی اصلی">
       <span class="mark" aria-hidden="true"></span>
       <span class="lockup__text">
         <span class="lockup__name">{{ profile.full_name }}</span>

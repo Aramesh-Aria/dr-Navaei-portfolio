@@ -202,3 +202,172 @@ class AdminThemeTests(TestCase):
         html = self.client.get("/admin/").content.decode()
         self.assertNotIn("fonts.googleapis.com", html)
         self.assertRegex(html, r"/public/static/vendor/bootswatch/flatly/bootstrap\.min[.0-9a-f]*\.css")
+
+
+from datetime import date
+
+from apps.core.templatetags.site import solar_hijri_year
+
+
+class SolarHijriYearTests(SimpleTestCase):
+    """Years of experience are counted from `practising_since` (a Solar Hijri year)."""
+
+    def test_autumn_2026_is_1405(self):
+        self.assertEqual(solar_hijri_year(date(2026, 11, 14)), 1405)
+
+    def test_the_year_turns_at_nowruz(self):
+        self.assertEqual(solar_hijri_year(date(2026, 3, 20)), 1404)
+        self.assertEqual(solar_hijri_year(date(2026, 3, 21)), 1405)
+
+    def test_nowruz_on_march_20_in_a_leap_year(self):
+        # 1 Farvardin 1403 fell on 20 March 2024.
+        self.assertEqual(solar_hijri_year(date(2024, 3, 19)), 1402)
+        self.assertEqual(solar_hijri_year(date(2024, 3, 20)), 1403)
+
+
+class YearsSinceFilterTests(SimpleTestCase):
+    def test_years_are_counted_from_the_solar_hijri_year(self):
+        self.assertEqual(
+            render("{{ y|years_since:today }}", y=1378, today=date(2026, 11, 14)), "27"
+        )
+
+    def test_no_year_gives_nothing(self):
+        self.assertEqual(render("{{ y|years_since|default:'' }}", y=None), "")
+
+
+from apps.conditions.models import ConditionTreated
+from apps.doctor.models import Credential
+
+
+class HomePageTests(TestCase):
+    """`/`: the founder card, credentials preview, top conditions and the clinic."""
+
+    def get(self):
+        return self.client.get("/")
+
+    def test_the_name_is_the_page_heading(self):
+        html = self.get().content.decode()
+        self.assertEqual(len(re.findall(r"<h1[ >]", html)), 1)
+        self.assertRegex(html, r"<h1[^>]*>دکتر سپیده صفانوایی</h1>")
+
+    def test_the_hero_call_button_hides_the_floating_tab(self):
+        html = self.get().content.decode()
+        self.assertRegex(html, r'<a class="pill pill--gold[^"]*" href="tel:\+981144229270" data-call-anchor')
+
+    def test_the_shell_preview_is_gone(self):
+        self.assertNotContains(self.get(), "پیش‌نمایش پوسته")
+
+    def test_only_credentials_with_an_institution_flip(self):
+        html = self.get().content.decode()
+        self.assertEqual(html.count("data-flip"), 4)
+        self.assertIn("دانشگاه علوم پزشکی مازندران", html)
+        # A title-only credential is a static row.
+        self.assertIn("عضو انجمن علمی ریه ایران", html)
+
+    def test_a_credential_detail_goes_on_the_back_of_its_card(self):
+        Credential.objects.filter(title="هیات علمی").update(detail="تدریس به دستیاران داخلی")
+        self.assertContains(self.get(), "تدریس به دستیاران داخلی")
+
+    def test_top_six_published_conditions_link_to_their_pages(self):
+        ConditionTreated.objects.filter(slug="asthma").update(is_published=False)
+        html = self.get().content.decode()
+        self.assertNotIn('href="/conditions/asthma/"', html)
+        self.assertIn('href="/conditions/copd/"', html)
+        self.assertIn('href="/conditions/lung-allergies/"', html)  # 7th, now 6th
+        self.assertNotIn('href="/conditions/pulmonary-fibrosis/"', html)
+
+    def test_latin_in_condition_titles_is_isolated(self):
+        self.assertContains(self.get(), "<bdi>COPD</bdi> (بیماری انسدادی مزمن ریه)")
+
+    def test_procedures_block_disappears_when_none_are_published(self):
+        self.assertContains(self.get(), "اقدامات درمانی")
+        self.assertContains(self.get(), 'href="/conditions/bronchoscopy/"')
+        ConditionTreated.objects.filter(category="procedure").update(is_published=False)
+        self.assertNotContains(self.get(), 'id="procedures-title"')
+
+    def test_experience_and_council_number_appear_only_once_entered(self):
+        self.assertNotContains(self.get(), "سال تجربه")
+        DoctorProfile.objects.update(practising_since=1378, medical_council_number="51510")
+        response = self.get()
+        self.assertContains(response, "سال تجربه")
+        self.assertContains(response, "۵۱۵۱۰")
+
+    def test_route_button_only_with_a_map_link(self):
+        self.assertNotContains(self.get(), "مسیر مطب")
+        ClinicLocation.objects.update(map_url="https://nshn.ir/abc")
+        self.assertContains(self.get(), "مسیر مطب")
+
+    def test_the_portrait_is_the_profile_photo_url(self):
+        self.assertRegex(
+            self.get().content.decode(),
+            r'<img class="portrait__img" src="/public/static/doctor/doctor-placeholder\.[0-9a-f]{12}\.svg"',
+        )
+
+    def test_home_renders_without_locations_or_credentials(self):
+        ClinicLocation.objects.all().delete()
+        Credential.objects.all().delete()
+        response = self.get()
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "data-flip")
+
+
+class BioFiltersTests(SimpleTestCase):
+    """The bio is set as paragraphs whose opening sentence leads, with the
+    paragraph's first year in the margin (01-direction.md §6, /about/)."""
+
+    def test_the_opening_sentence_is_split_from_the_rest(self):
+        source = "{% with s=t|lead_sentence %}[{{ s.lead }}][{{ s.rest }}]{% endwith %}"
+        self.assertEqual(
+            render(source, t="جمله‌ی اول است. جمله‌ی دوم."),
+            "[جمله‌ی اول است.][جمله‌ی دوم.]",
+        )
+
+    def test_a_single_sentence_is_all_lead(self):
+        source = "{% with s=t|lead_sentence %}[{{ s.lead }}][{{ s.rest }}]{% endwith %}"
+        self.assertEqual(render(source, t="فقط یک جمله"), "[فقط یک جمله][]")
+
+    def test_the_first_year_is_found_in_persian_or_ascii_digits(self):
+        self.assertEqual(render("{{ t|first_year }}", t="در سال ۱۳۸۵ وارد و در ۱۳۸۷ بازگشت"), "۱۳۸۵")
+        self.assertEqual(render("{{ t|first_year }}", t="since 1378"), "۱۳۷۸")
+
+    def test_counts_are_not_years(self):
+        self.assertEqual(render("{{ t|first_year }}", t="به مدت ۸ سال و ۳۰ مقاله"), "")
+
+
+class AboutPageTests(TestCase):
+    def get(self):
+        return self.client.get("/about/")
+
+    def test_about_has_its_own_title_and_heading(self):
+        html = self.get().content.decode()
+        self.assertIn("<title>درباره‌ی دکتر سپیده صفانوایی", html)
+        self.assertRegex(html, r"<h1[^>]*>دکتر سپیده صفانوایی</h1>")
+
+    def test_every_bio_paragraph_is_shown(self):
+        html = self.get().content.decode()
+        self.assertEqual(html.count('class="bio__para"'), 6)
+        self.assertIn("<bdi>ERS</bdi>", html)
+
+    def test_every_credential_is_shown(self):
+        html = self.get().content.decode()
+        self.assertEqual(html.count("data-flip"), 4)
+        self.assertIn("بیش از ۳۰ مقاله علمی", html)
+
+    def test_nav_marks_the_about_link_current(self):
+        self.assertContains(self.get(), 'href="/about/" aria-current="page"')
+
+    def test_about_renders_without_a_bio_paragraph_break(self):
+        DoctorProfile.objects.update(bio="یک جمله.")
+        self.assertContains(self.get(), 'class="bio__para"', count=1)
+
+    def test_about_description_is_the_bio_s_opening_sentence(self):
+        self.assertContains(
+            self.get(),
+            '<meta name="description" content="دکتر سپیده صفانوایی فارغ‌التحصیل تخصص داخلی در سال ۱۳۷۸ است.">',
+        )
+
+
+class CallTabTests(TestCase):
+    def test_call_tab_starts_hidden_so_it_never_flashes_on_load(self):
+        # site.js shows it once no [data-call-anchor] is on screen; CSS shows it without JS.
+        self.assertContains(self.client.get("/"), '<a class="calltab is-hidden"')

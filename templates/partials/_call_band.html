@@ -1,0 +1,27 @@
+{% load site %}{# The closing call band on Home and About: every Clinic Location's phones, then the way to the full details. #}
+{% if locations %}
+<section class="callband" aria-labelledby="callband-title">
+  <div class="wrap callband__inner">
+    <div class="callband__head">
+      <h2 class="display-2" id="callband-title">تماس با مطب</h2>
+      <p class="lede">برای گرفتن نوبت یا هر پرسشی، با مطب تماس بگیرید.</p>
+    </div>
+    <ul class="callband__list" role="list">
+      {% for location in locations %}
+      <li class="callband__clinic">
+        <p class="callband__name">{{ location.name|isolate_latin }}</p>
+        <p class="callband__phones">
+          <a class="pill pill--field" href="{{ location.phone|tel_href }}"><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="sr-only">تلفن مطب: </span><span class="num">{{ location.phone|phone_display }}</span></a>
+          {% if location.mobile_phone %}<a class="pill pill--line" href="{{ location.mobile_phone|tel_href }}"><span class="sr-only">همراه: </span><span class="num">{{ location.mobile_phone|phone_display }}</span></a>{% endif %}
+        </p>
+        <p class="callband__hours">{{ location.hours|fa_digits|linebreaksbr }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+    <p class="callband__more">
+      <a class="textlink" href="/locations/">نشانی{% if locations|length > 1 %} مطب‌ها{% else %} مطب{% endif %} و مسیر<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
+      <a class="textlink" href="/contact/">فرم تماس<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
+    </p>
+  </div>
+</section>
+{% endif %}

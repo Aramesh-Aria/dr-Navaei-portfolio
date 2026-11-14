@@ -363,6 +363,8 @@
   .calltab svg { inline-size: 18px; block-size: 18px; }
   @media (hover: hover) { .calltab:hover { background: var(--field); color: var(--ivory); } }
   .calltab:focus-visible { outline-color: var(--madder); }
+  /* It starts hidden in the markup (no flash on load); without JS it is always shown. */
+  html:not(.js) .calltab.is-hidden { transform: none; opacity: 1; visibility: visible; }
   .calltab.is-hidden {
     transform: translateY(16px);
     opacity: 0;
@@ -429,15 +431,259 @@
 }
 
 /* ------------------------------------------------------------ pages */
+/* Shared page components (Home, About) live in `components`; layouts per page in `pages`. */
+@layer components {
+  /* ---- sections on the pale ground ---- */
+  .section { padding-block: var(--s-15) var(--s-12); }
+  .section + .section { padding-block-start: var(--s-4); }
+  .section__head { margin-block-end: var(--s-6); display: grid; gap: var(--s-2); }
+  .section__more { margin-block-start: var(--s-6); }
+
+  .textlink {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-1);
+    min-block-size: var(--tap);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: rgb(12 52 56 / 0.35);
+    transition: text-decoration-color var(--dur-hover) var(--ease-out);
+  }
+  .textlink svg { inline-size: 18px; block-size: 18px; flex: none; }
+  @media (hover: hover) { .textlink:hover { text-decoration-color: currentColor; } }
+
+  /* ---- the founder card: portrait in a woven frame ---- */
+  .founder { inline-size: 100%; }
+  .founder__frame { background: var(--gold); padding: 12px; }
+  .founder__frame > div { background: var(--madder); padding: 4px; }
+  .founder__frame > div > div { background: var(--ivory); padding: 8px; }
+  .portrait { aspect-ratio: 4 / 5; background: var(--field-2); overflow: hidden; }
+  /* Any upload, any aspect: cover the 4:5 slot, faces sit in the upper third. */
+  .portrait__img { inline-size: 100%; block-size: 100%; object-fit: cover; object-position: 50% 22%; }
+  .founder__caption { display: grid; gap: 4px; padding: var(--s-2) var(--s-3) var(--s-3); background: var(--ivory); color: var(--field); }
+  .founder__name { font: 400 1.625rem / 1.4 var(--font-display); }
+  .founder__post { font-size: var(--fs-small); line-height: 1.7; color: var(--ink-2); }
+
+  /* ---- at-a-glance chips: flat swatches butted together ---- */
+  .facts { display: flex; flex-wrap: wrap; gap: 2px; }
+  .facts li { padding: 10px 20px; background: var(--field-2); font-size: var(--fs-small); font-weight: 500; }
+  .facts .facts__gold { background: var(--gold); color: var(--field); }
+  .facts strong { font-weight: 700; }
+
+  /* ---- credential flip cards: a swatch of cloth turned to its reverse ---- */
+  .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-3); }
+  /* Each card is a size container, so its 5:4 is a minimum height: a long
+     institution or detail grows the card (and its row) instead of overflowing. */
+  .cards > li { container-type: inline-size; }
+  .flip {
+    display: grid;
+    inline-size: 100%;
+    block-size: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    perspective: 1100px;
+    touch-action: manipulation;
+  }
+  .flip__turn {
+    display: grid;
+    min-block-size: 80cqi;
+    transform-style: preserve-3d;
+    transition: transform var(--dur-flip-out) var(--ease-out);
+  }
+  .flip__face {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+    padding: var(--s-3);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  /* Front: the teal swatch, its woven edge drawn as hard-stopped threads (no blend). */
+  .flip__front {
+    position: relative;
+    padding-block-end: var(--s-5);
+    color: var(--ivory);
+    background: linear-gradient(to top,
+      var(--field-2) 0 6px, var(--madder) 6px 9px, var(--gold) 9px 15px, var(--field) 15px);
+  }
+  .flip__cue { position: absolute; inset-block-start: var(--s-3); inset-inline-end: var(--s-3); inline-size: 22px; block-size: 22px; color: var(--gold); }
+  .flip__year { font: 400 3.5rem / 1.1 var(--font-display); color: var(--gold); }
+  .flip__title { margin-block-start: auto; font: 700 1.25rem / 1.6 var(--font-text); }
+  /* Back: the gold reverse of the cloth. RTL: it turns the mirror way. */
+  .flip__back { justify-content: flex-end; background: var(--gold); color: var(--field); transform: rotateY(180deg); }
+  .flip__label { font-size: var(--fs-small); font-weight: 500; }
+  .flip__inst { font: 400 1.625rem / 1.5 var(--font-display); }
+  .flip__inst bdi { font-family: var(--font-text); font-weight: 700; }
+  .flip__detail { font-size: var(--fs-small); line-height: 1.7; }
+
+  .flip:focus-visible .flip__turn,
+  .flip[aria-pressed="true"] .flip__turn {
+    transform: rotateY(-180deg);
+    transition-duration: var(--dur-flip-in);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .flip:hover .flip__turn { transform: rotateY(-180deg); transition-duration: var(--dur-flip-in); }
+  }
+
+  /* Static rows: memberships and publications, woven as ribbons. */
+  .ribbons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; margin-block-start: var(--s-6); }
+  .ribbons li {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: var(--s-2);
+    align-items: baseline;
+    padding: var(--s-2) var(--s-3);
+    background: var(--ivory);
+    font-weight: 500;
+  }
+  .ribbons__year { font: 400 1.5rem / 1 var(--font-display); color: var(--field-2); }
+  .ribbons__detail { display: block; font-weight: 400; font-size: var(--fs-small); color: var(--ink-2); }
+
+  /* ---- named threads: the conditions list ---- */
+  .threads { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-6); }
+  .thread {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--s-2);
+    align-items: center;
+    padding-block: var(--s-3);
+    border-block-start: 2px solid var(--field);
+    text-decoration: none;
+    transition: color var(--dur-hover) var(--ease-out);
+  }
+  .thread__title { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); }
+  .thread__title bdi { font-family: var(--font-text); font-weight: 700; }
+  .thread__desc { grid-column: 1; color: var(--ink-2); font-size: var(--fs-small); }
+  .thread__go { grid-column: 2; grid-row: 1 / span 2; inline-size: 24px; block-size: 24px; color: var(--field-2); }
+  @media (hover: hover) { .thread:hover .thread__title { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.3em; } }
+
+  /* ---- the closing call band ---- */
+  .callband { padding-block: var(--s-12); border-block-start: 2px solid var(--field); }
+  .callband__inner { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-4) var(--s-8); }
+  .callband__head { display: grid; gap: var(--s-2); align-content: start; }
+  .callband__list { display: grid; gap: var(--s-5); }
+  .callband__clinic { display: grid; gap: var(--s-1); }
+  .callband__name { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); }
+  .callband__phones { display: flex; flex-wrap: wrap; gap: var(--s-1); }
+  .callband__phones .pill { font-size: 1.1875rem; }
+  .callband__hours { color: var(--ink-2); }
+  .callband__more { grid-column: 2; display: flex; flex-wrap: wrap; gap: 0 var(--s-4); }
+}
+
 @layer pages {
-  /* TEMPORARY (Stage 3): the shell preview. Removed with core/shell_preview.html in Stage 4. */
-  .preview-hero { padding-block: var(--s-8) var(--s-12); }
-  .preview-hero .display-1 { margin-block: var(--s-1) var(--s-1); }
-  .preview-hero .lede { margin-block-start: var(--s-3); }
-  .preview-specimen { padding-block: var(--s-12); display: grid; gap: var(--s-3); justify-items: start; }
-  .preview-specimen .display-3 { margin-block-start: var(--s-4); }
-  .preview-dark { padding-block: var(--s-10); }
-  .preview-dark .actions { margin-block-start: var(--s-3); }
+  /* ---- Home: hero ---- */
+  .hero { padding-block: var(--s-6) var(--s-12); }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+    grid-template-areas: "text portrait";
+    gap: var(--s-8);
+    align-items: center;
+  }
+  .hero__text { grid-area: text; display: grid; justify-items: start; }
+  .hero__portrait { grid-area: portrait; justify-self: end; inline-size: min(100%, 420px); }
+  .hero__name { margin-block-end: var(--s-1); }
+  .hero__tagline { margin-block-end: var(--s-4); max-inline-size: 22em; }
+  .hero .facts { margin-block-end: var(--s-5); }
+  .hero__where { display: grid; gap: 4px; margin-block-start: var(--s-3); font-size: var(--fs-small); color: var(--ivory-2); }
+  .hero__where strong { font-weight: 500; color: var(--ivory); }
+
+  /* ---- Home: procedures on the cloth ---- */
+  .procedures { padding-block: var(--s-12); }
+  .procedures__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-4) var(--s-8); align-items: start; }
+  .procedures__grid header { display: grid; gap: var(--s-2); }
+  .procedures__list li + li { border-block-start: 1px solid rgb(247 242 231 / 0.18); }
+  .procedures__list a {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    gap: var(--s-2);
+    align-items: center;
+    min-block-size: 72px;
+    padding-block: var(--s-2);
+    text-decoration: none;
+    transition: color var(--dur-hover) var(--ease-out);
+  }
+  .procedures__n { font: 400 1.75rem / 1 var(--font-display); color: var(--gold); }
+  .procedures__title { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); }
+  .procedures__title bdi { font-family: var(--font-text); font-weight: 700; }
+  .procedures__list svg { inline-size: 24px; block-size: 24px; color: var(--gold); }
+  @media (hover: hover) { .procedures__list a:hover { color: var(--gold); } }
+
+  /* ---- About: intro and bio ---- */
+  .intro { padding-block: var(--s-8) var(--s-12); }
+  .intro__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    grid-template-areas: "text portrait";
+    gap: var(--s-8);
+    align-items: end;
+  }
+  .intro__text { grid-area: text; display: grid; justify-items: start; gap: var(--s-1); padding-block-end: var(--s-2); }
+  .intro__text .facts { margin-block-start: var(--s-3); }
+  .intro__portrait { grid-area: portrait; justify-self: end; inline-size: min(100%, 460px); }
+
+  .bio__grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: var(--s-8); align-items: start; }
+  .bio__title { position: sticky; inset-block-start: var(--s-4); }
+  .bio__body { display: grid; gap: var(--s-5); }
+  .bio__para { display: grid; grid-template-columns: 6rem minmax(0, var(--measure)); gap: var(--s-3); align-items: baseline; }
+  .bio__year { font: 400 2.25rem / 1 var(--font-display); color: var(--field-2); }
+  .bio__lead { font-weight: 700; }
+  .creds--about { padding-block-start: var(--s-6); }
+}
+
+/* ---- tablet and phone: their own decisions, not a shrink ---- */
+@layer pages {
+  @media (max-width: 1100px) {
+    .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 960px) {
+    .section { padding-block: var(--s-10) var(--s-8); }
+    .section__head { margin-block-end: var(--s-4); }
+
+    /* Hero: a small framed portrait above the name; the caption moves out. */
+    .hero { padding-block: var(--s-3) var(--s-8); }
+    .hero__grid { grid-template-columns: 1fr; grid-template-areas: "portrait" "text"; gap: var(--s-3); }
+    .hero__portrait { justify-self: start; inline-size: 124px; }
+    .hero__portrait .founder__frame { padding: 6px; }
+    .hero__portrait .founder__frame > div { padding: 2px; }
+    .hero__portrait .founder__frame > div > div { padding: 4px; }
+    .hero__portrait .founder__caption { display: none; }
+
+    .intro { padding-block: var(--s-4) var(--s-8); }
+    .intro__grid { grid-template-columns: 1fr; grid-template-areas: "portrait" "text"; gap: var(--s-4); }
+    .intro__portrait { justify-self: start; inline-size: min(64%, 300px); }
+
+    .threads { grid-template-columns: 1fr; }
+    .procedures { padding-block: var(--s-8); }
+    .procedures__grid, .callband__inner, .bio__grid { grid-template-columns: 1fr; }
+    .callband { padding-block: var(--s-8); }
+    .callband__more { grid-column: 1; }
+    .bio__title { position: static; }
+    .ribbons { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    /* On a phone the calls are full-width thumb targets. */
+    .hero__actions { inline-size: 100%; }
+    .hero__actions .pill, .callband__phones .pill { flex: 1 1 100%; min-block-size: 56px; font-size: 1.125rem; }
+    .cards { gap: var(--s-1); }
+    .flip__turn { min-block-size: 125cqi; }
+    .flip__face { padding: var(--s-2); }
+    .flip__front { padding-block-end: var(--s-4); }
+    .flip__cue { inset-block-start: var(--s-2); inset-inline-end: var(--s-2); inline-size: 18px; block-size: 18px; }
+    .flip__year { font-size: 2.5rem; }
+    .flip__title { font-size: 1.0625rem; line-height: 1.55; }
+    .flip__inst { font-size: 1.1875rem; }
+    .bio__para { grid-template-columns: 1fr; gap: 0; }
+    .bio__year { font-size: 1.75rem; }
+    .bio__year:empty { display: none; }
+    .ribbons li { grid-template-columns: 3.5rem minmax(0, 1fr); padding-inline: var(--s-2); }
+  }
 }
 
 /* ------------------------------------------------------------ utilities */
@@ -457,4 +703,12 @@
   *, *::before, *::after { scroll-behavior: auto !important; }
   .calltab.is-hidden { transform: none; }
   .js .menu.is-open { animation: none; }
+  /* The flip becomes a crossfade: no turn, the back fades over the front. */
+  .flip__turn, .flip:focus-visible .flip__turn, .flip[aria-pressed="true"] .flip__turn, .flip:hover .flip__turn { transform: none; transition: none; }
+  .flip__face { -webkit-backface-visibility: visible; backface-visibility: visible; }
+  .flip__back { transform: none; opacity: 0; transition: opacity 200ms linear; }
+  .flip:focus-visible .flip__back, .flip[aria-pressed="true"] .flip__back { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) and (hover: hover) and (pointer: fine) {
+  .flip:hover .flip__back { opacity: 1; }
 }

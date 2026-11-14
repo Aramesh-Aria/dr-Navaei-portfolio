@@ -1,7 +1,7 @@
 {% load site %}
 {% if primary_location %}
 {# Always-reachable call (Shafer's floating tab, re-made). Hidden by site.js while a [data-call-anchor] is on screen. #}
-<a class="calltab" href="{{ primary_location.phone|tel_href }}" data-calltab>
+<a class="calltab is-hidden" href="{{ primary_location.phone|tel_href }}" data-calltab>
   <svg aria-hidden="true"><use href="#i-phone"/></svg>تماس با مطب<span class="sr-only">، {{ primary_location.phone|phone_display }}</span>
 </a>
 {% endif %}

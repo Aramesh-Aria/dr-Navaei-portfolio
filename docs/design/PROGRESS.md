@@ -14,8 +14,8 @@ Kickoff line for every new chat:
 | 1 | Inspection | ✅ done 2026-11-14 | — |
 | 2 | Direction and mockups | ✅ done 2026-11-14, gate passed | **required:** choose a direction, answer the proposals and content questions |
 | 3 | Foundation (branch, approved backend changes, tokens, `base.html`) | ✅ done 2026-11-14, gate passed | **required:** approve the shell |
-| 4 | Home and About (credential flip cards) | ⬜ next | **required:** confirm the direction holds |
-| 5 | Conditions and Locations | ⬜ | — |
+| 4 | Home and About (credential flip cards) | ✅ done 2026-11-14, gate passed | **required:** confirm the direction holds |
+| 5 | Conditions and Locations | ⬜ next | — |
 | 6 | Contact and error pages | ⬜ | — |
 | 7 | Motion, mobile and cleanup | ⬜ | — |
 | 8 | Final review and report | ⬜ | **required:** decide on the merge |
@@ -113,6 +113,25 @@ Append one line per decision, with the stage it was made in. Never delete a line
 
 - **Stage 3 gate (owner, 2026-11-14):** the shell and the admin are **approved**. One change asked: the admin logo shows an «S» instead of AdminLTE's «A» (`assets/img/admin-logo.svg`, set as Jazzmin's `site_logo`, which also becomes the admin favicon). While doing it, a second RTL fix went into `admin.css`: the brand text's gap was on the wrong side and the name touched the logo.
 
+- **Stage 4:** `/` is `apps.core.views.HomeView` (`core/home.html`), `/about/` is `apps.doctor.views.AboutView` (`doctor/about.html`). The shell preview view, template, CSS and route are deleted.
+- **Stage 4:** credentials are split by one helper, `apps.doctor.views.credential_context(profile)`: `cards` (with an institution → flip), `rows` (the rest → static ribbons), `current` (the latest card by year, then order: her present post, «هیات علمی، دانشگاه علوم پزشکی مازندران», used as the founder card's caption). Home shows all of them, like About; there are only 4 + 4.
+- **Stage 4:** Home sections in order: hero (founder card + name + tagline + chips + call/route + every location's one-line address and hours) → selvedge → credentials → the first 6 published conditions as "named threads" + «همه‌ی بیماری‌ها و اقدامات» → every published procedure as a numbered list on the cloth (the block disappears with zero) → the call band.
+- **Stage 4:** the hero has **no lede sentence**: nothing in the data says it, and I didn't invent copy about her. The proof is the founder card caption and the credentials right below. The route button reads «مسیر مطب آمل» with a `map_url`, else «نشانی مطب آمل» → `/locations/`.
+- **Stage 4:** chips (`partials/_facts.html`): «N سال تجربه», «طبابت از YYYY» and «شماره نظام پزشکی …» (gold), each only once its field is entered. Today none show. Years and year are separate chips: joined by «·» the two Persian-digit runs were reordered by bidi.
+- **Stage 4:** years of experience: `years_since` filter over `solar_hijri_year(date)` (arithmetic Jalali conversion, tested at Nowruz 1403/1405).
+- **Stage 4:** About bio: each `\n\n` paragraph is a row with its **first Solar Hijri year in the margin** (`first_year` filter; paragraph 2 has none, so its margin is empty) and its **opening sentence in bold** (`lead_sentence` filter). The «زندگی‌نامه» heading is sticky on desktop. The last paragraph's ۱۳۸۷ comes after ۱۳۹۵: that's the bio's order, kept as written.
+- **Stage 4:** About's meta description is the bio's opening sentence; `og:type` is `profile`.
+- **Stage 4 (bug fix from Stage 3):** the meta blocks were in an `{% include %}`d partial, where a child template cannot override blocks. They now live in `base.html`; `partials/_meta.html` is deleted.
+- **Stage 4:** the flip card, as specified in Stage 2: a `<button aria-pressed>` with both faces in it (screen readers read title, year and institution). Hover (fine pointers only), `:focus-visible` and `aria-pressed="true"` turn it `rotateY(-180deg)`, 560 ms in / 380 ms out, `--ease-out`. A mouse click doesn't toggle (hover already turned it); a tap or Enter/Space does; Escape turns it back. Under reduced motion there's no turn, and the gold back crossfades in over 200 ms. The front's woven edge is a hard-stop gradient (four flat threads, no blend).
+- **Stage 4:** card size: each `li` is an inline-size container; the 5:4 (4:5 below 600 px) is a **minimum** (`min-block-size: 80cqi` / `125cqi`), so a long institution or `detail` grows the card and its row instead of overflowing. 4 columns above 1100 px, 2 below.
+- **Stage 4:** the call band (`partials/_call_band.html`) closes Home and About: every Clinic Location's name, both phones, hours, then links to `/locations/` and `/contact/`. Phone pills go full-width only below 600 px (at 768 they looked heavy).
+- **Stage 4:** the floating call tab now starts `is-hidden` in the markup (it flashed visible on load before the JS ran); `html:not(.js)` shows it, and the JS reveals it when there's no anchor or no IntersectionObserver.
+- **Stage 4:** two icons added to the sprite: `#i-turn` (the card cue) and `#i-forward` (points left: forward in RTL).
+- **Stage 4:** UI copy written (formal, third person, no claims beyond the data): «پشت هر کارت آمده است که آن مدرک یا سمت کجا به دست آمده.», «اقدامات تشخیصی و درمانی ریه که دکتر صفانوایی انجام می‌دهند.», «برای گرفتن نوبت یا هر پرسشی، با مطب تماس بگیرید.»
+- **Stage 4:** verified at 1440 / 768 / 390 with the seeds and with the worst case (3 locations, one with a long name and no mobile; empty tagline; council number and `practising_since` set; a long `detail`; zero procedures; a 16:9 landscape photo upload). No horizontal scroll, zero console messages, no 404s, one `h1`, every image with alt text, bio at 18 px on a phone. The dev database was restored from a backup afterwards and the test photo deleted.
+
+- **Stage 4 gate (owner, 2026-11-14):** Home and About are **approved** as built; the direction holds. No notes for Stage 5.
+
 ## Open questions for the owner
 
 Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.md)). Record each answer under Decisions when it comes back, then update the seeds or tell the Content Editor what to change in the admin.
@@ -133,42 +152,29 @@ Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.
 
 ## Handoff to next stage
 
-**Stage 4 (Home and About) is next.** The Stage 3 gate is passed (shell and admin approved).
+**Stage 5 (Conditions and Locations) is next.** The Stage 4 gate is passed: the owner approved Home and About with no notes.
 
-Screenshots to review (`docs/design/screens/stage3/`):
-- shell: `shell-1440-top.png`, `shell-1440-full.png`, `shell-768-full.png`, `shell-390-top.png`, `shell-390-full.png`, `shell-390-menu.png` (phone menu open), `shell-390-scrolled.png` (call tab), `shell-390-footer.png`, `shell-1440-focus.png` (keyboard focus);
-- worst case, three locations: `footer-1440-3-locations.png`, `shell-768-full-3-locations.png`;
-- admin: `admin-1440-profile.png`, `admin-390-profile.png`, `admin-1440-logo.png`, `admin-logo-closeup.png`.
+Screenshots (`docs/design/screens/stage4/`):
+- Home: `home-1440-top.png`, `home-1440-full.png`, `home-768-top.png`, `home-768-full.png`, `home-390-top.png`, `home-390-full.png`;
+- About: `about-1440-top.png`, `about-1440-full.png`, `about-768-top.png`, `about-768-full.png`, `about-390-top.png`, `about-390-full.png`;
+- the flip card: `home-1440-card-focus.png` (keyboard focus), `home-1440-card-midturn.png`, `home-1440-card-turned.png`, `home-1440-card-reduced-motion.png`, `about-390-card-tapped-detail.png`, `about-1440-card-detail.png`;
+- worst case: `home-768-worst-case.png`, `home-390-worst-case.png`, `home-390-worst-case-top.png`, `about-768-worst-case.png`, `about-390-worst-case.png`, `about-390-intro-facts.png` (chips), `home-1440-real-photo-landscape.png`, `home-390-real-photo-landscape.png`.
 
-### Tokens (`static_dev/assets/css/site.css`, `@layer tokens`)
-- **Colour:** `--field #0C3438`, `--field-2 #165257`, `--gold #D4A84E`, `--madder #A23B2C`, `--sea #E3ECE6`, `--ivory #F7F2E7`; derived inks `--ink` (= field), `--ink-2 #3B5A5C` (6.2:1 on sea), `--ivory-2 #C9D6D1` (9:1 on field). Gold never on sea. Madder only for stripes and focus.
-- **Type:** `--font-display` (Lalezar, display only), `--font-text` (Vazirmatn). Sizes `--fs-small` 16 · `--fs-body` 18→19 · `--fs-lede` 19→22 · `--fs-h3` 22→28 · `--fs-tagline` 24→38 · `--fs-h2` 34→64 · `--fs-h1` 42→104 (px, fluid). `--lh-text 1.9`, `--lh-display 1.35`. Classes: `.display-1/2/3`, `.display-tagline`, `.lede`, `.prose`, `.eyebrow`, `.num` (tabular, LTR-isolated digits).
-- **Space:** the 8px thread `--t`; `--s-1 … --s-15` (8 → 120); `--margin` clamp(20px, 4vw, 64px); `--wrap` 1312px; `--measure` 38em.
-- **Shape:** `--r-0`, `--r-pill`, `--r-focus`, `--tap` 48px.
-- **Motion:** `--ease-out cubic-bezier(.2,.8,.2,1)`, `--dur-hover 150ms`, `--dur-menu 220ms`, `--dur-tab 260ms`, `--dur-flip-in 560ms`, `--dur-flip-out 380ms`. Reduced motion is handled at the bottom of the file.
-- **Layers:** `reset, tokens, base, layout, components, pages, utilities`. Page styles go in `@layer pages`.
+### Template structure (updated)
+- `base.html` blocks: `title`, `description`, `og_type`, `og_title`, `og_description` (now **in `base.html` itself**), `head`, `body_class`, `content`.
+- Partials: `_icons.html` (sprite: `#i-phone`, `#i-route`, `#i-menu`, `#i-close`, `#i-out`, `#i-turn`, `#i-forward`), `_header.html`, `_nav_links.html`, `_footer.html`, `_calltab.html`, `_weave.html`, and new: `_portrait.html` (`with caption=True eager=True`), `_facts.html`, `_credentials.html` (needs `cards`, `rows`), `_call_band.html`.
+- Filters added (`{% load site %}`): `years_since`, `lead_sentence`, `first_year`. Python helper: `solar_hijri_year(date)`.
+- Shared components (in `@layer components`): `.section`, `.section__head`, `.section__more`, `.textlink`, `.founder`, `.portrait`, `.facts`, `.cards` / `.flip`, `.ribbons`, `.threads` / `.thread`, `.callband`. Page layouts in `@layer pages`: `.hero`, `.procedures`, `.intro`, `.bio`.
+- Every partial that uses a filter needs its own `{% load site %}` (load doesn't carry into an include).
 
-### Components already built
-`.wrap`, `.on-field` (teal surface, switches the focus ring to gold), `.stack`, `.actions`, `.mark` / `.mark--gold` (the lungs), `.selvedge` (via `partials/_weave.html`), `.pill` + `--gold` (primary on teal) / `--field` (primary on light) / `--line` (secondary on light) / `--line.--on-field` (secondary on teal) / `--small`, `.icon-button` (+`--gold`), `.clinics` / `.clinic` (1 location = one wide composition, 2+ = equal columns; reuse on Home and `/locations/`), `.calltab`, `.skip-link`, `.sr-only`.
-
-### Template structure (`templates/`)
-- `base.html` blocks: `title`, `description`, `og_type`, `og_title`, `og_description` (all in `partials/_meta.html`), `head` (extra head tags, e.g. a page's own JSON-LD), `body_class`, `content` (inside `<main id="main">`).
-- Partials: `_meta.html`, `_icons.html` (sprite: `#i-phone`, `#i-route`, `#i-menu`, `#i-close`, `#i-out`), `_header.html`, `_nav_links.html`, `_footer.html`, `_calltab.html`, `_weave.html` (the selvedge; `{% include "partials/_weave.html" %}`).
-- Context on every public page (`apps.core.context_processors.site`): `profile`, `locations` (list), `primary_location`, `site_url`, `default_description`. Empty on `/admin/`.
-- Filters (`{% load site %}`): `fa_digits`, `phone_display`, `tel_href`, `isolate_latin` (escapes, then wraps Latin runs in `<bdi>`), `paragraphs` (splits on blank lines; use for the bio), `body_sections` (the `## ` sections: list of `{id, heading, paragraphs}`; build "On this page" from the ones with a heading). Tag: `{% physician_json_ld profile locations site_url %}` (already in `base.html`).
-- JS: `static_dev/assets/js/site.js` (menu, call tab). Stage 4 adds the flip card there, reproducing `mockups/mockup.js`'s flip logic and the reduced-motion crossfade from `mockups/a.html`.
-- Nav links are literal paths (`/about/`, `/conditions/`, `/locations/`, `/contact/`) in `_nav_links.html`; switch them to `{% url %}` as each view lands.
-
-### For Stage 4
-- **Delete the temporary pieces:** `apps/core/views.py` `ShellPreviewView`, `templates/core/shell_preview.html`, the `.preview-*` rules in `@layer pages`, and the `""` route in `config/urls.py`. The `ShellTests` in `apps/core/tests.py` request `/`; keep them passing against the real home page.
-- Mark the hero's call button `data-call-anchor`.
-- Use `profile.photo_url` with `profile.photo_srcset` + `sizes` on the portrait.
-- Years of experience from `practising_since` still needs a test-first helper (Solar Hijri current year).
-- Credentials: flip only the ones with an `institution`; `detail` goes on the back when present.
+### For Stage 5
+- **Links already point at Stage 5 URLs:** Home's threads and procedures link to `/conditions/<slug>/`, and `/conditions/`, `/locations/` and `/contact/` are linked from the nav, the hero and the call band. They 404 until built. Switch them to `{% url %}` as each view lands (`home` and `about` already are).
+- Reuse `.threads` / `.thread` for the conditions list and `.clinics` (footer) or the call band for `/locations/`; the hero's route-or-address button points at `/locations/`.
+- The Home conditions count is `HOME_CONDITIONS = 6` in `apps/core/views.py`.
 
 Pending, but not blocking:
 - The doctor's answers ([`questions-for-doctor.md`](questions-for-doctor.md)). Record them under Decisions when they arrive.
 - The medical review of the condition texts, before launch.
 - The email provider.
 
-Tooling: the Playwright MCP server works against `http://127.0.0.1:8018` (start the server first with the `django` launch config). Node v26 is available locally. `pyftsubset` (system Python's fontTools) was used for the fonts.
+Tooling: the Playwright MCP server works against `http://127.0.0.1:8018`. Another chat's `runserver 8018` was already running on this checkout in Stage 4, so `preview_start` refused the port; Playwright used it as is (autoreload picks up edits; a screenshot right after an edit can race the reload). Worst-case content was set up in the dev DB from a backup copy and restored afterwards.

@@ -1,6 +1,6 @@
 {# The four top-level links, shared by the header, the phone menu and the footer. #}
 {% with p=request.path %}
-<li><a href="/about/"{% if p == "/about/" %} aria-current="page"{% endif %}>درباره‌ی دکتر</a></li>
+<li><a href="{% url 'about' %}"{% if p == "/about/" %} aria-current="page"{% endif %}>درباره‌ی دکتر</a></li>
 <li><a href="/conditions/"{% if p|slice:":12" == "/conditions/" %} aria-current="page"{% endif %}>بیماری‌ها و اقدامات</a></li>
 <li><a href="/locations/"{% if p == "/locations/" %} aria-current="page"{% endif %}>{% if locations|length > 1 %}مطب‌ها{% else %}مطب{% endif %}</a></li>
 <li><a href="/contact/"{% if p == "/contact/" %} aria-current="page"{% endif %}>تماس</a></li>

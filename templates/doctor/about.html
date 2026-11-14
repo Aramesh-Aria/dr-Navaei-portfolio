@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load site %}
+{% block title %}درباره‌ی {{ profile.full_name }}{% if profile.intro_tagline %} · {{ profile.intro_tagline }}{% endif %}{% endblock %}
+{% block og_title %}درباره‌ی {{ profile.full_name }}{% endblock %}
+{% block description %}{% with s=profile.bio|paragraphs|first|lead_sentence %}{{ s.lead }}{% endwith %}{% endblock %}
+{% block og_description %}{% with s=profile.bio|paragraphs|first|lead_sentence %}{{ s.lead }}{% endwith %}{% endblock %}
+{% block og_type %}profile{% endblock %}
+{% block body_class %}page-about{% endblock %}
+{% block content %}
+<section class="intro on-field" aria-labelledby="about-title">
+  <div class="wrap intro__grid">
+    <div class="intro__portrait">{% include "partials/_portrait.html" with eager=True %}</div>
+    <div class="intro__text">
+      <p class="eyebrow">درباره‌ی دکتر</p>
+      <h1 class="display-1 intro__name" id="about-title">{{ profile.full_name }}</h1>
+      {% if profile.intro_tagline %}<p class="display-tagline">{{ profile.intro_tagline|isolate_latin }}</p>{% endif %}
+      {% include "partials/_facts.html" %}
+    </div>
+  </div>
+</section>
+{% include "partials/_weave.html" %}
+
+<section class="section bio" aria-labelledby="bio-title">
+  <div class="wrap bio__grid">
+    <h2 class="display-2 bio__title" id="bio-title">زندگی‌نامه</h2>
+    <div class="bio__body">
+      {% for p in profile.bio|paragraphs %}{% with s=p|lead_sentence year=p|first_year %}
+      <div class="bio__para">
+        <span class="bio__year" aria-hidden="true">{{ year }}</span>
+        <p><span class="bio__lead">{{ s.lead|isolate_latin }}</span>{% if s.rest %} {{ s.rest|isolate_latin }}{% endif %}</p>
+      </div>
+      {% endwith %}{% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if cards or rows %}
+<section class="section creds creds--about" aria-labelledby="creds-title">
+  <div class="wrap">
+    <header class="section__head">
+      <h2 class="display-2" id="creds-title">سوابق علمی و حرفه‌ای</h2>
+      {% if cards %}<p class="lede">پشت هر کارت آمده است که آن مدرک یا سمت کجا به دست آمده.</p>{% endif %}
+    </header>
+    {% include "partials/_credentials.html" %}
+  </div>
+</section>
+{% endif %}
+
+{% include "partials/_call_band.html" %}
+{% endblock %}

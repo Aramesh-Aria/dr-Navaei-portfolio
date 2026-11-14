@@ -1,4 +1,5 @@
 from django.db import models
+from django.templatetags.static import static
 
 
 class DoctorProfile(models.Model):
@@ -17,6 +18,13 @@ class DoctorProfile(models.Model):
 
     def __str__(self):
         return self.full_name
+
+    @property
+    def photo_url(self):
+        # Neutral placeholder until the real photo is uploaded via the admin.
+        if self.photo:
+            return self.photo.url
+        return static("doctor/doctor-placeholder.svg")
 
 
 class Credential(models.Model):

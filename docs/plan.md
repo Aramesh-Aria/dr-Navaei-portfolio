@@ -1,4 +1,4 @@
-# Plan: Dr. Navaei Portfolio
+# Plan: Dr. Sepideh Safanavaei Portfolio
 
 This is the working plan for the Django app/model structure and the phased build order. It assumes the shared understanding captured in [`CONTEXT.md`](../CONTEXT.md) and the three ADRs in [`docs/adr/`](./adr/) — read those first for *why*; this document is the *what* and *in what order*.
 
@@ -10,7 +10,7 @@ Four Django apps, each owning one cohesive concept — kept separate because eac
 config/            # project settings, root urls.py
 apps/
 ├── doctor/         # Doctor Profile + Credentials — the "About" content
-├── conditions/     # Condition Treated — one per lung condition, own detail page
+├── conditions/     # Condition Treated + Procedure Performed — one per item, own detail page
 ├── locations/      # Clinic Location — one or more practice addresses/hours
 └── inquiries/      # Inquiry — the contact-form submissions
 ```
@@ -40,7 +40,11 @@ class Credential(models.Model):
 
 ```python
 class ConditionTreated(models.Model):
-    title = models.CharField(...)                 # Farsi name, e.g. "آسم"
+    category = models.CharField(choices=[("condition", ...), ("procedure", ...)])
+    # Holds both Condition Treated and Procedure Performed (CONTEXT.md) in one
+    # table — `category` is the only real variation between them, so a second
+    # model/app would be a seam with nothing behind it.
+    title = models.CharField(...)                 # Farsi name, e.g. "آسم" or "برونکوسکوپی"
     slug = models.SlugField(unique=True)           # Latin, e.g. "asthma" — see URL note below
     short_description = models.CharField(...)      # for list/card view
     body = models.TextField()                      # full detail-page content
@@ -48,7 +52,7 @@ class ConditionTreated(models.Model):
     is_published = models.BooleanField(default=True)
 ```
 
-Each gets its own URL (`/conditions/<slug>/`) per Q10 — the SEO surface for "پزشک ریه برای <condition>" searches.
+Each gets its own URL (`/conditions/<slug>/`) per Q10 — the SEO surface for "پزشک ریه برای <condition>" (or internal-medicine/diabetes equivalent, per the broadened scope) searches. The public template groups the list by `category` into two labeled sections rather than exposing it as a technical field.
 
 ### `locations`
 
@@ -56,8 +60,8 @@ Each gets its own URL (`/conditions/<slug>/`) per Q10 — the SEO surface for "�
 class ClinicLocation(models.Model):
     name = models.CharField(...)           # e.g. "مطب اصلی" / "بیمارستان ..."
     address = models.TextField()
-    phone = models.CharField(...)
-    whatsapp_number = models.CharField(blank=True)
+    phone = models.CharField(...)          # landline
+    mobile_phone = models.CharField(blank=True)  # for calls/SMS — not WhatsApp-specific
     map_url = models.URLField(blank=True)  # link to a maps service, not an embed — keep it simple
     hours = models.TextField()             # free text; structured per-day hours is v2 if it turns out to matter
 ```
@@ -124,6 +128,7 @@ Blog/announcements, testimonials, FAQ, real booking/calendar system, analytics, 
 
 ## Open external items (not blocking the build)
 
-- Asset checklist from your aunt (photos, bio, credentials, conditions list, addresses/hours, phone numbers) — see prior message.
-- Domain name — pending her input on how she wants to be found (full name vs. surname).
-- Email provider for Inquiry notifications, reachable from Iran — needs picking before Phase 4.
+- Photo(s) — not yet provided; `DoctorProfile.photo` stays blank until they arrive, and templates use `DoctorProfile.photo_url`, which falls back to a neutral placeholder (`apps/doctor/static/doctor/doctor-placeholder.svg`).
+- Domain name — resolved: `dr.safanavaiee.ir`.
+- Email provider for Inquiry notifications, reachable from Iran — needs picking before Phase 4. Until then `EMAIL_*` env vars stay empty and prod uses the dummy email backend (inquiries are still saved in the admin).
+- Second clinic location — Q9 assumed multiple locations, but the asset text only gives one concrete address (the Amol private clinic). Her morning academic affiliation (Mazandaran University of Medical Sciences) may or may not be a second patient-facing location — confirm before adding a second `ClinicLocation` row. No code change needed to add one: it's a new row in the admin.

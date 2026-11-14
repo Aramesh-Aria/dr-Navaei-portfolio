@@ -2,7 +2,22 @@ from django.db import models
 
 
 class ConditionTreated(models.Model):
-    title = models.CharField("نام بیماری", max_length=200)
+    """Holds two domain concepts (see CONTEXT.md: Condition Treated vs.
+    Procedure Performed) in one table — `category` is the only real
+    variation between them, so a second model would be a seam with
+    nothing behind it."""
+
+    CATEGORY_CONDITION = "condition"
+    CATEGORY_PROCEDURE = "procedure"
+    CATEGORY_CHOICES = [
+        (CATEGORY_CONDITION, "بیماری"),
+        (CATEGORY_PROCEDURE, "اقدام درمانی"),
+    ]
+
+    category = models.CharField(
+        "دسته", max_length=20, choices=CATEGORY_CHOICES, default=CATEGORY_CONDITION
+    )
+    title = models.CharField("نام", max_length=200)
     slug = models.SlugField(
         "اسلاگ (بخش انگلیسی آدرس صفحه)",
         unique=True,

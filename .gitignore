@@ -16,3 +16,9 @@ public/
 
 # Env
 .env
+
+.DS_Store
+# Claude Code skills/agents are copied in locally, not committed
+.claude/skills/
+.claude/agents/
+.claude

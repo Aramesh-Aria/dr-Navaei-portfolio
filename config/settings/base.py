@@ -4,18 +4,14 @@ use `dev.py` or `prod.py`, which both start with `from .base import *`.
 """
 
 import os
-from pathlib import Path
 
-from dotenv import load_dotenv
+from config.env import BASE_DIR, env_bool, load_env
 
-# config/settings/base.py -> config/settings -> config -> repo root
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
-load_dotenv(BASE_DIR / ".env")
+load_env()  # already done by manage.py/wsgi.py; repeated for other entry points
 
 SECRET_KEY = os.environ["SECRET_KEY"]
 
-DEBUG = False
+DEBUG = env_bool("DEBUG", default=False)
 ALLOWED_HOSTS = []
 
 

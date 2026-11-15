@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.templatetags.static import static
 
@@ -33,10 +34,26 @@ class DoctorProfile(models.Model):
     def __str__(self):
         return self.full_name
 
+    def clean(self):
+        # A new upload is decoded here, so a broken file is a form error
+        # rather than a 500 when its copies are made at save.
+        if self.photo and not self.photo._committed and not images.check(self.photo):
+            raise ValidationError({"photo": "این عکس باز نمی‌شود. لطفاً عکس دیگری انتخاب کنید (JPG یا PNG)."})
+
     def save(self, *args, **kwargs):
+        before = (
+            DoctorProfile.objects.filter(pk=self.pk).values_list("photo", flat=True).first()
+            if self.pk else None
+        ) or ""
         super().save(*args, **kwargs)
-        # A new upload has no resized copies yet; make them once.
-        if self.photo and not images.variant_url(self.photo, images.WIDTHS[-1]):
+        after = self.photo.name if self.photo else ""
+        if after == before:
+            return
+        # The photo changed: the old copies go (the original upload is kept),
+        # and the new photo gets its own.
+        if before:
+            images.delete_variants(self.photo.storage, before)
+        if after:
             images.make_variants(self.photo)
 
     @property

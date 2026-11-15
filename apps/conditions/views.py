@@ -14,9 +14,8 @@ class ConditionListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        published = ConditionTreated.objects.filter(is_published=True)
-        context["conditions"] = published.filter(category=ConditionTreated.CATEGORY_CONDITION)
-        context["procedures"] = published.filter(category=ConditionTreated.CATEGORY_PROCEDURE)
+        context["conditions"] = ConditionTreated.objects.conditions()
+        context["procedures"] = ConditionTreated.objects.procedures()
         return context
 
 
@@ -31,7 +30,7 @@ class ConditionDetailView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        item = get_object_or_404(ConditionTreated, slug=kwargs["slug"], is_published=True)
+        item = get_object_or_404(ConditionTreated.objects.published(), slug=kwargs["slug"])
         sections = body_sections(item.body)
         headed = [s for s in sections if s["heading"]]
         context.update({

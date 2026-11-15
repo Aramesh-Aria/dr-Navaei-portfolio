@@ -1,6 +1,19 @@
 from django.db import models
 
 
+class ConditionTreatedQuerySet(models.QuerySet):
+    """What the public pages list: published rows, by category."""
+
+    def published(self):
+        return self.filter(is_published=True)
+
+    def conditions(self):
+        return self.published().filter(category=ConditionTreated.CATEGORY_CONDITION)
+
+    def procedures(self):
+        return self.published().filter(category=ConditionTreated.CATEGORY_PROCEDURE)
+
+
 class ConditionTreated(models.Model):
     """Holds two domain concepts (see CONTEXT.md: Condition Treated vs.
     Procedure Performed) in one table — `category` is the only real
@@ -27,6 +40,8 @@ class ConditionTreated(models.Model):
     body = models.TextField("توضیح کامل")
     order = models.PositiveIntegerField("ترتیب نمایش", default=0)
     is_published = models.BooleanField("نمایش داده شود", default=True)
+
+    objects = ConditionTreatedQuerySet.as_manager()
 
     class Meta:
         verbose_name = "بیماری"

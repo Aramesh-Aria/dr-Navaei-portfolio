@@ -18,7 +18,7 @@ Kickoff line for every new chat:
 | 5 | Conditions and Locations | ✅ done 2026-11-14 | — |
 | 6 | Contact and error pages | ✅ done 2026-11-15 | — |
 | 7 | Motion, mobile and cleanup | ✅ done 2026-11-15 | — |
-| 8 | Final review and report | ⏸ done 2026-11-15, waiting at gate | **required:** decide on the merge |
+| 8 | Final review and report | ⏸ done 2026-11-15 (9.2 and 9.3 built 2026-11-16), waiting at gate | **required:** decide on the merge |
 
 Status values: ⬜ not started · 🟡 in progress (see its checkpoint) · ⏸ waiting at gate · ✅ done
 
@@ -202,6 +202,18 @@ Append one line per decision, with the stage it was made in. Never delete a line
   - The critique snapshot is in `.impeccable/critique/` (left open: the captcha P1).
 - **Stage 8:** stale hashed static copies deleted after the final `collectstatic`. Screenshots of every page at 1440/768/390 are in `screens/stage8/`. LCP was measured on the final build on a `DEBUG=False --nostatic` server: 60–96 ms on localhost and 684–760 ms on simulated slow 4G, at 218–262 KB per page. On that server: zero console errors and zero 4xx across 7 pages × 3 widths. 404 and 400 were captured.
 
+- **Stage 8 (after the report, 2026-11-16):** the owner approved proposals 9.2 and 9.3 before the merge, and both are built.
+  - **9.2:**
+    - a `ConditionTreated` QuerySet manager with `published()`, `conditions()` and `procedures()`;
+    - `images.variant_url` remembers per process which photos have WebP copies (no `exists()` on every render, no new field);
+    - `DoctorProfile.save()` deletes the old copies when the photo is replaced or cleared, and keeps the original;
+    - `DoctorProfile.clean()` refuses an image Pillow can't decode, with a Persian form error instead of a 500.
+  - **9.3:** data migration `conditions/0004_sectioned_bodies`.
+    - All 20 bodies get an opening paragraph and two `## ` sections.
+    - It replaces only a body still identical to the seed, and goes backwards the same way.
+    - It is new starter text, **not reviewed by the doctor**.
+  - **Checks:** no schema change (`makemigrations --check`); 164 tests pass.
+
 ## Open questions for the owner
 
 Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.md)). Record each answer under Decisions when it comes back, then update the seeds or tell the Content Editor what to change in the admin.
@@ -225,8 +237,8 @@ Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.
 **All design stages are done. Stage 8 waits at its gate: the owner reads [`report.md`](report.md) and decides whether to merge `frontend-design` into `main`.** No chat merges or pushes.
 
 After the merge:
-- Deploy, then run `python manage.py migrate` on Runflare (`doctor/0003` and the captcha table). Never `collectstatic` there.
-- Owner tasks are in `report.md` §7, the doctor's pre-launch review in §8, and the optional proposals (a friendlier captcha, the model clean-ups) in §9.
+- Deploy, then run `python manage.py migrate` on Runflare (`doctor/0003`, the captcha table and `conditions/0004`). Never `collectstatic` there.
+- Owner tasks are in `report.md` §7, the doctor's pre-launch review in §8, and the open proposal 9.1 (a friendlier captcha) in §9. 9.2 and 9.3 are built.
 - Still waiting on the doctor's answers (questions above). Each fits with an admin edit; the surname also appears in the Jazzmin titles in `config/settings/base.py`.
 
 Tooling: the dev server is `http://127.0.0.1:8018`. For production-like serving (the 404/500 pages, LCP), run a second server on a scratch settings module that imports `config.settings.dev` and sets `DEBUG = False`, with `runserver 8019 --nostatic`.

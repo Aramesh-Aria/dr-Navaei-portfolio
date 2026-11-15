@@ -2,6 +2,8 @@
 
 Written on 2026-11-15 on `frontend-design`. It covers Stages 3–7 plus the owner's commit `339396f` (the captcha, the 400/403 pages, the primary bio button), and the fixes made in this stage.
 
+**Updated 2026-11-16:** the owner approved proposals 9.2 and 9.3 before the merge, and both are built (section 9). There are now 164 tests, and all pass. Section 9 has the details; sections 5, 7 and 8 are updated to match.
+
 **The decision this report asks for** is at the end: [merge or not](#the-merge-decision).
 
 Contents:
@@ -29,7 +31,7 @@ The site is built as approved: direction A «چادرشب», set in Lalezar and 
 | impeccable `audit` | **16/20 (Good)**: Accessibility 3, Performance 3, Theming 3, Responsive 3, Implementation Integrity 4 (pass) |
 | `code-review` (standards + spec) | 4 bugs or gaps fixed; 6 findings kept on purpose or deferred, each with its reason (section 4 and appendix B) |
 | `break-ui` (whole site; worst-case, sparse and three-clinic data at 1440/1024/768/390) | 4 breaks found and fixed: the phone footer with 2+ clinics, a pasted URL that scrolled every page sideways, nav labels wrapping beside a long tagline, and «COVID-19» split at its hyphen in a heading |
-| Tests | **152 pass** (143 at the start of the stage) |
+| Tests | **152 pass** (143 at the start of the stage); **164** after 9.2 and 9.3 |
 | LCP | **60–96 ms** on localhost, **684–760 ms** on simulated slow 4G, on every page; transfer **218–262 KB** |
 
 My recommendation is to merge. Nothing in section 5 blocks a merge. Launching needs the owner tasks in section 7 and the doctor's review in section 8.
@@ -226,12 +228,13 @@ Read these before launch. None blocks the merge.
    - The chips «N سال تجربه», «طبابت از …» and «شماره نظام پزشکی …» appear as soon as `practising_since` and `medical_council_number` are entered.
    - Until then the phone hero shows the name, the degrees line and the address.
    - Checked with the worst-case data: with the chips filled, they sit on the phone's first screen, under the name and degrees.
-3. **Condition pages are thin** until the doctor's reviewed texts arrive. The "on this page" index appears only once a body has two or more `## ` sections, which no seeded body has today.
+3. **The condition texts are unreviewed starter copy** (proposal 9.3, built 2026-11-16).
+   - All 20 bodies now have an opening paragraph and two `## ` sections, so every detail page shows its "on this page" index.
+   - The new text is general and conservative: no doses, figures or promises. **The doctor has not reviewed it** (section 8, item 1).
 4. **Not checked on a real phone:** the keyboard with the call tab stepped aside, the landscape notch padding, autofill, and the flip at 120 Hz.
 5. **Left for later, small:**
    - nine `rgb(… / alpha)` literals that repeat token colours (they could use `color-mix()`);
    - `lungs.svg` and the placeholder are 30 KB each before gzip (12 KB gzipped); a simplified path would cut about 75%;
-   - the Stage 7 simplify items that need a model change (proposal 9.2).
 6. **Drift found while writing `DESIGN.md`:** the 14 px degrees line, the eyebrow and the over-1 px side borders. All three were fixed afterwards (section 4, rows 23–25), and `DESIGN.md` describes the fixed build.
 7. **One About paragraph runs to about 86 characters a line at 1440** («ایشان از سال ۱۳۸۷ عضو انجمن…»), slightly over the 80 target. It is borderline for Persian at this size, so it was left.
 8. **With zero procedures published**, the list page's `h1` and the nav still say «بیماری‌ها و اقدامات». The procedures block and its jump pill do disappear. Nobody plans to unpublish all five, so it was left.
@@ -260,7 +263,10 @@ The portrait needs no code change: upload it in the admin (Doctor Profile → ph
 ## 7. What the owner must do
 
 **On Runflare, once merged and deployed:**
-1. Run `python manage.py migrate`. It applies `doctor/0003` and creates the captcha table, which the contact form needs. **Never run `collectstatic` there.**
+1. Run `python manage.py migrate`. **Never run `collectstatic` there.** It applies:
+   - `doctor/0003`;
+   - the captcha table, which the contact form needs;
+   - `conditions/0004`, the sectioned condition texts. It replaces only a body that is still exactly the seed text, so anything already edited in the admin is kept.
 
 **In the admin, as the doctor answers** ([`questions-for-doctor.md`](questions-for-doctor.md)):
 2. Doctor Profile:
@@ -284,7 +290,8 @@ The portrait needs no code change: upload it in the admin (Doctor Profile → ph
 Do these on the running site, before launch:
 
 1. **Review the medical text of all 20 condition and procedure pages.** It is starter copy: the title, the short description and the body.
-   - For any page she wants to expand, start each section with a line beginning `## ` (for example `## علائم`). The page then builds its own "on this page" index.
+   - **The bodies were rewritten on 2026-11-16 (proposal 9.3)**, and she has not seen this version. Each has an opening paragraph, then two sections: «علائم» and «تشخیص و درمان» (or similar) for a condition, «کاربرد» and «روش انجام» for a procedure.
+   - A line that begins `## ` starts a section and becomes an entry in the page's "on this page" index. She can rename, add or remove sections. With fewer than two, the index disappears.
 2. **Review the UI copy that speaks for the clinic or gives medical guidance:**
    - the "when to see a doctor" panel: «اگر این علائم را دارید، یا با درمان فعلی بهتر نشده‌اید…»;
    - the procedure panel: «تصمیم به انجام این اقدام پس از ویزیت و بررسی پرونده گرفته می‌شود…»;
@@ -302,13 +309,34 @@ Do these on the running site, before launch:
 
 ## 9. Proposals that need your decision
 
-Each one is optional; none is built.
+Each one is optional. 9.2 and 9.3 were approved and built on 2026-11-16 (see below the table); 9.1 is still open.
 
 | # | Proposal | Why | Cost |
 |---|---|---|---|
 | 9.1 | **Make the captcha friendlier to Persian keyboards:** use `captcha.helpers.math_challenge` (or digits only), accept Persian or ASCII digits in the answer, and change the hint | Both reviewers' top issue: an older patient on a Persian keyboard must switch to English letters. Digits are typed the same on both keyboards. Alternatively, drop the image and rely on the honeypot plus a time-to-submit check | small: a setting, a normaliser like `normalise_phone`, a hint text, tests |
 | 9.2 | **The deferred clean-ups that touch models** (from Stage 7 simplify and this code review): a `ConditionTreated.published()` queryset; recording the photo's WebP copies at save instead of `storage.exists()` on every render; deleting old WebP copies when a photo is replaced; refusing a corrupt upload with a form error instead of a 500 | Fewer queries and file checks per page, and two admin edge cases | small to medium; model code only, no migration for the first three |
 | 9.3 | **A `## ` section structure in the seeded condition texts** once the doctor reviews them | Turns on the Mayo-style "on this page" index | content only |
+
+### 9.2, built 2026-11-16
+
+There is no schema change: `makemigrations --check` reports none. All four parts were written test-first.
+
+- **`ConditionTreated.objects.published()`**, `.conditions()` and `.procedures()` (a QuerySet used as the manager). It replaces the four hand-written `is_published=True` filters in the Home, list, detail and 404 views.
+- **WebP copies: no `exists()` on every render.**
+  - **Change:** `images.variant_url` remembers per process which photos have their copies. It records them when it writes them, or learns it from a single `exists()` the first time a name is rendered.
+  - **What a stale entry can do:** the only thing remembered is "the copies exist". So a worker that hasn't seen a new upload's copies checks once, and until then it serves the original, which was the existing fallback.
+  - **Why no field:** recording this in the database would have needed a new field and a migration, which the proposal ruled out.
+- **Replaced or cleared photo:** `DoctorProfile.save()` reads the old photo name before saving. Once the save succeeds, if the name changed, it deletes the old WebP copies. The original upload is kept on disk, as before.
+  - Saving other fields no longer looks for copies at all.
+- **Broken upload:** `DoctorProfile.clean()` decodes the whole image. A JPEG cut short passed Django's own check and caused a 500 at save; it now shows «این عکس باز نمی‌شود…» on the photo field.
+
+### 9.3, built 2026-11-16
+
+- **What changed:** data migration `conditions/0004_sectioned_bodies`. Every one of the 20 seeded bodies now has an opening paragraph and two `## ` sections, so every detail page shows its "on this page" index.
+- **What it overwrites:** it replaces a body only if the body is still byte-identical to the `0003` seed. Going backwards, it restores the seed only where the body is still exactly the new text. Tests cover an edited body surviving in both directions.
+- **The text:** general and conservative, in the formal third person. It has no doses, statistics or treatment promises. The «تنگی نفس» page has a «چه زمانی فوری است» section pointing to 115. **The doctor has not reviewed any of it** (section 8, item 1).
+- **Checked:** all 20 pages at 390, 768 and 1440 return 200, with no horizontal overflow, an index of three entries and 18 px body text on phones. There were no console errors.
+- **Screenshots:** `condition-<width>-sections.png` (COPD) and `procedure-<width>-sections.png` (bronchoscopy) in `screens/stage8/`. The older condition captures show the pre-9.3 bodies.
 
 ---
 
@@ -332,7 +360,7 @@ The fixed point is `main` (merge-base `adada23`). The diff is source only: it ex
 - **Bugs:**
   - the `fa_digits|isolate_latin` order (fixed, row 1);
   - `medicalSpecialty` / `openingHours` (kept, section 4);
-  - photo save leaving orphan WebP copies, and a corrupt upload giving a 500 (deferred, proposal 9.2).
+  - photo save leaving orphan WebP copies, and a corrupt upload giving a 500 (deferred to proposal 9.2, built 2026-11-16).
 - **Smells (judgement):** deferred, section 4.
 
 ### Spec

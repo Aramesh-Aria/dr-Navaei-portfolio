@@ -33,6 +33,19 @@ class ConditionTreatedTests(TestCase):
         )
         self.assertEqual([c.slug for c in conditions], ["asthma"])
 
+    def test_published_leaves_out_hidden_rows(self):
+        make("asthma")
+        make("hidden", is_published=False)
+        self.assertEqual([c.slug for c in ConditionTreated.objects.published()], ["asthma"])
+
+    def test_conditions_and_procedures_are_published_rows_of_each_category(self):
+        make("asthma", order=1)
+        make("copd", order=2, is_published=False)
+        make("bronchoscopy", category=ConditionTreated.CATEGORY_PROCEDURE)
+        make("stent", category=ConditionTreated.CATEGORY_PROCEDURE, is_published=False)
+        self.assertEqual([c.slug for c in ConditionTreated.objects.conditions()], ["asthma"])
+        self.assertEqual([c.slug for c in ConditionTreated.objects.procedures()], ["bronchoscopy"])
+
     def test_slug_must_be_unique(self):
         make("asthma")
         with self.assertRaises(IntegrityError):
@@ -50,6 +63,11 @@ class SeededConditionsTests(TestCase):
 
     def test_seeded_items_are_published(self):
         self.assertFalse(ConditionTreated.objects.filter(is_published=False).exists())
+
+    def test_every_seeded_body_has_at_least_two_sections(self):
+        for item in ConditionTreated.objects.all():
+            with self.subTest(item.slug):
+                self.assertGreaterEqual(item.body.count("\n## "), 2)
 
     def test_bronchoscopy_is_seeded_as_a_procedure(self):
         self.assertEqual(
@@ -150,7 +168,11 @@ class ConditionDetailPageTests(TestCase):
         self.assertIn("نوبت و مشاوره", html)
 
     def test_a_short_body_has_no_on_this_page_index(self):
+        ConditionTreated.objects.filter(slug="copd").update(body="یک بند کوتاه.")
         self.assertNotContains(self.get(), "در این صفحه")
+
+    def test_seeded_bodies_get_an_on_this_page_index(self):
+        self.assertContains(self.get(), "در این صفحه")
 
     def test_two_headed_sections_get_an_on_this_page_index(self):
         ConditionTreated.objects.filter(slug="copd").update(
@@ -167,3 +189,31 @@ class ConditionDetailPageTests(TestCase):
         self.assertIn("<title>COPD (بیماری انسدادی مزمن ریه) · دکتر سپیده صفانوایی</title>", html)
         self.assertIn('<meta name="description" content="تشخیص و درمان بیماری انسدادی مزمن ریه">', html)
         self.assertIn('<link rel="canonical" href="https://dr.safanavaiee.ir/conditions/copd/">', html)
+
+
+import importlib
+
+from django.apps import apps as django_apps
+
+sectioned = importlib.import_module("apps.conditions.migrations.0004_sectioned_bodies")
+
+
+class SectionedBodiesMigrationTests(TestCase):
+    """0004 runs on production: it may only replace the untouched seed text."""
+
+    def test_an_edited_body_is_left_alone(self):
+        ConditionTreated.objects.filter(slug="asthma").update(body=sectioned.SEED["asthma"])
+        ConditionTreated.objects.filter(slug="copd").update(body="متن ویرایش‌شده‌ی دکتر.")
+        sectioned.forwards(django_apps, None)
+        self.assertEqual(ConditionTreated.objects.get(slug="copd").body, "متن ویرایش‌شده‌ی دکتر.")
+        self.assertEqual(ConditionTreated.objects.get(slug="asthma").body, sectioned.BODIES["asthma"])
+
+    def test_backwards_restores_only_untouched_new_text(self):
+        ConditionTreated.objects.filter(slug="copd").update(body="متن ویرایش‌شده‌ی دکتر.")
+        sectioned.backwards(django_apps, None)
+        self.assertEqual(ConditionTreated.objects.get(slug="asthma").body, sectioned.SEED["asthma"])
+        self.assertEqual(ConditionTreated.objects.get(slug="copd").body, "متن ویرایش‌شده‌ی دکتر.")
+
+    def test_every_seeded_slug_has_new_text(self):
+        self.assertEqual(set(sectioned.BODIES), set(sectioned.SEED))
+        self.assertEqual(len(sectioned.BODIES), 20)

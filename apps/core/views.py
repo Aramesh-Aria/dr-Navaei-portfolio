@@ -23,11 +23,8 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        published = ConditionTreated.objects.filter(is_published=True)
-        context["conditions"] = published.filter(
-            category=ConditionTreated.CATEGORY_CONDITION
-        )[:HOME_CONDITIONS]
-        context["procedures"] = published.filter(category=ConditionTreated.CATEGORY_PROCEDURE)
+        context["conditions"] = ConditionTreated.objects.conditions()[:HOME_CONDITIONS]
+        context["procedures"] = ConditionTreated.objects.procedures()
         context.update(credential_context(DoctorProfile.objects.first()))
         return context
 
@@ -45,9 +42,7 @@ def permission_denied(request, exception=None):
 
 def page_not_found(request, exception=None):
     """The 404 page: the way back, the published conditions, the clinic phone."""
-    conditions = ConditionTreated.objects.filter(
-        is_published=True, category=ConditionTreated.CATEGORY_CONDITION
-    )[:HOME_CONDITIONS]
+    conditions = ConditionTreated.objects.conditions()[:HOME_CONDITIONS]
     return render(request, "404.html", {"conditions": conditions}, status=404)
 
 

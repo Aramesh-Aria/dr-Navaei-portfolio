@@ -381,4 +381,4 @@ The fixed point is `main` (merge-base `adada23`). The diff is source only: it ex
 
 ## The merge decision
 
-`frontend-design` is ready to merge into `main`. **It has not been merged or pushed.** That is your call. After merging, deploy and run `migrate` on Runflare (section 7, item 1).
+`frontend-design` is ready to merge into `main`. **The owner approved the merge on 2026-11-16**, after 9.2 and 9.3 were built; the owner runs the merge and the push. After merging, deploy and run `migrate` on Runflare (section 7, item 1).

@@ -18,7 +18,7 @@ Kickoff line for every new chat:
 | 5 | Conditions and Locations | ✅ done 2026-11-14 | — |
 | 6 | Contact and error pages | ✅ done 2026-11-15 | — |
 | 7 | Motion, mobile and cleanup | ✅ done 2026-11-15 | — |
-| 8 | Final review and report | ⏸ done 2026-11-15 (9.2 and 9.3 built 2026-11-16), waiting at gate | **required:** decide on the merge |
+| 8 | Final review and report | ✅ done 2026-11-15 (9.2 and 9.3 built 2026-11-16), gate passed 2026-11-16 | **required:** decide on the merge |
 
 Status values: ⬜ not started · 🟡 in progress (see its checkpoint) · ⏸ waiting at gate · ✅ done
 
@@ -213,6 +213,7 @@ Append one line per decision, with the stage it was made in. Never delete a line
     - It replaces only a body still identical to the seed, and goes backwards the same way.
     - It is new starter text, **not reviewed by the doctor**.
   - **Checks:** no schema change (`makemigrations --check`); 164 tests pass.
+- **Stage 8 gate (owner, 2026-11-16):** merge `frontend-design` into `main` approved, after 9.2 and 9.3 were built. The owner merges and pushes. Still open: proposal 9.1 (the captcha), the doctor's review of the condition texts and the questions below.
 
 ## Open questions for the owner
 
@@ -234,11 +235,11 @@ Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.
 
 ## Handoff to next stage
 
-**All design stages are done. Stage 8 waits at its gate: the owner reads [`report.md`](report.md) and decides whether to merge `frontend-design` into `main`.** No chat merges or pushes.
+**All stages are done. The Stage 8 gate passed on 2026-11-16: the owner approved merging `frontend-design` into `main`.** The owner runs the merge and the push; a chat does not.
 
 After the merge:
 - Deploy, then run `python manage.py migrate` on Runflare (`doctor/0003`, the captcha table and `conditions/0004`). Never `collectstatic` there.
-- Owner tasks are in `report.md` §7, the doctor's pre-launch review in §8, and the open proposal 9.1 (a friendlier captcha) in §9. 9.2 and 9.3 are built.
+- Owner tasks are in [`report.md`](report.md) §7 and the doctor's pre-launch review in §8 (including the new, unreviewed condition texts). Proposal 9.1 (a friendlier captcha) is still open in §9.
 - Still waiting on the doctor's answers (questions above). Each fits with an admin edit; the surname also appears in the Jazzmin titles in `config/settings/base.py`.
 
 Tooling: the dev server is `http://127.0.0.1:8018`. For production-like serving (the 404/500 pages, LCP), run a second server on a scratch settings module that imports `config.settings.dev` and sets `DEBUG = False`, with `runserver 8019 --nostatic`.

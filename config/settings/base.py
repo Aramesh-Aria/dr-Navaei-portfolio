@@ -21,7 +21,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "jazzmin",  # must come before django.contrib.admin
-    "django.contrib.admin",
+    "apps.core.admin_config.SiteAdminConfig",  # replaces django.contrib.admin (unread Inquiry count)
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -47,6 +47,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "config.urls"
+# The contact form left open too long gets a Persian page back to the form.
+CSRF_FAILURE_VIEW = "apps.core.views.csrf_failure"
 
 TEMPLATES = [
     {

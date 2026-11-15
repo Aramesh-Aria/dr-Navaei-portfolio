@@ -5,6 +5,8 @@
 //    and keyboard focus turn them in CSS. Escape turns a card back.
 // 4. Copy an address (for a taxi app): the button shows only where the
 //    clipboard is available, confirms in place and through a live region.
+// 5. Forms: a sent state or an error summary takes focus on load; the send
+//    button says it is sending and refuses a second press.
 (function () {
   "use strict";
 
@@ -89,4 +91,23 @@
       });
     });
   }
+
+  // ---- 5. forms --------------------------------------------------------
+  var focusTarget = document.querySelector("[data-focus-on-load]");
+  if (focusTarget) focusTarget.focus();
+  document.querySelectorAll("[data-form]").forEach(function (form) {
+    var send = form.querySelector("[data-send]");
+    var sendLabel = send && send.querySelector("[data-send-label]");
+    var idleLabel = sendLabel && sendLabel.textContent;
+    form.addEventListener("submit", function (event) {
+      if (send.getAttribute("aria-disabled") === "true") { event.preventDefault(); return; }
+      send.setAttribute("aria-disabled", "true");
+      sendLabel.textContent = "در حال فرستادن…";
+    });
+    // Coming back with the back button (bfcache) must not leave it stuck.
+    window.addEventListener("pageshow", function () {
+      send.removeAttribute("aria-disabled");
+      sendLabel.textContent = idleLabel;
+    });
+  });
 })();

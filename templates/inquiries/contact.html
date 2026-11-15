@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load site %}
+{% block title %}تماس با مطب و فرم پیام · {{ profile.full_name }}{% endblock %}
+{% block og_title %}تماس با مطب · {{ profile.full_name }}{% endblock %}
+{% block description %}تلفن {% if locations|length > 1 %}مطب‌ها{% else %}مطب{% endif %} {{ profile.full_name }} و فرم پیام: نام و شماره‌تان را بگذارید تا مطب با شما تماس بگیرد.{% endblock %}
+{% block og_description %}تلفن {% if locations|length > 1 %}مطب‌ها{% else %}مطب{% endif %} {{ profile.full_name }} و فرم پیام: نام و شماره‌تان را بگذارید تا مطب با شما تماس بگیرد.{% endblock %}
+{% block body_class %}page-contact{% endblock %}
+{% block content %}
+<section class="pagehead on-field" aria-labelledby="page-title">
+  <div class="wrap pagehead__inner">
+    <h1 class="display-1 pagehead__title" id="page-title">تماس با مطب</h1>
+    <p class="lede">سریع‌ترین راه گرفتن نوبت، تماس تلفنی با مطب است. اگر الان نمی‌توانید تماس بگیرید، پیام بگذارید تا مطب با شما تماس بگیرد.</p>
+  </div>
+</section>
+{% include "partials/_weave.html" %}
+
+<div class="section contact">
+  <div class="wrap contact__grid">
+    {% if locations %}
+    <section class="contact__call" aria-labelledby="call-title">
+      <h2 class="display-3" id="call-title">تلفن {% if locations|length > 1 %}مطب‌ها{% else %}مطب{% endif %}</h2>
+      <ul class="contact__clinics" role="list">
+        {% for location in locations %}
+        <li class="contact__clinic">
+          {% if locations|length > 1 %}<p class="contact__name">{{ location.name|isolate_latin }}</p>{% endif %}
+          <p><a class="place__phone" href="{{ location.phone|tel_href }}"{% if forloop.first %} data-call-anchor{% endif %}><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="sr-only">تلفن {{ location.name }}: </span><span class="num">{{ location.phone|phone_display }}</span></a></p>
+          {% if location.mobile_phone %}<p><a class="place__phone" href="{{ location.mobile_phone|tel_href }}"><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="sr-only">همراه: </span><span class="num">{{ location.mobile_phone|phone_display }}</span></a></p>{% endif %}
+          <p class="contact__hours">{% if locations|length == 1 %}{{ location.name|isolate_latin }} · {% endif %}{{ location.hours|fa_digits|linebreaksbr }}</p>
+        </li>
+        {% endfor %}
+      </ul>
+      <p class="contact__more">
+        <a class="textlink" href="{% url 'locations' %}">نشانی{% if locations|length > 1 %} مطب‌ها{% else %} مطب{% endif %} و مسیر<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
+        {% if profile.paziresh24_url %}<a class="textlink" href="{{ profile.paziresh24_url }}" rel="noopener" target="_blank">پروفایل در پذیرش۲۴<svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr-only"> (در پنجره‌ی تازه)</span></a>{% endif %}
+      </p>
+    </section>
+    {% endif %}
+
+    <section class="contact__panel" aria-labelledby="form-title">
+      {% if sent %}
+      <div class="sent" tabindex="-1" data-focus-on-load>
+        <svg class="sent__mark" aria-hidden="true"><use href="#i-check"/></svg>
+        <h2 class="display-3" id="form-title">پیام شما رسید</h2>
+        <p>مطب در نخستین فرصت با شماره‌ای که گذاشتید تماس می‌گیرد.</p>
+        {% if primary_location %}<p>اگر کارتان فوری است، با <a class="num" href="{{ primary_location.phone|tel_href }}">{{ primary_location.phone|phone_display }}</a> تماس بگیرید.</p>{% endif %}
+        <p><a class="textlink" href="{% url 'home' %}">بازگشت به صفحه‌ی اصلی<svg aria-hidden="true"><use href="#i-forward"/></svg></a></p>
+      </div>
+      {% else %}
+      <h2 class="display-3" id="form-title">پیام بگذارید</h2>
+      <p class="contact__intro">نام و شماره‌تان را بنویسید تا مطب با شما تماس بگیرد.</p>
+      <form class="form" method="post" action="{% url 'contact' %}" novalidate data-form>
+        {% csrf_token %}
+        {% if form.errors %}
+        <div class="form__summary" role="group" aria-labelledby="summary-title" tabindex="-1" data-focus-on-load>
+          <p id="summary-title"><strong>فرم فرستاده نشد.</strong> لطفاً {% if form.errors|length > 1 %}این موارد{% else %}این مورد{% endif %} را درست کنید:</p>
+          <ul>{% for field in form %}{% if field.errors %}<li><a href="#{{ field.id_for_label }}">{{ field.errors.0 }}</a></li>{% endif %}{% endfor %}</ul>
+        </div>
+        {% endif %}
+        {% for field in form %}
+        <div class="field{% if field.errors %} field--invalid{% endif %}">
+          <label for="{{ field.id_for_label }}">{{ field.label }}{% if not field.field.required %} <span class="field__optional">(اختیاری)</span>{% endif %}</label>
+          {% if field.help_text %}<p class="field__hint" id="{{ field.id_for_label }}_hint">{{ field.help_text }}</p>{% endif %}
+          {% if field.errors %}<p class="field__error" id="{{ field.id_for_label }}_error"><svg aria-hidden="true"><use href="#i-alert"/></svg>{{ field.errors.0 }}</p>{% endif %}
+          {{ field }}
+        </div>
+        {% endfor %}
+        {# Honeypot: hidden from people and screen readers; a bot that fills it is dropped silently. #}
+        <div class="form__trap" aria-hidden="true">
+          <label for="id_website">وب‌سایت</label>
+          <input type="text" name="website" id="id_website" tabindex="-1" autocomplete="off">
+        </div>
+        <p class="form__send">
+          <button class="pill pill--field" type="submit" data-send><span data-send-label>فرستادن پیام</span></button>
+        </p>
+        <p class="form__urgent">این فرم برای شرایط اورژانسی نیست. در شرایط اورژانسی با <a href="tel:115" class="num">۱۱۵</a> تماس بگیرید یا به نزدیک‌ترین اورژانس بروید.</p>
+      </form>
+      {% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}

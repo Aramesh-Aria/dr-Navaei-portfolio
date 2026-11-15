@@ -8,7 +8,11 @@ from django.views.static import serve
 from apps.conditions.views import ConditionDetailView, ConditionListView
 from apps.core.views import HomeView
 from apps.doctor.views import AboutView
+from apps.inquiries.views import ContactView
 from apps.locations.views import LocationsView
+
+handler404 = "apps.core.views.page_not_found"
+handler500 = "apps.core.views.server_error"
 
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
@@ -16,6 +20,7 @@ urlpatterns = [
     path("conditions/", ConditionListView.as_view(), name="conditions"),
     path("conditions/<slug:slug>/", ConditionDetailView.as_view(), name="condition"),
     path("locations/", LocationsView.as_view(), name="locations"),
+    path("contact/", ContactView.as_view(), name="contact"),
     path("admin/", admin.site.urls),
     path(
         "favicon.ico",

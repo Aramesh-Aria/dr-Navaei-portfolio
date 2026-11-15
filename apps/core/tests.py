@@ -371,3 +371,65 @@ class CallTabTests(TestCase):
     def test_call_tab_starts_hidden_so_it_never_flashes_on_load(self):
         # site.js shows it once no [data-call-anchor] is on screen; CSS shows it without JS.
         self.assertContains(self.client.get("/"), '<a class="calltab is-hidden"')
+
+
+from unittest import mock
+
+from django.test import Client, RequestFactory
+
+from apps.core.views import server_error
+
+
+class NotFoundPageTests(TestCase):
+    def test_an_unknown_address_gets_the_site_404_with_ways_back(self):
+        response = self.client.get("/no-such-page/")
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, "404.html")
+        html = response.content.decode()
+        self.assertRegex(html, r"<h1[^>]*>این صفحه پیدا نشد</h1>")
+        self.assertIn('<meta name="robots" content="noindex">', html)
+        self.assertIn('href="/conditions/"', html)
+        self.assertIn('href="/conditions/asthma/"', html)  # the published conditions, as threads
+        self.assertIn('href="tel:+981144229270"', html)
+
+    def test_an_unpublished_condition_gets_the_same_page(self):
+        ConditionTreated.objects.filter(slug="asthma").update(is_published=False)
+        response = self.client.get("/conditions/asthma/")
+        self.assertContains(response, "این صفحه پیدا نشد", status_code=404)
+        self.assertNotContains(response, 'href="/conditions/asthma/"', status_code=404)
+
+
+class ServerErrorPageTests(TestCase):
+    def test_the_site_500_handler_is_installed(self):
+        from config import urls
+
+        self.assertEqual(urls.handler500, "apps.core.views.server_error")
+
+    def test_server_error_page_apologises_and_gives_the_clinic_phone(self):
+        response = server_error(RequestFactory().get("/"))
+        self.assertEqual(response.status_code, 500)
+        self.assertContains(response, "مشکلی پیش آمد", status_code=500)
+        self.assertContains(response, 'href="tel:+981144229270"', status_code=500)
+        self.assertContains(response, 'lang="fa" dir="rtl"', status_code=500)
+
+    def test_without_the_database_the_page_still_renders_without_the_phone(self):
+        with mock.patch("apps.core.views.ClinicLocation.objects.all", side_effect=RuntimeError("db down")):
+            response = server_error(RequestFactory().get("/"))
+        self.assertContains(response, "مشکلی پیش آمد", status_code=500)
+        self.assertNotContains(response, "tel:", status_code=500)
+
+    def test_a_500_page_that_cannot_render_still_answers_500(self):
+        with mock.patch("apps.core.views.loader.get_template", side_effect=RuntimeError), \
+                self.assertLogs("apps.core.views", "ERROR"):
+            response = server_error(RequestFactory().get("/"))
+        self.assertEqual(response.status_code, 500)
+        self.assertContains(response, "Server Error (500)", status_code=500)
+
+
+class ExpiredFormPageTests(TestCase):
+    def test_a_form_sent_without_its_csrf_cookie_gets_a_persian_page_back_to_the_form(self):
+        response = Client(enforce_csrf_checks=True).post("/contact/", {"name": "x", "phone": "09120000000"})
+        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed(response, "403_csrf.html")
+        self.assertContains(response, "فرم منقضی شد", status_code=403)
+        self.assertContains(response, 'href="/contact/"', status_code=403)

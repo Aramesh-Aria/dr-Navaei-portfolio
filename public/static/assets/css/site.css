@@ -833,6 +833,105 @@
   }
 }
 
+/* ------------------------------------------- contact and error pages (Stage 6) */
+@layer components {
+  /* ---- form fields: hard-edged like the cloth, 18px+ text so iOS never zooms ---- */
+  .form { display: grid; gap: var(--s-4); }
+  .field { display: grid; gap: 6px; }
+  .field label { font-weight: 700; }
+  .field__optional { font-weight: 400; color: var(--ink-2); }
+  .field__hint { font-size: var(--fs-small); line-height: 1.7; color: var(--ink-2); }
+  .field input, .field textarea {
+    inline-size: 100%;
+    min-block-size: 56px;
+    padding: 12px 16px;
+    border: 2px solid var(--ink-2);
+    border-radius: var(--r-0);
+    background: var(--ivory);
+    color: var(--ink);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    transition: border-color var(--dur-hover) var(--ease-out);
+  }
+  .field textarea { min-block-size: 9rem; resize: vertical; }
+  /* The phone is typed left to right but sits flush with the Persian labels. */
+  .field input[dir="ltr"] { text-align: right; }
+  .field input:focus-visible, .field textarea:focus-visible { border-color: var(--field); outline-offset: 2px; border-radius: var(--r-0); }
+  @media (hover: hover) { .field input:hover, .field textarea:hover { border-color: var(--field); } }
+  .field--invalid input, .field--invalid textarea { border-color: var(--madder); }
+  .field__error { display: flex; gap: var(--s-1); align-items: flex-start; font-size: var(--fs-small); font-weight: 700; line-height: 1.7; color: var(--madder); }
+  .field__error svg { inline-size: 20px; block-size: 20px; flex: none; margin-block-start: 3px; }
+
+  .form__summary {
+    display: grid;
+    gap: var(--s-1);
+    padding: var(--s-2) var(--s-3);
+    border-inline-start: 4px solid var(--madder);
+    background: var(--sea);
+  }
+  .form__summary ul { padding-inline-start: 1.25em; }
+  .form__summary a { color: var(--madder); font-weight: 700; }
+  /* Focused on load so it is announced; its madder border already marks it. */
+  .form__summary:focus, .form__summary:focus-visible { outline: none; }
+
+  /* Honeypot: off-screen, not display:none (some bots skip hidden fields). */
+  .form__trap { position: absolute; inset-inline-start: -9999px; inline-size: 1px; block-size: 1px; overflow: hidden; }
+
+  .form__send .pill { min-inline-size: 14rem; min-block-size: 56px; font-size: 1.125rem; }
+  .form__send .pill[aria-disabled="true"] { opacity: 0.7; cursor: progress; }
+  .form__urgent { padding-block-start: var(--s-3); border-block-start: 1px solid rgb(12 52 56 / 0.18); font-size: var(--fs-small); line-height: 1.8; color: var(--ink-2); }
+  .form__urgent a { color: var(--madder); font-weight: 700; text-decoration: none; }
+
+  /* ---- the sent state replaces the form, in place ---- */
+  .sent { display: grid; gap: var(--s-2); justify-items: start; }
+  .sent:focus, .sent:focus-visible { outline: none; }  /* focused on load only to be announced */
+  .sent__mark { inline-size: 56px; block-size: 56px; padding: 12px; background: var(--gold); color: var(--field); }
+  .sent a.num { font-weight: 700; }
+
+  /* ---- error pages: the code in gold above the title ---- */
+  .pagehead__code { font: 400 var(--fs-h2) / 1 var(--font-display); color: var(--gold); }
+  .pagehead__actions { margin-block-start: var(--s-3); }
+}
+
+@layer pages {
+  /* ---- Contact: the phones first (the start side), the form beside them ---- */
+  .contact__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-8); align-items: start; }
+  .contact__call { display: grid; gap: var(--s-3); position: sticky; inset-block-start: var(--s-4); }
+  .contact__clinics { display: grid; gap: var(--s-4); }
+  .contact__clinic { display: grid; gap: 4px; padding-block-start: var(--s-2); border-block-start: 2px solid var(--field); }
+  .contact__name { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); }
+  .contact__name bdi { font-family: var(--font-text); font-weight: 700; }
+  .contact__hours { color: var(--ink-2); }
+  /* The call is the primary path here: the numbers are the largest thing beside the form. */
+  .contact__clinic .place__phone { font-size: clamp(1.625rem, 1.3rem + 1vw, 2.125rem); }
+  .contact__clinic .place__phone svg { inline-size: 26px; block-size: 26px; }
+  .contact__more { display: flex; flex-wrap: wrap; gap: 0 var(--s-4); }
+  .contact__panel {
+    display: grid;
+    gap: var(--s-2);
+    padding: var(--s-6) var(--s-6) var(--s-6);
+    /* The woven edge on top, as on the Clinic Location panels. */
+    background: linear-gradient(to bottom,
+      var(--gold) 0 8px, var(--madder) 8px 12px, var(--field-2) 12px 20px, var(--ivory) 20px);
+  }
+  .contact__intro { margin-block-end: var(--s-2); }
+  /* A two-column contact page with no location: the form takes the width it needs. */
+  .contact__grid:not(:has(.contact__call)) { grid-template-columns: minmax(0, 46rem); }
+
+  @media (max-width: 960px) {
+    .contact__grid { grid-template-columns: 1fr; gap: var(--s-6); }
+    .contact__call { position: static; }
+    /* Stacked above the form, 2+ clinics sit side by side where they fit. */
+    .contact__clinics { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--s-3) var(--s-4); }
+  }
+  @media (max-width: 600px) {
+    .contact__panel { padding: var(--s-5) var(--s-3) var(--s-4); margin-inline: calc(var(--margin) * -1 + 8px); }
+    .form__send .pill { inline-size: 100%; }
+    .pagehead__actions { inline-size: 100%; }
+    .pagehead__actions .pill { flex: 1 1 100%; min-block-size: 56px; }
+  }
+}
+
 /* ------------------------------------------------------------ utilities */
 @layer utilities {
   .sr-only {

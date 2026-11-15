@@ -42,7 +42,7 @@
     <p class="lede">نشانی مطب به‌زودی در این صفحه می‌آید.</p>
     {% endif %}
     <p class="places__more">
-      <a class="textlink" href="/contact/">یا پیام بگذارید: فرم تماس<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
+      <a class="textlink" href="{% url 'contact' %}">یا پیام بگذارید: فرم تماس<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
       {% if profile.paziresh24_url %}<a class="textlink" href="{{ profile.paziresh24_url }}" rel="noopener" target="_blank">پروفایل در پذیرش۲۴<svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr-only"> (در پنجره‌ی تازه)</span></a>{% endif %}
     </p>
     <p class="sr-only" aria-live="polite" data-copy-status></p>

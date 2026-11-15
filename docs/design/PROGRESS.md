@@ -16,8 +16,8 @@ Kickoff line for every new chat:
 | 3 | Foundation (branch, approved backend changes, tokens, `base.html`) | ✅ done 2026-11-14, gate passed | **required:** approve the shell |
 | 4 | Home and About (credential flip cards) | ✅ done 2026-11-14, gate passed | **required:** confirm the direction holds |
 | 5 | Conditions and Locations | ✅ done 2026-11-14 | — |
-| 6 | Contact and error pages | ⬜ next | — |
-| 7 | Motion, mobile and cleanup | ⬜ | — |
+| 6 | Contact and error pages | ✅ done 2026-11-15 | — |
+| 7 | Motion, mobile and cleanup | ⬜ next | — |
 | 8 | Final review and report | ⬜ | **required:** decide on the merge |
 
 Status values: ⬜ not started · 🟡 in progress (see its checkpoint) · ⏸ waiting at gate · ✅ done
@@ -145,6 +145,20 @@ Append one line per decision, with the stage it was made in. Never delete a line
 - **Stage 5:** Home's procedures lede hardcoded «دکتر صفانوایی»; it now uses `profile.full_name`, so the surname answer stays an admin edit.
 - **Stage 5:** verified at 1440 / 768 / 390: one `h1` per page, no horizontal scroll, zero console messages, every internal link resolves except `/contact/` (Stage 6), focus ring visible (madder on the light ground, gold on the panel), tab order follows the reading order. Worst cases checked in the dev DB (restored from a backup afterwards): a 4-section body with Latin (PFT), the long Latin procedure title, 2 and 3 locations (a long name, no mobile, Persian digits and spaces in a phone, two-line hours, a map link). Zero procedures, zero locations and unpublished/unknown slugs (404) are covered by tests.
 
+- **Stage 6:** `/contact/` is `apps.inquiries.views.ContactView` (`inquiries/contact.html`, URL name `contact`) with `apps.inquiries.forms.InquiryForm` (name, phone, preferred contact time, message; no medical-detail field). Every internal link now uses `{% url %}`.
+- **Stage 6:** a sent form redirects back to `/contact/` (a reload never sends twice); the confirmation shows once, carried by a one-time `messages` entry. It replaces the form in place and takes focus.
+- **Stage 6:** phones are normalised by `normalise_phone`: Persian or Arabic-Indic digits, spaces, dashes, brackets and a `+98`/`0098` prefix are accepted and saved as 11 ASCII digits starting with 0; anything else is refused. Letters are refused, not stripped. The error message gives one example written without spaces (a grouped number in a plain-text message is reordered by bidi).
+- **Stage 6:** the honeypot `website` is off-screen (not `display:none`), `aria-hidden`, `tabindex="-1"`. Filled → nothing saved, no email, but the same confirmation (a bot learns nothing).
+- **Stage 6:** email: `notify()` sends only when `INQUIRY_NOTIFICATION_EMAIL` is set (read with `getattr`, so dev and tests need no setting), after the save; a failing send is logged, never raised. The body has name, phone, time, message and the admin link.
+- **Stage 6:** errors: Persian messages for every field; an error summary at the top (links to each field, focused on load); each invalid field gets `aria-invalid` and `aria-describedby` = its hint + its error. The form is `novalidate`, so the browser's own (possibly English) bubbles never show.
+- **Stage 6:** fields are square (the cloth has hard edges), 56 px tall, 18–19 px text (no iOS zoom), `autocomplete` and `inputmode="tel"`; the phone is `dir="ltr"` but right-aligned with the labels. The send button says «در حال فرستادن…» and refuses a second press; `pageshow` resets it after back/forward.
+- **Stage 6:** contact layout: the phones on the start side (sticky on desktop, numbers at 26–34 px, the first one a `data-call-anchor`), the form in an ivory panel with the woven top edge beside them. Below 960 px the phones come first and 2+ clinics sit in columns where they fit.
+- **Stage 6:** UI copy written (for the doctor's review): the page lede, «نام و شماره‌تان را بنویسید تا مطب با شما تماس بگیرد.», the sent text «مطب در نخستین فرصت با شماره‌ای که گذاشتید تماس می‌گیرد.» (a promise about the clinic's process: confirm it with her), the privacy hint on the message field, and «این فرم برای شرایط اورژانسی نیست…» with `tel:115`.
+- **Stage 6:** the unread Inquiry count: `apps.core.admin.SiteAdminSite.get_app_list` appends «(N)» in Persian digits; `apps.core.admin_config.SiteAdminConfig` replaces `django.contrib.admin` in `INSTALLED_APPS`. Checked in Jazzmin's sidebar and the index.
+- **Stage 6:** error pages: `handler404` = `apps.core.views.page_not_found` (`404.html`: «۴۰۴» in gold, home / conditions / phone, then the first six published conditions as threads, `noindex`). `handler500` = `server_error` (`500.html` stands alone: no `base.html`, no context processors; it reads the profile and first location in a `try`, so without a database it still renders, without the phone; if the template fails, a plain «Server Error (500)»). `CSRF_FAILURE_VIEW` = `csrf_failure` (`403_csrf.html`, «فرم منقضی شد», a link back to the form): added because the contact form left open too long is its realistic cause.
+- **Stage 6:** one icon added: `#i-alert` (field errors).
+- **Stage 6:** verified at 1440 / 768 / 390: no horizontal scroll, zero console messages on `/contact/`, no 404s among assets, focus order header → phones → form (honeypot skipped), visible focus on fields, a real submit with «۰۹۱۲ ۱۲۳-۴۵۶۷» saved as `09121234567` (then deleted). 404 and 500 checked on a temporary `DEBUG=False` server (removed afterwards). Worst case: 3 locations (a long name with Latin «ICU», no mobile, Persian digits and spaces in a phone, two-line hours) in the dev DB, restored from a backup afterwards. No new motion this stage beyond 150 ms colour transitions, so reduced motion needs nothing new.
+
 ## Open questions for the owner
 
 Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.md)). Record each answer under Decisions when it comes back, then update the seeds or tell the Content Editor what to change in the admin.
@@ -165,29 +179,25 @@ Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.
 
 ## Handoff to next stage
 
-**Stage 6 (Contact and error pages) is next.** Stage 5 has no gate.
+**Stage 7 (Motion, mobile and cleanup) is next.** Stage 6 has no gate.
 
-Screenshots (`docs/design/screens/stage5/`):
-- Conditions list: `conditions-1440-full.png`, `conditions-768-full.png`, `conditions-390-top.png`, `conditions-390-full.png`;
-- condition page: `procedure-ablation-1440-full.png` (today's short body, long Latin title, the panel beside it); with a 4-section test body and the index: `condition-sections-1440-full.png`, `condition-sections-768-full.png`, `condition-sections-390-full.png`;
-- locations: `locations-1440-full.png` (one), `locations-1440-two.png`, `locations-1440-three.png`, `locations-768-top.png`, `locations-390-full.png`;
-- `home-768-procedures-regression.png` (Home after the shared partial).
+Screenshots (`docs/design/screens/stage6/`): `contact-1440-full.png`, `contact-1440-errors.png`, `contact-1440-focus.png`, `contact-768-three-locations.png`, `contact-390-full.png`, `contact-390-errors.png`, `contact-390-sent.png`, `404-390-full.png`, `500-1440-full.png`.
 
 ### Template structure (updated)
-- `base.html` blocks: unchanged (`title`, `description`, `og_type`, `og_title`, `og_description`, `head`, `body_class`, `content`).
-- Partials: `_icons.html` (sprite: `#i-phone`, `#i-route`, `#i-menu`, `#i-close`, `#i-out`, `#i-turn`, `#i-forward`, `#i-copy`, `#i-check`), `_header.html`, `_nav_links.html`, `_footer.html`, `_calltab.html`, `_weave.html`, `_portrait.html`, `_facts.html`, `_credentials.html`, `_call_band.html`, and new: `_threads.html` (`with items=…`), `_procedures.html` (`with items=… describe=True`). Page-local: `conditions/_see_doctor.html`, `conditions/_list_description.txt`.
-- Template tags: `{% medical_entity_json_ld item site_url %}` (new, in `site.py`; both JSON-LD tags share `_json_ld_script`).
-- New components: `.pagehead` (+ `__title--long`), `.crumbs`, `.jumps`, `.seedoc`, `.places` / `.place`, `.toc`; page layouts `.article` (`--toc`), `.places-section`.
-- `site.js` part 4: `[data-copy]` buttons with `[data-copy-label]`, and one `[data-copy-status]` live region per page.
+- `base.html` blocks: unchanged. The error pages put `<meta name="robots" content="noindex">` in `head`.
+- New templates: `inquiries/contact.html`, `404.html`, `403_csrf.html`, `500.html` (standalone; keep it free of anything that needs the database or a context processor).
+- Icons: `#i-alert` added to the sprite.
+- New components: `.form`, `.field` (`__hint`, `__error`, `__optional`, `--invalid`), `.form__summary`, `.form__trap`, `.form__send`, `.form__urgent`, `.sent`, `.pagehead__code`, `.pagehead__actions`; page layout `.contact` (`__grid`, `__call`, `__clinics`, `__clinic`, `__panel`).
+- `site.js` part 5: `[data-focus-on-load]` takes focus; `[data-form]` / `[data-send]` / `[data-send-label]` for the sending state.
 
-### For Stage 6
-- **`/contact/` is still a hard-coded path** in `_nav_links.html`, `_call_band.html`, `conditions/_see_doctor.html` and `locations/list.html`. Switch each to `{% url 'contact' %}` when the view lands. It is the only 404 left among internal links.
-- Reuse `.pagehead` + `_weave.html` to open the contact page, and `.place` (or the call band) for "the phones and the address beside the form".
-- The 404 page can reuse `.pagehead` and `_threads.html`.
+### For Stage 7
+- Candidates for `find-animation-opportunities`: the sent state appearing (today it just renders), the error summary. Keep it quiet; the flip card stays the one signature moment.
+- `mobile-native`: check the form on a real phone keyboard (the `tel` pad, autofill of name and phone), and the safe area under the full-width call tab on `/contact/` (the tab hides while the first phone is on screen).
+- The academy-style `apps/core/admin.py` imports `Inquiry` inside the method to avoid an app-loading cycle; leave it there.
 
 Pending, but not blocking:
 - The doctor's answers ([`questions-for-doctor.md`](questions-for-doctor.md)). Record them under Decisions when they arrive.
-- The medical review of the condition texts before launch, **now also the "when to see a doctor", procedure and emergency lines** written in Stage 5.
-- The email provider.
+- The medical review before launch: the condition texts, the "when to see a doctor", procedure and emergency lines (Stage 5), **and now the contact page copy, especially the promise that the clinic calls back** (Stage 6).
+- The email provider. Until then `INQUIRY_NOTIFICATION_EMAIL` stays empty and Inquiries are read in the admin.
 
-Tooling: the Playwright MCP server works against `http://127.0.0.1:8018` (a `runserver 8018` was already running). Worst-case content was set up in the dev DB from a backup copy and restored afterwards.
+Tooling: the Playwright MCP server works against `http://127.0.0.1:8018`. To see the 404/500 pages, run a second server with `DEBUG = False` and `--nostatic` (a scratch settings module importing `config.settings.dev`); the dev server shows Django's debug pages instead.

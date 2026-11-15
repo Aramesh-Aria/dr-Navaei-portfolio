@@ -17,8 +17,8 @@ Kickoff line for every new chat:
 | 4 | Home and About (credential flip cards) | ✅ done 2026-11-14, gate passed | **required:** confirm the direction holds |
 | 5 | Conditions and Locations | ✅ done 2026-11-14 | — |
 | 6 | Contact and error pages | ✅ done 2026-11-15 | — |
-| 7 | Motion, mobile and cleanup | ⬜ next | — |
-| 8 | Final review and report | ⬜ | **required:** decide on the merge |
+| 7 | Motion, mobile and cleanup | ✅ done 2026-11-15 | — |
+| 8 | Final review and report | ⬜ next | **required:** decide on the merge |
 
 Status values: ⬜ not started · 🟡 in progress (see its checkpoint) · ⏸ waiting at gate · ✅ done
 
@@ -159,6 +159,21 @@ Append one line per decision, with the stage it was made in. Never delete a line
 - **Stage 6:** one icon added: `#i-alert` (field errors).
 - **Stage 6:** verified at 1440 / 768 / 390: no horizontal scroll, zero console messages on `/contact/`, no 404s among assets, focus order header → phones → form (honeypot skipped), visible focus on fields, a real submit with «۰۹۱۲ ۱۲۳-۴۵۶۷» saved as `09121234567` (then deleted). 404 and 500 checked on a temporary `DEBUG=False` server (removed afterwards). Worst case: 3 locations (a long name with Latin «ICU», no mobile, Persian digits and spaces in a phone, two-line hours) in the dev DB, restored from a backup afterwards. No new motion this stage beyond 150 ms colour transitions, so reduced motion needs nothing new.
 
+- **Stage 7:** `find-animation-opportunities` approved three motions and rejected five (the error summary, the menu exit, scroll-in entrances, an arrow nudge on hover, smooth scrolling). Built with `animate`:
+  - **press feedback**: `scale: 0.97` on `:active` for `.pill`, `.icon-button`, `.calltab`, `--dur-press` 160 ms `--ease-out` (replaces `filter: brightness`). The individual `scale` property, so it never fights the call tab's hide `transform`. Not while the send button is busy; none under reduced motion.
+  - **the sent check**: `.sent__mark` settles in from `scale .9` + `opacity 0`, 280 ms after 80 ms; only the mark moves. Reduced motion: a 200 ms fade.
+  - **the copy check**: WAAPI on the icon, `scale(.8)`/`opacity .4` → 1, 180 ms; the way back stays instant. Reduced motion: opacity only.
+- **Stage 7:** reduced motion now keeps a 150 ms fade on the phone menu (gentler, not zero; it had none).
+- **Stage 7:** `--ease-out` stays `cubic-bezier(.2,.8,.2,1)` (the approved Stage 2 spec), not the skills' `(.23,1,.32,1)`: the approved direction outranks them.
+- **Stage 7 (mobile-native):** every hover is gated `(hover: hover) and (pointer: fine)`; pills, icon buttons and flip cards get `-webkit-user-select: none`; `.wrap` and the phone call tab pad by `env(safe-area-inset-left/right)` (landscape notch); the call tab steps aside while a form field has focus (`html.is-typing`, set by `site.js` on `focusin` of an input or textarea).
+- **Stage 7:** the copy button now handles a refused clipboard write (it threw an uncaught error and showed nothing): «کپی نشد» with `#i-alert` for 2.4 s, announced in the live region.
+- **Stage 7 (simplify):** `clinic_word` («مطب» / «مطب‌ها») comes from the context processor and replaces 11 hand-written `{% if locations|length > 1 %}` switches; the default meta description uses the `lead_sentence` filter instead of its own regex; the woven edges are two tokens, `--weave-foot` and `--weave-head`; one `bdi` rule covers every display-type component (`.callband__name` gains it); `500.html` includes the sprite and `_weave.html` (both need no database); unused `.stack`, `.prose`, the `_weave` `variant` parameter and a dead `|default:1` are gone.
+- **Stage 7:** the call tab's phone insets use physical `left`/`right` (the safe-area insets are physical; `inset-inline` put the left inset on the right in RTL). Links get tap feedback (`.textlink`, `.place__phone`, `.thread` show their hover state on `:active`). `clinic_word` falls back to «مطب» on a 404 under `/admin/`.
+- **Stage 7 reviews:** `review-animations`: **Approve** (one finding fixed: the menu now fades under reduced motion; the flip's 560/380 ms is the approved signature). `animation-performance`: every animation is `transform`/`scale`/`opacity`; no `will-change`, blur, animated variables or rAF; nothing to fix.
+- **Stage 7, how things were verified:** Playwright's mouse and keyboard delivered no events in this session.
+  - **Playwright, by API and CDP:** all six pages at 1440 / 768 / 390 (no horizontal scroll, one `h1`, zero console messages, no 4xx); `:active` forced over CDP (`scale` 0.97, `none` under reduced motion); the call tab's typing state (visible → hidden → visible); the call tab 12 px from both edges at 390; reduced motion (menu `fade-in` 150 ms, flip crossfade); the sent state (`sent-in`, focus on it; a real submit saved `09121234567`, then deleted); the 500 page (sprite icon and selvedge); the worst case (3 locations, «ICU» in a name, no mobile, two-line hours, Persian digits in a phone) at 1440 and 390, with the DB restored afterwards.
+  - **In-app browser, real input:** the menu opens by click and closes on Escape with focus returned; the Tab order on About (skip link → lockup → nav → phone → flip cards), with a visible ring on every stop; the copy button's refused state and, with the clipboard stubbed, its success state and animation.
+
 ## Open questions for the owner
 
 Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.md)). Record each answer under Decisions when it comes back, then update the seeds or tell the Content Editor what to change in the admin.
@@ -179,25 +194,32 @@ Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.
 
 ## Handoff to next stage
 
-**Stage 7 (Motion, mobile and cleanup) is next.** Stage 6 has no gate.
+**Stage 8 (Final review and report) is next.** Stage 7 has no gate.
 
-Screenshots (`docs/design/screens/stage6/`): `contact-1440-full.png`, `contact-1440-errors.png`, `contact-1440-focus.png`, `contact-768-three-locations.png`, `contact-390-full.png`, `contact-390-errors.png`, `contact-390-sent.png`, `404-390-full.png`, `500-1440-full.png`.
+Screenshots (`docs/design/screens/stage7/`): every page at 1440 and 390 (390 full-page), `home-768.png`, `contact-390-sent.png`.
 
 ### Template structure (updated)
-- `base.html` blocks: unchanged. The error pages put `<meta name="robots" content="noindex">` in `head`.
-- New templates: `inquiries/contact.html`, `404.html`, `403_csrf.html`, `500.html` (standalone; keep it free of anything that needs the database or a context processor).
-- Icons: `#i-alert` added to the sprite.
-- New components: `.form`, `.field` (`__hint`, `__error`, `__optional`, `--invalid`), `.form__summary`, `.form__trap`, `.form__send`, `.form__urgent`, `.sent`, `.pagehead__code`, `.pagehead__actions`; page layout `.contact` (`__grid`, `__call`, `__clinics`, `__clinic`, `__panel`).
-- `site.js` part 5: `[data-focus-on-load]` takes focus; `[data-form]` / `[data-send]` / `[data-send-label]` for the sending state.
+- `base.html` blocks: unchanged.
+- Context: `clinic_word` («مطب» / «مطب‌ها»), from `apps.core.context_processors.site`. Use it for every label that names the clinics.
+- CSS tokens added: `--dur-press`, `--weave-foot`, `--weave-head`. A woven edge is `background: var(--weave-…)`, never a new gradient.
+- `site.js` part 4 has a failure state; part 5 sets `html.is-typing`.
 
-### For Stage 7
-- Candidates for `find-animation-opportunities`: the sent state appearing (today it just renders), the error summary. Keep it quiet; the flip card stays the one signature moment.
-- `mobile-native`: check the form on a real phone keyboard (the `tel` pad, autofill of name and phone), and the safe area under the full-width call tab on `/contact/` (the tab hides while the first phone is on screen).
-- The academy-style `apps/core/admin.py` imports `Inquiry` inside the method to avoid an app-loading cycle; leave it there.
+### For Stage 8
+- **Simplify findings left for Stage 8 or later** (skipped here because they change a model or a partial's interface):
+  - a `ConditionTreated` queryset (`published()`, `conditions()`, `procedures()`) instead of the filter repeated in four views; it needs a models.py change;
+  - `photo_url` / `photo_srcset` call `storage.exists()` on every access (up to 6 stats per Home render); cache per instance or record the variants at save;
+  - the site context processor runs 2 queries per request, and Home/About query the profile again;
+  - the procedures and credentials `<section>` wrappers are copied between pages; the phone-link markup is hand-written about 18 times, with sr-only labels that have drifted;
+  - each page writes its meta description twice (`description` and `og_description`);
+  - `lungs.svg` is 30 KB for a 44 px mark; a simplified path would save about 75%.
+  - smaller CSS: the `body_class` blocks have no CSS or JS using them; `clinics--N`/`places--N` could be a single `--many` flag; the full-width phone-pill rule is repeated per container; the hero reaches into `.founder__frame`'s nested paddings (a `--frame` custom property would do it).
+- The impeccable hook flags `.form__summary`'s `border-inline-start: 4px` as a "side-tab". It's the error-summary alert pattern, so it's kept; the tool could only suppress it file-wide, so it was left standing.
+- **Needs a real phone:** the keyboard with the call tab hidden, landscape notch padding, autofill, the flip at 120 Hz.
+- The Playwright MCP's mouse and keyboard did nothing in this session; check that before relying on it for the keyboard pass.
 
 Pending, but not blocking:
 - The doctor's answers ([`questions-for-doctor.md`](questions-for-doctor.md)). Record them under Decisions when they arrive.
-- The medical review before launch: the condition texts, the "when to see a doctor", procedure and emergency lines (Stage 5), **and now the contact page copy, especially the promise that the clinic calls back** (Stage 6).
+- The medical review before launch: the condition texts, the "when to see a doctor", procedure and emergency lines (Stage 5), and the contact page copy, especially the promise that the clinic calls back (Stage 6). The new «کپی نشد» label is UI copy for the same review.
 - The email provider. Until then `INQUIRY_NOTIFICATION_EMAIL` stays empty and Inquiries are read in the admin.
 
-Tooling: the Playwright MCP server works against `http://127.0.0.1:8018`. To see the 404/500 pages, run a second server with `DEBUG = False` and `--nostatic` (a scratch settings module importing `config.settings.dev`); the dev server shows Django's debug pages instead.
+Tooling: the dev server is `http://127.0.0.1:8018`. To see the 404/500 pages, run a second server with `DEBUG = False` and `--nostatic` (a scratch settings module importing `config.settings.dev`); the dev server shows Django's debug pages instead.

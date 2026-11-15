@@ -93,7 +93,7 @@ from apps.locations.models import ClinicLocation
 
 
 class ShellTests(TestCase):
-    """The shared page shell, rendered by the temporary home view (Stage 3)."""
+    """The shared page shell (header, footer, call tab, meta), checked on the home page."""
 
     def get(self):
         return self.client.get("/")

@@ -14,7 +14,7 @@
   <p class="seedoc__hours">{{ primary_location.name|isolate_latin }} · {{ primary_location.hours|fa_digits }}</p>
   {% endif %}
   <p class="seedoc__links">
-    <a class="textlink" href="{% url 'locations' %}">نشانی{% if locations|length > 1 %} مطب‌ها{% else %} مطب{% endif %} و مسیر<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
+    <a class="textlink" href="{% url 'locations' %}">نشانی {{ clinic_word }} و مسیر<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
     <a class="textlink" href="{% url 'contact' %}">فرم تماس<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
   </p>
   <p class="seedoc__urgent">در شرایط اورژانسی، مانند تنگی نفس شدید یا درد قفسه‌ی سینه، با <a href="tel:115" class="num">۱۱۵</a> تماس بگیرید یا به نزدیک‌ترین اورژانس بروید.</p>

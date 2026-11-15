@@ -6,7 +6,8 @@
 // 4. Copy an address (for a taxi app): the button shows only where the
 //    clipboard is available, confirms in place and through a live region.
 // 5. Forms: a sent state or an error summary takes focus on load; the send
-//    button says it is sending and refuses a second press.
+//    button says it is sending and refuses a second press; the call tab steps
+//    aside while a field is being typed in.
 (function () {
   "use strict";
 
@@ -69,6 +70,7 @@
 
   // ---- 4. copy an address ---------------------------------------------
   var status = document.querySelector("[data-copy-status]");
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (navigator.clipboard && window.isSecureContext) {
     document.querySelectorAll("[data-copy]").forEach(function (copy) {
       var label = copy.querySelector("[data-copy-label]");
@@ -76,17 +78,32 @@
       var idle = label.textContent;
       var timer;
       copy.hidden = false;
+      var show = function (text, href) {
+        label.textContent = text;
+        icon.setAttribute("href", href);
+        if (status) status.textContent = text + ".";
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+          label.textContent = idle;
+          icon.setAttribute("href", "#i-copy");
+          if (status) status.textContent = "";
+        }, 2400);
+      };
       copy.addEventListener("click", function () {
         navigator.clipboard.writeText(copy.getAttribute("data-copy")).then(function () {
-          label.textContent = "نشانی کپی شد";
-          icon.setAttribute("href", "#i-check");
-          if (status) status.textContent = "نشانی کپی شد.";
-          clearTimeout(timer);
-          timer = setTimeout(function () {
-            label.textContent = idle;
-            icon.setAttribute("href", "#i-copy");
-            if (status) status.textContent = "";
-          }, 2400);
+          show("نشانی کپی شد", "#i-check");
+          // The check settles in (state change made legible); the way back stays instant.
+          var svg = icon.parentNode;
+          if (svg.animate) {
+            var easeOut = getComputedStyle(svg).getPropertyValue("--ease-out").trim() || "ease-out";
+            svg.animate(reduce.matches
+              ? [{ opacity: 0.4 }, { opacity: 1 }]
+              : [{ opacity: 0.4, transform: "scale(0.8)" }, { opacity: 1, transform: "none" }],
+              { duration: 180, easing: easeOut });
+          }
+        }, function () {
+          // Refused (no permission, an embedded view): say so; the address is right above.
+          show("کپی نشد", "#i-alert");
         });
       });
     });
@@ -104,6 +121,12 @@
       send.setAttribute("aria-disabled", "true");
       sendLabel.textContent = "در حال فرستادن…";
     });
+    // While a field has focus the call tab steps aside (it would float over the
+    // field above the phone keyboard).
+    form.addEventListener("focusin", function (event) {
+      if (event.target.matches("input, textarea")) document.documentElement.classList.add("is-typing");
+    });
+    form.addEventListener("focusout", function () { document.documentElement.classList.remove("is-typing"); });
     // Coming back with the back button (bfcache) must not leave it stuck.
     window.addEventListener("pageshow", function () {
       send.removeAttribute("aria-disabled");

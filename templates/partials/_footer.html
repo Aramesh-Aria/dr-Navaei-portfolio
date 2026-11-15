@@ -10,8 +10,8 @@
     </div>
     {% if locations %}
     <section class="site-footer__clinics" aria-labelledby="footer-clinics">
-      <h2 class="site-footer__heading" id="footer-clinics">{% if locations|length > 1 %}نشانی و تلفن مطب‌ها{% else %}نشانی و تلفن مطب{% endif %}</h2>
-      <div class="clinics clinics--{{ locations|length|default:1 }}{% if locations|length > 1 %} clinics--many{% endif %}">
+      <h2 class="site-footer__heading" id="footer-clinics">نشانی و تلفن {{ clinic_word }}</h2>
+      <div class="clinics clinics--{{ locations|length }}{% if locations|length > 1 %} clinics--many{% endif %}">
         {% for location in locations %}
         <div class="clinic">
           <h3 class="clinic__name">{{ location.name|isolate_latin }}</h3>

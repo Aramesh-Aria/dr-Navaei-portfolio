@@ -2,8 +2,8 @@
 {% load site %}
 {% block title %}تماس با مطب و فرم پیام · {{ profile.full_name }}{% endblock %}
 {% block og_title %}تماس با مطب · {{ profile.full_name }}{% endblock %}
-{% block description %}تلفن {% if locations|length > 1 %}مطب‌ها{% else %}مطب{% endif %} {{ profile.full_name }} و فرم پیام: نام و شماره‌تان را بگذارید تا مطب با شما تماس بگیرد.{% endblock %}
-{% block og_description %}تلفن {% if locations|length > 1 %}مطب‌ها{% else %}مطب{% endif %} {{ profile.full_name }} و فرم پیام: نام و شماره‌تان را بگذارید تا مطب با شما تماس بگیرد.{% endblock %}
+{% block description %}تلفن {{ clinic_word }} {{ profile.full_name }} و فرم پیام: نام و شماره‌تان را بگذارید تا مطب با شما تماس بگیرد.{% endblock %}
+{% block og_description %}تلفن {{ clinic_word }} {{ profile.full_name }} و فرم پیام: نام و شماره‌تان را بگذارید تا مطب با شما تماس بگیرد.{% endblock %}
 {% block body_class %}page-contact{% endblock %}
 {% block content %}
 <section class="pagehead on-field" aria-labelledby="page-title">
@@ -18,7 +18,7 @@
   <div class="wrap contact__grid">
     {% if locations %}
     <section class="contact__call" aria-labelledby="call-title">
-      <h2 class="display-3" id="call-title">تلفن {% if locations|length > 1 %}مطب‌ها{% else %}مطب{% endif %}</h2>
+      <h2 class="display-3" id="call-title">تلفن {{ clinic_word }}</h2>
       <ul class="contact__clinics" role="list">
         {% for location in locations %}
         <li class="contact__clinic">
@@ -30,7 +30,7 @@
         {% endfor %}
       </ul>
       <p class="contact__more">
-        <a class="textlink" href="{% url 'locations' %}">نشانی{% if locations|length > 1 %} مطب‌ها{% else %} مطب{% endif %} و مسیر<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
+        <a class="textlink" href="{% url 'locations' %}">نشانی {{ clinic_word }} و مسیر<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
         {% if profile.paziresh24_url %}<a class="textlink" href="{{ profile.paziresh24_url }}" rel="noopener" target="_blank">پروفایل در پذیرش۲۴<svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr-only"> (در پنجره‌ی تازه)</span></a>{% endif %}
       </p>
     </section>

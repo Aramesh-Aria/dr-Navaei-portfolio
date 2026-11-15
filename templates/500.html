@@ -11,6 +11,7 @@
 <meta name="theme-color" content="#0C3438">
 </head>
 <body class="page-error">
+{% include "partials/_icons.html" %}
 <header class="site-header on-field">
   <div class="site-header__bar wrap">
     <a class="lockup" href="/"{% if profile %} aria-label="{{ profile.full_name }}، صفحه‌ی اصلی"{% endif %}>
@@ -26,12 +27,12 @@
     <h1 class="display-1 pagehead__title" id="page-title">مشکلی پیش آمد</h1>
     <p class="lede">این صفحه الان باز نمی‌شود. خطا از سایت است، نه از شما. چند دقیقه‌ی دیگر دوباره امتحان کنید{% if primary_location %}، یا با مطب تماس بگیرید{% endif %}.</p>
     <p class="actions pagehead__actions">
-      {% if primary_location %}<a class="pill pill--gold" href="{{ primary_location.phone|tel_href }}"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 3h3.5l2 5-2.5 1.5a11 11 0 0 0 6.5 6.5L16 13.5l5 2V19a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg><span class="sr-only">تلفن مطب: </span><span class="num">{{ primary_location.phone|phone_display }}</span></a>{% endif %}
+      {% if primary_location %}<a class="pill pill--gold" href="{{ primary_location.phone|tel_href }}"><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="sr-only">تلفن مطب: </span><span class="num">{{ primary_location.phone|phone_display }}</span></a>{% endif %}
       <a class="pill pill--line pill--on-field" href="/">صفحه‌ی اصلی</a>
     </p>
   </div>
 </section>
-<div class="selvedge" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+{% include "partials/_weave.html" %}
 </main>
 </body>
 </html>

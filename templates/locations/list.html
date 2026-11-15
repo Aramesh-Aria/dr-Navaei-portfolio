@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load site %}
-{% block title %}{% if locations|length > 1 %}مطب‌ها{% else %}مطب{% endif %}: نشانی، تلفن و ساعت پذیرش · {{ profile.full_name }}{% endblock %}
-{% block og_title %}نشانی و تلفن {% if locations|length > 1 %}مطب‌ها{% else %}مطب{% endif %} · {{ profile.full_name }}{% endblock %}
+{% block title %}{{ clinic_word }}: نشانی، تلفن و ساعت پذیرش · {{ profile.full_name }}{% endblock %}
+{% block og_title %}نشانی و تلفن {{ clinic_word }} · {{ profile.full_name }}{% endblock %}
 {% block description %}{% for l in locations %}{{ l.name }}: {{ l.address }}{% if not forloop.last %}؛ {% endif %}{% endfor %}{% endblock %}
 {% block og_description %}{% for l in locations %}{{ l.name }}: {{ l.address }}{% if not forloop.last %}؛ {% endif %}{% endfor %}{% endblock %}
 {% block body_class %}page-locations{% endblock %}
 {% block content %}
 <section class="pagehead on-field" aria-labelledby="page-title">
   <div class="wrap pagehead__inner">
-    <h1 class="display-1 pagehead__title" id="page-title">{% if locations|length > 1 %}مطب‌ها{% else %}مطب{% endif %}</h1>
+    <h1 class="display-1 pagehead__title" id="page-title">{{ clinic_word }}</h1>
     <p class="lede">نشانی، تلفن و ساعت پذیرش. برای گرفتن نوبت، تماس تلفنی سریع‌ترین راه است.</p>
   </div>
 </section>

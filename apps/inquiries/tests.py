@@ -1,11 +1,18 @@
 from unittest import mock
 
+from captcha.models import CaptchaStore
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from .models import Inquiry
+
+
+def solved_captcha():
+    """A real captcha with its right answer, as the form's POST fields."""
+    key = CaptchaStore.generate_key()
+    return {"captcha_0": key, "captcha_1": CaptchaStore.objects.get(hashkey=key).response}
 
 
 class InquiryAdminTests(TestCase):
@@ -54,7 +61,7 @@ class ContactPageTests(TestCase):
 
     def post(self, **fields):
         data = {"name": "مریم احمدی", "phone": "09121234567", "preferred_contact_time": "", "message": ""}
-        data.update(fields)
+        data.update(solved_captcha(), **fields)
         return self.client.post("/contact/", data, follow=True)
 
     def test_a_sent_inquiry_is_saved_and_confirmed_once(self):
@@ -109,13 +116,51 @@ class ContactPageTests(TestCase):
         self.assertRegex(html, r'name="website"[^>]*tabindex="-1"')
 
 
+class ContactCaptchaTests(TestCase):
+    """The contact form asks for the letters of a server-drawn image."""
+
+    def test_the_form_shows_a_labelled_captcha_with_a_new_image_button(self):
+        html = self.client.get("/contact/").content.decode()
+        self.assertRegex(html, r'<label for="id_captcha_1">کد امنیتی')
+        self.assertRegex(html, r'<img src="/captcha/image/[0-9a-f]+/"[^>]*alt="تصویر کد امنیتی"')
+        self.assertIn('data-captcha-refresh="/captcha/refresh/"', html)
+        self.assertRegex(html, r'id="id_captcha_1"[^>]*aria-describedby="id_captcha_1_hint"|aria-describedby="id_captcha_1_hint"[^>]*id="id_captcha_1"')
+
+    def test_the_captcha_image_is_served(self):
+        key = CaptchaStore.generate_key()
+        response = self.client.get(f"/captcha/image/{key}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "image/png")
+
+    def test_a_wrong_code_is_refused_and_tied_to_the_captcha_box(self):
+        key = CaptchaStore.generate_key()
+        response = self.client.post(
+            "/contact/", {"name": "مریم", "phone": "09121234567", "captcha_0": key, "captcha_1": "wrong"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Inquiry.objects.exists())
+        html = response.content.decode()
+        self.assertIn("کد امنیتی درست نیست", html)
+        self.assertIn('id="id_captcha_1_error"', html)
+        self.assertIn('href="#id_captcha_1"', html)  # the summary links to the box
+        self.assertRegex(html, r'aria-describedby="id_captcha_1_hint id_captcha_1_error"')
+
+    def test_a_missing_code_is_refused(self):
+        self.client.post("/contact/", {"name": "مریم", "phone": "09121234567"})
+        self.assertFalse(Inquiry.objects.exists())
+
+    def test_the_contact_form_carries_a_csrf_token(self):
+        self.assertContains(self.client.get("/contact/"), 'name="csrfmiddlewaretoken"')
+
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
 class InquiryEmailTests(TestCase):
     """An email goes out only when INQUIRY_NOTIFICATION_EMAIL is set, and
     email never stops an Inquiry from being saved."""
 
     def post(self):
-        return self.client.post("/contact/", {"name": "مریم", "phone": "۰۹۱۲۱۲۳۴۵۶۷", "message": "سلام"})
+        return self.client.post(
+            "/contact/", {"name": "مریم", "phone": "۰۹۱۲۱۲۳۴۵۶۷", "message": "سلام", **solved_captcha()}
+        )
 
     @override_settings(INQUIRY_NOTIFICATION_EMAIL="")
     def test_no_email_without_a_notification_address(self):
@@ -138,14 +183,14 @@ class InquiryEmailTests(TestCase):
         with mock.patch("apps.inquiries.views.send_mail", side_effect=OSError("smtp down")), \
                 self.assertLogs("apps.inquiries.views", "ERROR"):
             response = self.client.post(
-                "/contact/", {"name": "مریم", "phone": "09121234567"}, follow=True
+                "/contact/", {"name": "مریم", "phone": "09121234567", **solved_captcha()}, follow=True
             )
         self.assertEqual(Inquiry.objects.count(), 1)
         self.assertContains(response, "پیام شما رسید")
 
     @override_settings(INQUIRY_NOTIFICATION_EMAIL="clinic@example.com")
     def test_a_honeypot_submission_sends_no_email(self):
-        self.client.post("/contact/", {"name": "x", "phone": "09121234567", "website": "x"})
+        self.client.post("/contact/", {"name": "x", "phone": "09121234567", "website": "x", **solved_captcha()})
         self.assertEqual(len(mail.outbox), 0)
 
 

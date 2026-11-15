@@ -32,6 +32,17 @@ class HomeView(TemplateView):
         return context
 
 
+def bad_request(request, exception=None):
+    """The 400 page: a request the site could not read (a broken query, a
+    malformed upload). It never asks for the host, which may be what was bad."""
+    return render(request, "400.html", status=400)
+
+
+def permission_denied(request, exception=None):
+    """The 403 page, for a page that isn't open to visitors."""
+    return render(request, "403.html", status=403)
+
+
 def page_not_found(request, exception=None):
     """The 404 page: the way back, the published conditions, the clinic phone."""
     conditions = ConditionTreated.objects.filter(

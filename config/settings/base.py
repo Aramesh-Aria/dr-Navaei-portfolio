@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "apps.conditions",
     "apps.locations",
     "apps.inquiries",
+    "captcha",  # after apps.inquiries, whose template overrides its widget
 ]
 
 MIDDLEWARE = [
@@ -49,6 +50,14 @@ MIDDLEWARE = [
 ROOT_URLCONF = "config.urls"
 # The contact form left open too long gets a Persian page back to the form.
 CSRF_FAILURE_VIEW = "apps.core.views.csrf_failure"
+
+# The contact form's captcha (django-simple-captcha, as on ArameshMusicAcademy-website):
+# drawn on the server, so it works when Iran's international internet is cut.
+# Minutes an image stays valid (default 5): an older patient may take longer over the form.
+CAPTCHA_TIMEOUT = 30
+# Drawn at the size it is shown (200×70), so the letters are sharp, not upscaled.
+CAPTCHA_IMAGE_SIZE = (200, 70)
+CAPTCHA_FONT_SIZE = 44
 
 TEMPLATES = [
     {

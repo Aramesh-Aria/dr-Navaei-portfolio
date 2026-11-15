@@ -133,4 +133,28 @@
       sendLabel.textContent = idleLabel;
     });
   });
+
+  // The captcha's "new image" button: a hard-to-read image is swapped for a
+  // fresh one in place, without reloading the form. Hidden until this runs.
+  document.querySelectorAll("[data-captcha-refresh]").forEach(function (button) {
+    var field = button.closest(".field");
+    var image = field.querySelector("[data-captcha-image]");
+    var key = field.querySelector('input[type="hidden"]');
+    var answer = field.querySelector('input:not([type="hidden"])');
+    button.hidden = false;
+    button.addEventListener("click", function () {
+      button.disabled = true;
+      fetch(button.dataset.captchaRefresh, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+        .then(function (response) { return response.ok ? response.json() : null; })
+        .then(function (data) {
+          if (!data) return;
+          image.src = data.image_url;
+          key.value = data.key;
+          answer.value = "";
+          answer.focus();
+        })
+        .catch(function () {})
+        .finally(function () { button.disabled = false; });
+    });
+  });
 })();

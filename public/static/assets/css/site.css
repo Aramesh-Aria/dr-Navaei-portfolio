@@ -894,6 +894,24 @@
   /* Focused on load so it is announced; its madder border already marks it. */
   .form__summary:focus, .form__summary:focus-visible { outline: none; }
 
+  /* Captcha: the image with its "new image" button, then the answer box. */
+  .captcha { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-1) var(--s-2); }
+  /* The image has a white ground; multiply lays its letters on the panel. */
+  .captcha__image { inline-size: 12.5rem; block-size: auto; mix-blend-mode: multiply; }
+  .captcha__refresh {
+    display: inline-grid; place-items: center;
+    inline-size: 44px; block-size: 44px;
+    border: 2px solid var(--field); border-radius: var(--r-pill);
+    background: transparent; color: var(--field); cursor: pointer;
+    transition: background-color var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out);
+  }
+  .captcha__refresh svg { inline-size: 20px; block-size: 20px; }
+  .captcha__refresh:disabled { opacity: 0.6; cursor: progress; }
+  .captcha__refresh:active { scale: 0.97; }
+  @media (hover: hover) and (pointer: fine) { .captcha__refresh:hover { background: var(--field); color: var(--ivory); } }
+  /* The answer is Latin letters: centred, tracked, and as wide as the image. */
+  .field input[name="captcha_1"] { max-inline-size: 12.5rem; text-align: center; letter-spacing: 0.15em; }
+
   /* Honeypot: off-screen, not display:none (some bots skip hidden fields). */
   .form__trap { position: absolute; inset-inline-start: -9999px; inline-size: 1px; block-size: 1px; overflow: hidden; }
 

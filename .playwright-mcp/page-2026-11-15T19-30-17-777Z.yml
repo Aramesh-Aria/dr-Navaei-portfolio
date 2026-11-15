@@ -1,0 +1,98 @@
+- generic [active] [ref=f6e1]:
+  - link "پرش به محتوای صفحه" [ref=f6e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f6e3]:
+    - generic [ref=f6e4]:
+      - link "دکتر سپیده صفانوایی، صفحه‌ی اصلی" [ref=f6e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f6e7]:
+          - generic [ref=f6e8]: دکتر سپیده صفانوایی
+          - generic [ref=f6e9]: متخصص داخلی و فوق تخصص بیماری‌های ریه
+      - navigation "اصلی" [ref=f6e10]:
+        - list [ref=f6e11]:
+          - listitem [ref=f6e12]:
+            - link "درباره‌ی دکتر" [ref=f6e13] [cursor=pointer]:
+              - /url: /about/
+          - listitem [ref=f6e14]:
+            - link "بیماری‌ها و اقدامات" [ref=f6e15] [cursor=pointer]:
+              - /url: /conditions/
+          - listitem [ref=f6e16]:
+            - link "مطب" [ref=f6e17] [cursor=pointer]:
+              - /url: /locations/
+          - listitem [ref=f6e18]:
+            - link "تماس" [ref=f6e19] [cursor=pointer]:
+              - /url: /contact/
+      - 'link "تلفن مطب: ۰۱۱-۴۴۲۲۹۲۷۰" [ref=f6e20] [cursor=pointer]':
+        - /url: tel:+981144229270
+        - generic [ref=f6e23]: "تلفن مطب:"
+        - generic [ref=f6e24]: ۰۱۱-۴۴۲۲۹۲۷۰
+  - main [ref=f6e25]:
+    - region "مطب" [ref=f6e26]:
+      - generic [ref=f6e27]:
+        - heading "مطب" [level=1] [ref=f6e28]
+        - paragraph [ref=f6e29]: نشانی، تلفن و ساعت پذیرش. برای گرفتن نوبت، تماس تلفنی سریع‌ترین راه است.
+    - generic [ref=f6e39]:
+      - list [ref=f6e40]:
+        - listitem [ref=f6e41]:
+          - region "مطب آمل" [ref=f6e42]:
+            - heading "مطب آمل" [level=2] [ref=f6e43]
+            - generic [ref=f6e44]:
+              - paragraph [ref=f6e45]: آمل، سبزه میدان، روبروی مخابرات مرکزی، ساختمان پزشکان آنیتا، طبقه اول، واحد ۳
+              - paragraph [ref=f6e46]:
+                - button "کپی نشانی" [ref=f6e47] [cursor=pointer]
+            - generic [ref=f6e51]:
+              - generic [ref=f6e52]:
+                - term [ref=f6e53]: تلفن مطب
+                - definition [ref=f6e54]:
+                  - link "۰۱۱-۴۴۲۲۹۲۷۰" [ref=f6e55] [cursor=pointer]:
+                    - /url: tel:+981144229270
+              - generic [ref=f6e59]:
+                - term [ref=f6e60]: همراه
+                - definition [ref=f6e61]:
+                  - link "۰۹۱۱ ۹۹۷ ۰۸۲۸" [ref=f6e62] [cursor=pointer]:
+                    - /url: tel:+989119970828
+              - generic [ref=f6e66]:
+                - term [ref=f6e67]: ساعت پذیرش
+                - definition [ref=f6e68]: "پذیرش بیماران: روزانه، شیفت عصر"
+      - paragraph [ref=f6e69]:
+        - 'link "یا پیام بگذارید: فرم تماس" [ref=f6e70] [cursor=pointer]':
+          - /url: /contact/
+      - paragraph [ref=f6e73]
+  - contentinfo [ref=f6e74]:
+    - generic [ref=f6e83]:
+      - generic [ref=f6e84]:
+        - paragraph [ref=f6e86]: دکتر سپیده صفانوایی
+        - paragraph [ref=f6e87]: متخصص داخلی و فوق تخصص بیماری‌های ریه
+      - region "نشانی و تلفن مطب" [ref=f6e88]:
+        - heading "نشانی و تلفن مطب" [level=2] [ref=f6e89]
+        - generic [ref=f6e91]:
+          - heading "مطب آمل" [level=3] [ref=f6e92]
+          - paragraph [ref=f6e93]: آمل، سبزه میدان، روبروی مخابرات مرکزی، ساختمان پزشکان آنیتا، طبقه اول، واحد ۳
+          - generic [ref=f6e94]:
+            - generic [ref=f6e95]:
+              - term [ref=f6e96]: تلفن مطب
+              - definition [ref=f6e97]:
+                - link "۰۱۱-۴۴۲۲۹۲۷۰" [ref=f6e98] [cursor=pointer]:
+                  - /url: tel:+981144229270
+            - generic [ref=f6e99]:
+              - term [ref=f6e100]: همراه
+              - definition [ref=f6e101]:
+                - link "۰۹۱۱ ۹۹۷ ۰۸۲۸" [ref=f6e102] [cursor=pointer]:
+                  - /url: tel:+989119970828
+            - generic [ref=f6e103]:
+              - term [ref=f6e104]: ساعت پذیرش
+              - definition [ref=f6e105]: "پذیرش بیماران: روزانه، شیفت عصر"
+    - navigation "پانویس" [ref=f6e108]:
+      - list [ref=f6e109]:
+        - listitem [ref=f6e110]:
+          - link "درباره‌ی دکتر" [ref=f6e111] [cursor=pointer]:
+            - /url: /about/
+        - listitem [ref=f6e112]:
+          - link "بیماری‌ها و اقدامات" [ref=f6e113] [cursor=pointer]:
+            - /url: /conditions/
+        - listitem [ref=f6e114]:
+          - link "مطب" [ref=f6e115] [cursor=pointer]:
+            - /url: /locations/
+        - listitem [ref=f6e116]:
+          - link "تماس" [ref=f6e117] [cursor=pointer]:
+            - /url: /contact/

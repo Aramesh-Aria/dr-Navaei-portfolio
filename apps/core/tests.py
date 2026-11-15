@@ -426,6 +426,38 @@ class ServerErrorPageTests(TestCase):
         self.assertContains(response, "Server Error (500)", status_code=500)
 
 
+class BadRequestPageTests(TestCase):
+    def test_the_site_400_handler_is_installed(self):
+        from config import urls
+
+        self.assertEqual(urls.handler400, "apps.core.views.bad_request")
+
+    def test_a_request_for_an_unknown_host_gets_the_persian_400_page(self):
+        response = self.client.get("/", HTTP_HOST="evil.example")
+        self.assertEqual(response.status_code, 400)
+        self.assertTemplateUsed(response, "400.html")
+        self.assertContains(response, "درخواست نادرست بود", status_code=400)
+        self.assertContains(response, '<meta name="robots" content="noindex">', status_code=400)
+        self.assertContains(response, 'href="tel:+981144229270"', status_code=400)
+
+
+class PermissionDeniedPageTests(TestCase):
+    def test_the_site_403_handler_is_installed(self):
+        from config import urls
+
+        self.assertEqual(urls.handler403, "apps.core.views.permission_denied")
+
+    def test_a_forbidden_page_gets_the_persian_403_page(self):
+        from django.contrib.auth import get_user_model
+
+        self.client.force_login(get_user_model().objects.create_superuser("editor", "", "pw"))
+        response = self.client.get("/admin/inquiries/inquiry/add/")  # Inquiries come only from patients
+        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed(response, "403.html")
+        self.assertContains(response, "دسترسی به این صفحه ممکن نیست", status_code=403)
+        self.assertContains(response, 'href="/"', status_code=403)
+
+
 class ExpiredFormPageTests(TestCase):
     def test_a_form_sent_without_its_csrf_cookie_gets_a_persian_page_back_to_the_form(self):
         response = Client(enforce_csrf_checks=True).post("/contact/", {"name": "x", "phone": "09120000000"})

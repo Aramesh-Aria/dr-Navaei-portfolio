@@ -1,0 +1,156 @@
+- generic [active] [ref=f5e1]:
+  - link "پرش به محتوای صفحه" [ref=f5e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f5e3]:
+    - generic [ref=f5e4]:
+      - link "دکتر سپیده صفانوایی، صفحه‌ی اصلی" [ref=f5e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f5e7]: دکتر سپیده صفانوایی
+      - link "تماس با مطب، ۰۱۱-۴۴۲۲۹۲۷۰" [ref=f5e9] [cursor=pointer]:
+        - /url: tel:+981144229270
+      - button "منو" [ref=f5e13] [cursor=pointer]
+  - main [ref=f5e17]:
+    - region "دکتر سپیده صفانوایی" [ref=f5e18]:
+      - generic [ref=f5e19]:
+        - figure [ref=f5e21]:
+          - img "نشان ریه، به جای عکس دکتر سپیده صفانوایی" [ref=f5e26]
+        - generic [ref=f5e27]:
+          - paragraph [ref=f5e28]: درباره‌ی دکتر
+          - heading "دکتر سپیده صفانوایی" [level=1] [ref=f5e29]
+          - paragraph [ref=f5e30]: متخصص داخلی و فوق تخصص بیماری‌های ریه
+    - region "زندگی‌نامه" [ref=f5e39]:
+      - generic [ref=f5e40]:
+        - heading "زندگی‌نامه" [level=2] [ref=f5e41]
+        - generic [ref=f5e42]:
+          - generic [ref=f5e43]:
+            - generic [aria-hidden] [ref=f5e44]: ۱۳۷۸
+            - paragraph [ref=f5e45]: دکتر سپیده صفانوایی فارغ‌التحصیل تخصص داخلی در سال ۱۳۷۸ است. دوران طرح تخصصی را به مدت ۲ سال در منطقه محروم کهگیلویه گذراند و پس از آن به دیار اصلی خود، آمل، بازگشت و به مدت ۸ سال مسئول بخش دیابت آمل در بیمارستان امام رضا مشغول به کار شد.
+          - paragraph [ref=f5e47]: در طی این ۸ سال، مرکز دیابت آمل جزو ۵ مرکز برتر و ریفرال کشوری شناخته شد و بارها توسط ریاست دانشگاه و بازرسین کشوری به علت اجرای استاندارد جهانی دیابت مورد تشویق قرار گرفت.
+          - generic [ref=f5e48]:
+            - generic [aria-hidden] [ref=f5e49]: ۱۳۸۵
+            - paragraph [ref=f5e50]: پس از آن، برای ادامه تحصیل در رشته فوق تخصصی ریه، در سال ۱۳۸۵ وارد دانشگاه علوم پزشکی شهید بهشتی شد و به مدت ۲ سال در بیمارستان مسیح دانشوری مشغول به کار و تحصیل بود. در سال ۱۳۸۷ با مدرک فوق تخصصی ریه و ICU به شهر آمل بازگشت.
+          - generic [ref=f5e51]:
+            - generic [aria-hidden] [ref=f5e52]: ۱۳۹۰
+            - paragraph [ref=f5e53]: در سال ۱۳۹۰ مجدداً به مدت ۵ سال برای گذراندن دوره اینترونشن فوق تخصصی ریه به بیمارستان مسیح دانشوری مراجعه کرد و این دوره را در همان بیمارستان به پایان رساند.
+          - generic [ref=f5e54]:
+            - generic [aria-hidden] [ref=f5e55]: ۱۳۹۵
+            - paragraph [ref=f5e56]: از سال ۱۳۹۵ به عنوان هیات علمی با دانشگاه علوم پزشکی مازندران در ساعات صبح همکاری می‌کند و روزانه در شیفت عصر، در مطب شخصی خود در شهر آمل، پذیرای بیماران داخلی، دیابت و ریوی است.
+          - generic [ref=f5e57]:
+            - generic [aria-hidden] [ref=f5e58]: ۱۳۸۷
+            - paragraph [ref=f5e59]:
+              - generic [ref=f5e60]: ایشان از سال ۱۳۸۷ عضو انجمن علمی ریه اروپا (ERS)، انجمن علمی ریه آمریکا (ATS) و انجمن علمی ریه ایران است و تاکنون بالغ بر ۳۰ مقاله علمی و ۲ کتاب نوشته است که در مجلات معتبر خارجی به چاپ رسیده‌اند.
+    - region "سوابق علمی و حرفه‌ای" [ref=f5e61]:
+      - generic [ref=f5e62]:
+        - generic [ref=f5e63]:
+          - heading "سوابق علمی و حرفه‌ای" [level=2] [ref=f5e64]
+          - paragraph [ref=f5e65]: پشت هر کارت آمده است که آن مدرک یا سمت کجا به دست آمده.
+        - list [ref=f5e66]:
+          - listitem [ref=f5e67]:
+            - 'button "۱۳۷۸ متخصص داخلی محل: دانشگاه علوم پزشکی شهید بهشتی، تهران" [ref=f5e68] [cursor=pointer]':
+              - generic [ref=f5e69]:
+                - generic [ref=f5e70]:
+                  - generic [ref=f5e73]: ۱۳۷۸
+                  - generic [ref=f5e74]: متخصص داخلی
+                - generic [ref=f5e75]:
+                  - generic [ref=f5e76]: "محل:"
+                  - generic [ref=f5e77]: دانشگاه علوم پزشکی شهید بهشتی، تهران
+          - listitem [ref=f5e78]:
+            - 'button "۱۳۸۷ فوق تخصص بیماری‌های ریه و ICU محل: دانشگاه علوم پزشکی شهید بهشتی - بیمارستان مسیح دانشوری" [ref=f5e79] [cursor=pointer]':
+              - generic [ref=f5e80]:
+                - generic [ref=f5e81]:
+                  - generic [ref=f5e84]: ۱۳۸۷
+                  - generic [ref=f5e85]: فوق تخصص بیماری‌های ریه و ICU
+                - generic [ref=f5e86]:
+                  - generic [ref=f5e87]: "محل:"
+                  - generic [ref=f5e88]: دانشگاه علوم پزشکی شهید بهشتی - بیمارستان مسیح دانشوری
+          - listitem [ref=f5e89]:
+            - 'button "۱۳۹۵ دوره تخصصی اینترونشن ریه محل: بیمارستان مسیح دانشوری" [ref=f5e90] [cursor=pointer]':
+              - generic [ref=f5e91]:
+                - generic [ref=f5e92]:
+                  - generic [ref=f5e95]: ۱۳۹۵
+                  - generic [ref=f5e96]: دوره تخصصی اینترونشن ریه
+                - generic [ref=f5e97]:
+                  - generic [ref=f5e98]: "محل:"
+                  - generic [ref=f5e99]: بیمارستان مسیح دانشوری
+          - listitem [ref=f5e100]:
+            - 'button "۱۳۹۵ هیات علمی محل: دانشگاه علوم پزشکی مازندران" [ref=f5e101] [cursor=pointer]':
+              - generic [ref=f5e102]:
+                - generic [ref=f5e103]:
+                  - generic [ref=f5e106]: ۱۳۹۵
+                  - generic [ref=f5e107]: هیات علمی
+                - generic [ref=f5e108]:
+                  - generic [ref=f5e109]: "محل:"
+                  - generic [ref=f5e110]: دانشگاه علوم پزشکی مازندران
+        - list "عضویت‌ها و آثار" [ref=f5e111]:
+          - listitem [ref=f5e112]:
+            - generic [ref=f5e113]: ۱۳۸۷
+            - generic [ref=f5e114]: عضو انجمن علمی ریه اروپا (ERS)
+          - listitem [ref=f5e115]:
+            - generic [ref=f5e116]: ۱۳۸۷
+            - generic [ref=f5e117]: عضو انجمن علمی ریه آمریکا (ATS)
+          - listitem [ref=f5e118]:
+            - generic [ref=f5e119]: ۱۳۸۷
+            - generic [ref=f5e120]: عضو انجمن علمی ریه ایران
+          - listitem [ref=f5e121]:
+            - generic [ref=f5e122]: بیش از ۳۰ مقاله علمی و ۲ کتاب در مجلات معتبر خارجی
+    - region "تماس با مطب" [ref=f5e123]:
+      - generic [ref=f5e124]:
+        - generic [ref=f5e125]:
+          - heading "تماس با مطب" [level=2] [ref=f5e126]
+          - paragraph [ref=f5e127]: برای گرفتن نوبت یا هر پرسشی، با مطب تماس بگیرید.
+        - list [ref=f5e128]:
+          - listitem [ref=f5e129]:
+            - paragraph [ref=f5e130]: مطب آمل
+            - paragraph [ref=f5e131]:
+              - 'link "تلفن مطب: ۰۱۱-۴۴۲۲۹۲۷۰" [ref=f5e132] [cursor=pointer]':
+                - /url: tel:+981144229270
+                - generic [ref=f5e135]: "تلفن مطب:"
+                - generic [ref=f5e136]: ۰۱۱-۴۴۲۲۹۲۷۰
+              - 'link "همراه: ۰۹۱۱ ۹۹۷ ۰۸۲۸" [ref=f5e137] [cursor=pointer]':
+                - /url: tel:+989119970828
+                - generic [ref=f5e138]: "همراه:"
+                - generic [ref=f5e139]: ۰۹۱۱ ۹۹۷ ۰۸۲۸
+            - paragraph [ref=f5e140]: "پذیرش بیماران: روزانه، شیفت عصر"
+        - paragraph [ref=f5e141]:
+          - link "نشانی مطب و مسیر" [ref=f5e142] [cursor=pointer]:
+            - /url: /locations/
+          - link "فرم تماس" [ref=f5e145] [cursor=pointer]:
+            - /url: /contact/
+  - contentinfo [ref=f5e148]:
+    - generic [ref=f5e157]:
+      - generic [ref=f5e158]:
+        - paragraph [ref=f5e160]: دکتر سپیده صفانوایی
+        - paragraph [ref=f5e161]: متخصص داخلی و فوق تخصص بیماری‌های ریه
+      - region "نشانی و تلفن مطب" [ref=f5e162]:
+        - heading "نشانی و تلفن مطب" [level=2] [ref=f5e163]
+        - generic [ref=f5e165]:
+          - heading "مطب آمل" [level=3] [ref=f5e166]
+          - paragraph [ref=f5e167]: آمل، سبزه میدان، روبروی مخابرات مرکزی، ساختمان پزشکان آنیتا، طبقه اول، واحد ۳
+          - generic [ref=f5e168]:
+            - generic [ref=f5e169]:
+              - term [ref=f5e170]: تلفن مطب
+              - definition [ref=f5e171]:
+                - link "۰۱۱-۴۴۲۲۹۲۷۰" [ref=f5e172] [cursor=pointer]:
+                  - /url: tel:+981144229270
+            - generic [ref=f5e173]:
+              - term [ref=f5e174]: همراه
+              - definition [ref=f5e175]:
+                - link "۰۹۱۱ ۹۹۷ ۰۸۲۸" [ref=f5e176] [cursor=pointer]:
+                  - /url: tel:+989119970828
+            - generic [ref=f5e177]:
+              - term [ref=f5e178]: ساعت پذیرش
+              - definition [ref=f5e179]: "پذیرش بیماران: روزانه، شیفت عصر"
+    - navigation "پانویس" [ref=f5e182]:
+      - list [ref=f5e183]:
+        - listitem [ref=f5e184]:
+          - link "درباره‌ی دکتر" [ref=f5e185] [cursor=pointer]:
+            - /url: /about/
+        - listitem [ref=f5e186]:
+          - link "بیماری‌ها و اقدامات" [ref=f5e187] [cursor=pointer]:
+            - /url: /conditions/
+        - listitem [ref=f5e188]:
+          - link "مطب" [ref=f5e189] [cursor=pointer]:
+            - /url: /locations/
+        - listitem [ref=f5e190]:
+          - link "تماس" [ref=f5e191] [cursor=pointer]:
+            - /url: /contact/

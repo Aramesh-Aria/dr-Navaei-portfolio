@@ -1,5 +1,6 @@
 import re
 
+from captcha.fields import CaptchaField, CaptchaTextInput
 from django import forms
 
 from apps.core.templatetags.site import ascii_digits
@@ -32,6 +33,17 @@ class InquiryForm(forms.ModelForm):
         help_text="لطفاً شرح بیماری را این‌جا ننویسید؛ آن را در ویزیت بگویید.",
         widget=forms.Textarea(attrs={"rows": 4}),
     )
+    # Drawn on the server (no outside service). The answer is Latin letters,
+    # so the phone keyboard gets no capitals, corrections or spell check.
+    captcha = CaptchaField(
+        label="کد امنیتی",
+        help_text="حروف انگلیسیِ تصویر را بنویسید. بزرگ یا کوچک بودن حروف فرقی ندارد.",
+        error_messages={"invalid": "کد امنیتی درست نیست. کد تصویر تازه را بنویسید."},
+        widget=CaptchaTextInput(attrs={
+            "autocomplete": "off", "autocapitalize": "none", "autocorrect": "off",
+            "spellcheck": "false", "dir": "ltr", "enterkeyhint": "send",
+        }),
+    )
 
     class Meta:
         model = Inquiry
@@ -58,20 +70,21 @@ class InquiryForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for name, field in self.fields.items():
             if field.help_text:
-                field.widget.attrs["aria-describedby"] = f"id_{name}_hint"
+                field.widget.attrs["aria-describedby"] = f"{self[name].id_for_label}_hint"
             if field.required:
                 field.widget.attrs["aria-required"] = "true"
 
     def full_clean(self):
         super().full_clean()
-        # Point each invalid field at its error, after its hint.
+        # Point each invalid field at its error, after its hint. The ids follow
+        # the label's target, which for the captcha is its text box (id_captcha_1).
         for name in self.errors:
             if name not in self.fields:
                 continue
             attrs = self.fields[name].widget.attrs
             attrs["aria-invalid"] = "true"
             attrs["aria-describedby"] = " ".join(
-                filter(None, [attrs.get("aria-describedby"), f"id_{name}_error"])
+                filter(None, [attrs.get("aria-describedby"), f"{self[name].id_for_label}_error"])
             )
 
     def clean_phone(self):

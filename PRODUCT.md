@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Django 5.2, server-rendered templates, SQLite, hosted on Runflare (ADR-0002, ADR-0003). The frontend CSS/JS approach (Tailwind standalone CLI vs plain modern CSS with small vanilla JS) is **undecided**: Stage 2 of `docs/DESIGN_PROMPT.md` recommends one and the owner approves it. Node.js is not available in production builds; no JS framework.
+Django 5.2, server-rendered templates, SQLite, hosted on Runflare (ADR-0002, ADR-0003). The frontend is plain modern CSS (custom properties, `@layer`) with small vanilla JS (owner decision at the Stage 2 gate); no Tailwind, no htmx, no JS framework. Node.js is not available in production builds.
 
 ## Users
 
@@ -50,7 +50,7 @@ What a neighbouring doctor could not truthfully copy:
 - 1 to N Clinic Locations, addable from the admin alone. One today (Amol).
 - Contact form has no medical-detail field, by design. Email notification is optional and never blocks saving.
 - Out of scope: online booking/calendar, blog, testimonials, FAQ, analytics, English, structured per-day hours. A link out to her Paziresh24 profile is allowed as a proposal.
-- **Undecided** (owner answers at the Stage 2 gate): surname spelling (صفانوایی vs صفاءنوائی), clinic hours wording, whether Imam hospital in Sari is a patient-facing location, showing the medical council number (51510), the email provider.
+- **Waiting on the doctor's answers** (`docs/design/questions-for-doctor.md`): surname spelling (صفانوایی vs صفاءنوائی), clinic hours wording, whether Imam hospital in Sari is a patient-facing location, showing the medical council number (51510), the email provider.
 
 ## Brand Commitments
 

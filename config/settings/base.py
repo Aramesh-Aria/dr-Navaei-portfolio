@@ -55,9 +55,10 @@ CSRF_FAILURE_VIEW = "apps.core.views.csrf_failure"
 # drawn on the server, so it works when Iran's international internet is cut.
 # Minutes an image stays valid (default 5): an older patient may take longer over the form.
 CAPTCHA_TIMEOUT = 30
-# Drawn at the size it is shown (200×70), so the letters are sharp, not upscaled.
-CAPTCHA_IMAGE_SIZE = (200, 70)
-CAPTCHA_FONT_SIZE = 44
+# Drawn at twice the size it is shown (200×70 CSS px, set in the widget), so
+# the letters stay sharp on 2× and 3× phone screens.
+CAPTCHA_IMAGE_SIZE = (400, 140)
+CAPTCHA_FONT_SIZE = 88
 
 TEMPLATES = [
     {

@@ -23,6 +23,8 @@ def site(request):
         "primary_location": locations[0] if locations else None,
         # «مطب» or «مطب‌ها»: every label that names the clinics follows the count.
         "clinic_word": "مطب‌ها" if len(locations) > 1 else "مطب",
+        # Links to /locations/ promise «و مسیر» only when a map link exists.
+        "has_route": any(l.map_url for l in locations),
         "site_url": settings.SITE_URL,
         "default_description": description[:200],
     }

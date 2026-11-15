@@ -1,0 +1,433 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-15T20:27:02+00:00",
+  "title": "Design System: Dr. Sepideh Safanavaei",
+  "extensions": {
+    "colorMeta": {
+      "field": {
+        "role": "primary",
+        "displayName": "Deep Teal Cloth",
+        "canonical": "#0C3438",
+        "oklch": "oklch(30.0% 0.044 204.6)",
+        "tonalRamp": [
+          "oklch(15.0% 0.017 204.6)",
+          "oklch(26.4% 0.042 204.6)",
+          "oklch(37.9% 0.039 204.6)",
+          "oklch(49.3% 0.032 204.6)",
+          "oklch(60.7% 0.025 204.6)",
+          "oklch(72.1% 0.018 204.6)",
+          "oklch(83.6% 0.011 204.6)",
+          "oklch(95.0% 0.003 204.6)"
+        ]
+      },
+      "field-2": {
+        "role": "primary",
+        "displayName": "Second Teal Thread",
+        "canonical": "#165257",
+        "oklch": "oklch(40.4% 0.060 203.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.019 203.1)",
+          "oklch(26.4% 0.048 203.1)",
+          "oklch(37.9% 0.058 203.1)",
+          "oklch(49.3% 0.052 203.1)",
+          "oklch(60.7% 0.043 203.1)",
+          "oklch(72.1% 0.033 203.1)",
+          "oklch(83.6% 0.024 203.1)",
+          "oklch(95.0% 0.007 203.1)"
+        ]
+      },
+      "gold": {
+        "role": "secondary",
+        "displayName": "Saffron Thread",
+        "canonical": "#D4A84E",
+        "oklch": "oklch(75.5% 0.119 83.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.009 83.0)",
+          "oklch(26.4% 0.037 83.0)",
+          "oklch(37.9% 0.056 83.0)",
+          "oklch(49.3% 0.076 83.0)",
+          "oklch(60.7% 0.095 83.0)",
+          "oklch(72.1% 0.114 83.0)",
+          "oklch(83.6% 0.106 83.0)",
+          "oklch(95.0% 0.043 83.0)"
+        ]
+      },
+      "madder": {
+        "role": "tertiary",
+        "displayName": "Madder Thread",
+        "canonical": "#A23B2C",
+        "oklch": "oklch(49.5% 0.140 30.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.036 30.9)",
+          "oklch(26.4% 0.095 30.9)",
+          "oklch(37.9% 0.117 30.9)",
+          "oklch(49.3% 0.139 30.9)",
+          "oklch(60.7% 0.118 30.9)",
+          "oklch(72.1% 0.095 30.9)",
+          "oklch(83.6% 0.073 30.9)",
+          "oklch(95.0% 0.025 30.9)"
+        ]
+      },
+      "sea": {
+        "role": "neutral",
+        "displayName": "Pale Caspian Green",
+        "canonical": "#E3ECE6",
+        "oklch": "oklch(93.5% 0.012 157.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.001 157.0)",
+          "oklch(26.4% 0.002 157.0)",
+          "oklch(37.9% 0.003 157.0)",
+          "oklch(49.3% 0.005 157.0)",
+          "oklch(60.7% 0.007 157.0)",
+          "oklch(72.1% 0.009 157.0)",
+          "oklch(83.6% 0.011 157.0)",
+          "oklch(95.0% 0.006 157.0)"
+        ]
+      },
+      "ivory": {
+        "role": "neutral",
+        "displayName": "Ivory",
+        "canonical": "#F7F2E7",
+        "oklch": "oklch(96.2% 0.016 86.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.001 86.4)",
+          "oklch(26.4% 0.002 86.4)",
+          "oklch(37.9% 0.003 86.4)",
+          "oklch(49.3% 0.005 86.4)",
+          "oklch(60.7% 0.008 86.4)",
+          "oklch(72.1% 0.010 86.4)",
+          "oklch(83.6% 0.013 86.4)",
+          "oklch(95.0% 0.008 86.4)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Teal Ink",
+        "canonical": "#0C3438",
+        "oklch": "oklch(30.0% 0.044 204.6)",
+        "tonalRamp": [
+          "oklch(15.0% 0.017 204.6)",
+          "oklch(26.4% 0.042 204.6)",
+          "oklch(37.9% 0.039 204.6)",
+          "oklch(49.3% 0.032 204.6)",
+          "oklch(60.7% 0.025 204.6)",
+          "oklch(72.1% 0.018 204.6)",
+          "oklch(83.6% 0.011 204.6)",
+          "oklch(95.0% 0.003 204.6)"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Muted Teal Ink",
+        "canonical": "#3B5A5C",
+        "oklch": "oklch(44.4% 0.037 201.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.011 201.0)",
+          "oklch(26.4% 0.027 201.0)",
+          "oklch(37.9% 0.033 201.0)",
+          "oklch(49.3% 0.034 201.0)",
+          "oklch(60.7% 0.028 201.0)",
+          "oklch(72.1% 0.022 201.0)",
+          "oklch(83.6% 0.017 201.0)",
+          "oklch(95.0% 0.005 201.0)"
+        ]
+      },
+      "ivory-2": {
+        "role": "neutral",
+        "displayName": "Faded Ivory",
+        "canonical": "#C9D6D1",
+        "oklch": "oklch(86.5% 0.016 171.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.001 171.0)",
+          "oklch(26.4% 0.002 171.0)",
+          "oklch(37.9% 0.005 171.0)",
+          "oklch(49.3% 0.007 171.0)",
+          "oklch(60.7% 0.010 171.0)",
+          "oklch(72.1% 0.012 171.0)",
+          "oklch(83.6% 0.015 171.0)",
+          "oklch(95.0% 0.007 171.0)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page h1: the doctor's name on Home and About, the page title elsewhere. Lalezar, one weight."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section h2s, a single location's name, error codes."
+      },
+      "tagline": {
+        "displayName": "Tagline",
+        "purpose": "The doctor's tagline in gold Lalezar on the teal cloth."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Threads, procedures, clinic and panel titles in Lalezar."
+      },
+      "lede": {
+        "displayName": "Lede",
+        "purpose": "Opening sentence of a section or condition overview."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All running text and form input; 18px floor on phones."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Definition terms, chips, footer headings; 16px is the floor."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Pills and the call tab, Vazirmatn 700."
+      }
+    },
+    "shadows": [
+      {
+        "name": "float",
+        "value": "0 8px 24px rgb(12 52 56 / 0.28)",
+        "purpose": "The floating call tab only; nothing else casts a shadow."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "purpose": "The one easing for every transition and animation."
+      },
+      {
+        "name": "dur-hover",
+        "value": "150ms",
+        "purpose": "Colour-only hovers (fine pointers only)."
+      },
+      {
+        "name": "dur-press",
+        "value": "160ms",
+        "purpose": "Press feedback: scale 0.97 on pills, icon buttons, call tab, captcha refresh; none under reduced motion."
+      },
+      {
+        "name": "dur-menu",
+        "value": "220ms",
+        "purpose": "Phone menu: 8px slide + fade in; 150ms fade under reduced motion."
+      },
+      {
+        "name": "dur-tab",
+        "value": "260ms",
+        "purpose": "Call tab rises 16px in; opacity 200ms linear; stays put under reduced motion."
+      },
+      {
+        "name": "dur-flip-in",
+        "value": "560ms",
+        "purpose": "Flip card turn to the gold back: the one signature motion."
+      },
+      {
+        "name": "dur-flip-out",
+        "value": "380ms",
+        "purpose": "Flip card turn back. Reduced motion: a 200ms opacity crossfade."
+      },
+      {
+        "name": "sent-in",
+        "value": "280ms after 80ms, from scale 0.9 + opacity 0",
+        "purpose": "The sent check settles in; 200ms fade under reduced motion."
+      },
+      {
+        "name": "copy-check",
+        "value": "180ms, scale(0.8)/opacity 0.4 to 1",
+        "purpose": "Copy-address confirmation icon (WAAPI); opacity only under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "cards-2col",
+        "value": "1100px"
+      },
+      {
+        "name": "tablet",
+        "value": "960px"
+      },
+      {
+        "name": "location-stack",
+        "value": "700px"
+      },
+      {
+        "name": "phone",
+        "value": "600px"
+      },
+      {
+        "name": "narrow",
+        "value": "480px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Gold Pill (primary on teal)",
+      "kind": "button",
+      "refersTo": "pill-gold",
+      "description": "The primary action on the teal cloth: call the clinic.",
+      "html": "<div class=\"ds-ground-field\" dir=\"rtl\"><a class=\"ds-pill ds-pill-gold\" href=\"#\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M5 3h3.5l2 5-2.5 1.5a11 11 0 0 0 6.5 6.5L16 13.5l5 2V19a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2Z\"/></svg>تماس با مطب</a></div>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-block-size: 48px; padding: 10px 24px; border: 2px solid transparent; border-radius: 999px; font: 700 1.0625rem/1.2 Vazirmatn, system-ui, sans-serif; text-decoration: none; cursor: pointer; transition: background-color 150ms cubic-bezier(.2,.8,.2,1), color 150ms cubic-bezier(.2,.8,.2,1), border-color 150ms cubic-bezier(.2,.8,.2,1), scale 160ms cubic-bezier(.2,.8,.2,1); } .ds-pill:active { scale: 0.97; } .ds-pill:focus-visible { outline: 3px solid var(--focus, var(--madder, #A23B2C)); outline-offset: 3px; border-radius: 999px; } .ds-ground-field { background: var(--field, #0C3438); padding: 24px; --focus: var(--gold, #D4A84E); } .ds-pill-gold { background: var(--gold, #D4A84E); border-color: var(--gold, #D4A84E); color: var(--field, #0C3438); } .ds-pill-gold:hover { background: var(--ivory, #F7F2E7); border-color: var(--ivory, #F7F2E7); }"
+    },
+    {
+      "name": "Teal Pill (primary on light ground)",
+      "kind": "button",
+      "refersTo": "pill-field",
+      "description": "The primary action on the pale ground; inverts to gold on hover.",
+      "html": "<div class=\"ds-ground-sea\" dir=\"rtl\"><button class=\"ds-pill ds-pill-field\" type=\"button\">زندگی‌نامه‌ی کامل دکتر<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 12H5M11 6l-6 6 6 6\"/></svg></button></div>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-block-size: 48px; padding: 10px 24px; border: 2px solid transparent; border-radius: 999px; font: 700 1.0625rem/1.2 Vazirmatn, system-ui, sans-serif; text-decoration: none; cursor: pointer; transition: background-color 150ms cubic-bezier(.2,.8,.2,1), color 150ms cubic-bezier(.2,.8,.2,1), border-color 150ms cubic-bezier(.2,.8,.2,1), scale 160ms cubic-bezier(.2,.8,.2,1); } .ds-pill:active { scale: 0.97; } .ds-pill:focus-visible { outline: 3px solid var(--focus, var(--madder, #A23B2C)); outline-offset: 3px; border-radius: 999px; } .ds-ground-sea { background: var(--sea, #E3ECE6); padding: 24px; } .ds-pill-field { background: var(--field, #0C3438); border-color: var(--field, #0C3438); color: var(--ivory, #F7F2E7); } .ds-pill-field:hover { background: var(--gold, #D4A84E); border-color: var(--gold, #D4A84E); color: var(--field, #0C3438); }"
+    },
+    {
+      "name": "Line Pill (secondary)",
+      "kind": "button",
+      "refersTo": "pill-line",
+      "description": "Secondary action: a teal outline that fills on hover (gold outline on teal).",
+      "html": "<div class=\"ds-ground-sea\" dir=\"rtl\"><a class=\"ds-pill ds-pill-line\" href=\"#\">همه‌ی بیماری‌ها و اقدامات<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 12H5M11 6l-6 6 6 6\"/></svg></a></div>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-block-size: 48px; padding: 10px 24px; border: 2px solid transparent; border-radius: 999px; font: 700 1.0625rem/1.2 Vazirmatn, system-ui, sans-serif; text-decoration: none; cursor: pointer; transition: background-color 150ms cubic-bezier(.2,.8,.2,1), color 150ms cubic-bezier(.2,.8,.2,1), border-color 150ms cubic-bezier(.2,.8,.2,1), scale 160ms cubic-bezier(.2,.8,.2,1); } .ds-pill:active { scale: 0.97; } .ds-pill:focus-visible { outline: 3px solid var(--focus, var(--madder, #A23B2C)); outline-offset: 3px; border-radius: 999px; } .ds-ground-sea { background: var(--sea, #E3ECE6); padding: 24px; } .ds-pill-line { background: transparent; border-color: var(--field, #0C3438); color: var(--field, #0C3438); } .ds-pill-line:hover { background: var(--field, #0C3438); color: var(--ivory, #F7F2E7); }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "text-field",
+      "description": "Square, 56px, ivory ground; madder border and message when invalid.",
+      "html": "<div class=\"ds-field\" dir=\"rtl\"><label for=\"ds-n\">نام</label><input id=\"ds-n\" type=\"text\" value=\"\"><label for=\"ds-p\">شماره تماس</label><p class=\"ds-error\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 7.5v5.5M12 16.5v.01\"/></svg>شماره را با ۱۱ رقم بنویسید.</p><input id=\"ds-p\" class=\"ds-invalid\" type=\"tel\" dir=\"ltr\"></div>",
+      "css": ".ds-field { display: grid; gap: 6px; padding: 24px; background: var(--ivory, #F7F2E7); color: var(--field, #0C3438); font: 400 1.125rem/1.9 Vazirmatn, system-ui, sans-serif; } .ds-field label { font-weight: 700; } .ds-field input { inline-size: 100%; min-block-size: 56px; padding: 12px 16px; border: 2px solid var(--ink-2, #3B5A5C); border-radius: 0; background: var(--ivory, #F7F2E7); color: var(--field, #0C3438); font: inherit; line-height: 1.6; transition: border-color 150ms cubic-bezier(.2,.8,.2,1); } .ds-field input[dir=ltr] { text-align: right; } .ds-field input:hover, .ds-field input:focus-visible { border-color: var(--field, #0C3438); } .ds-field input:focus-visible { outline: 3px solid var(--madder, #A23B2C); outline-offset: 2px; } .ds-field input.ds-invalid { border-color: var(--madder, #A23B2C); } .ds-error { display: flex; gap: 8px; margin: 0; font-size: 1rem; font-weight: 700; line-height: 1.7; color: var(--madder, #A23B2C); } .ds-error svg { flex: none; margin-block-start: 3px; }"
+    },
+    {
+      "name": "Header and Nav",
+      "kind": "nav",
+      "description": "The teal bar: lungs mark lockup, nav with gold underline on the current page, phone as a line pill.",
+      "html": "<header class=\"ds-nav\" dir=\"rtl\"><span class=\"ds-lockup\"><b>دکتر سپیده صفانوایی</b></span><nav><a href=\"#\" aria-current=\"page\">خانه</a><a href=\"#\">درباره‌ی دکتر</a><a href=\"#\">بیماری‌ها</a><a href=\"#\">مطب</a></nav><a class=\"ds-navphone\" href=\"#\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M5 3h3.5l2 5-2.5 1.5a11 11 0 0 0 6.5 6.5L16 13.5l5 2V19a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2Z\"/></svg><span dir=\"ltr\">۰۱۱-۴۴۲۲۹۲۷۰</span></a></header>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 32px; min-block-size: 88px; padding: 16px 24px; background: var(--field, #0C3438); color: var(--ivory, #F7F2E7); font: 400 1.125rem/1.9 Vazirmatn, system-ui, sans-serif; } .ds-lockup { display: flex; align-items: center; gap: 12px; } .ds-nav nav { display: flex; gap: 24px; font-weight: 500; } .ds-nav nav a { color: inherit; text-decoration: none; padding-block: 8px; border-block-end: 2px solid transparent; transition: border-color 150ms cubic-bezier(.2,.8,.2,1); } .ds-nav nav a:hover, .ds-nav nav a[aria-current=page] { border-color: var(--gold, #D4A84E); } .ds-nav a:focus-visible { outline: 3px solid var(--gold, #D4A84E); outline-offset: 3px; border-radius: 4px; } .ds-navphone { margin-inline-start: auto; display: inline-flex; align-items: center; gap: 10px; min-block-size: 44px; padding: 8px 20px; border: 2px solid var(--gold, #D4A84E); border-radius: 999px; color: var(--ivory, #F7F2E7); text-decoration: none; font-weight: 700; font-size: 1rem; transition: background-color 150ms, color 150ms; } .ds-navphone:hover { background: var(--gold, #D4A84E); color: var(--field, #0C3438); }"
+    },
+    {
+      "name": "Fact Chips",
+      "kind": "chip",
+      "refersTo": "fact-chip",
+      "description": "Flat swatches butted with 2px gaps; the council number in gold.",
+      "html": "<ul class=\"ds-facts\" dir=\"rtl\"><li><strong>۰۰</strong> سال تجربه</li><li>طبابت از <strong>۱۳۰۰</strong></li><li class=\"ds-gold\">شماره نظام پزشکی <strong>۰۰۰۰۰</strong></li></ul>",
+      "css": ".ds-facts { display: flex; flex-wrap: wrap; gap: 2px; margin: 0; padding: 24px; list-style: none; background: var(--field, #0C3438); } .ds-facts li { padding: 10px 20px; background: var(--field-2, #165257); color: var(--ivory, #F7F2E7); font: 500 1rem/1.7 Vazirmatn, system-ui, sans-serif; } .ds-facts .ds-gold { background: var(--gold, #D4A84E); color: var(--field, #0C3438); } .ds-facts strong { font-weight: 700; }"
+    },
+    {
+      "name": "Credential Flip Card",
+      "kind": "card",
+      "refersTo": "flip-front",
+      "description": "The signature: a teal swatch with a woven foot that turns (560ms in / 380ms out) to its gold reverse.",
+      "html": "<div class=\"ds-flipwrap\" dir=\"rtl\"><button class=\"ds-flip\" type=\"button\" aria-pressed=\"false\" onclick=\"this.setAttribute('aria-pressed', this.getAttribute('aria-pressed')!=='true')\"><span class=\"ds-turn\"><span class=\"ds-face ds-front\"><svg class=\"ds-cue\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4\"/></svg><span class=\"ds-year\">۱۳۸۷</span><span class=\"ds-title\">فوق تخصص ریه و مراقبت‌های ویژه (ICU)</span></span><span class=\"ds-face ds-back\"><span class=\"ds-label\">محل:</span><span class=\"ds-inst\">بیمارستان مسیح دانشوری</span></span></span></button></div>",
+      "css": ".ds-flipwrap { padding: 24px; background: var(--sea, #E3ECE6); inline-size: 300px; } .ds-flip { display: grid; inline-size: 100%; padding: 0; border: 0; border-radius: 0; background: none; font: inherit; text-align: start; perspective: 1100px; cursor: pointer; } .ds-turn { display: grid; min-block-size: 240px; transform-style: preserve-3d; transition: transform 380ms cubic-bezier(.2,.8,.2,1); } .ds-flip:hover .ds-turn, .ds-flip:focus-visible .ds-turn, .ds-flip[aria-pressed=true] .ds-turn { transform: rotateY(-180deg); transition-duration: 560ms; } .ds-face { grid-area: 1/1; display: flex; flex-direction: column; gap: 8px; padding: 24px; backface-visibility: hidden; -webkit-backface-visibility: hidden; } .ds-front { position: relative; padding-block-end: 40px; color: var(--ivory, #F7F2E7); background: linear-gradient(to top, var(--field-2, #165257) 0 6px, var(--madder, #A23B2C) 6px 9px, var(--gold, #D4A84E) 9px 15px, var(--field, #0C3438) 15px); } .ds-cue { position: absolute; inset-block-start: 24px; inset-inline-end: 24px; color: var(--gold, #D4A84E); } .ds-year { font: 400 3.5rem/1.1 Lalezar, Vazirmatn, sans-serif; color: var(--gold, #D4A84E); } .ds-title { margin-block-start: auto; font: 700 1.25rem/1.6 Vazirmatn, sans-serif; } .ds-back { justify-content: flex-end; background: var(--gold, #D4A84E); color: var(--field, #0C3438); transform: rotateY(180deg); } .ds-label { font: 500 1rem Vazirmatn, sans-serif; } .ds-inst { font: 400 1.625rem/1.5 Lalezar, Vazirmatn, sans-serif; } .ds-flip:focus-visible { outline: 3px solid var(--madder, #A23B2C); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-turn, .ds-flip:hover .ds-turn, .ds-flip[aria-pressed=true] .ds-turn { transform: none; transition: none; } .ds-face { backface-visibility: visible; } .ds-back { transform: none; opacity: 0; transition: opacity 200ms linear; } .ds-flip:hover .ds-back, .ds-flip[aria-pressed=true] .ds-back { opacity: 1; } }"
+    },
+    {
+      "name": "Location Panel",
+      "kind": "card",
+      "refersTo": "location-panel",
+      "description": "An ivory panel under the woven head edge: name in Lalezar, address, large phone.",
+      "html": "<section class=\"ds-place\" dir=\"rtl\"><h3>مطب آمل</h3><p class=\"ds-addr\">آمل، خیابان ...</p><a class=\"ds-phone\" href=\"#\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M5 3h3.5l2 5-2.5 1.5a11 11 0 0 0 6.5 6.5L16 13.5l5 2V19a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2Z\"/></svg><span dir=\"ltr\">۰۱۱-۴۴۲۲۹۲۷۰</span></a><p class=\"ds-hours\">روزانه، شیفت عصر</p></section>",
+      "css": ".ds-place { display: grid; gap: 24px; padding: 40px 32px; background: linear-gradient(to bottom, var(--gold, #D4A84E) 0 8px, var(--madder, #A23B2C) 8px 12px, var(--field-2, #165257) 12px 20px, var(--ivory, #F7F2E7) 20px); color: var(--field, #0C3438); font: 400 1.125rem/1.9 Vazirmatn, sans-serif; } .ds-place h3 { margin: 0; font: 400 1.75rem/1.35 Lalezar, Vazirmatn, sans-serif; } .ds-addr { margin: 0; font-size: 1.25rem; font-weight: 500; line-height: 1.8; } .ds-phone { display: inline-flex; align-items: center; gap: 8px; min-block-size: 48px; color: inherit; font: 700 1.5rem/1.2 Vazirmatn, sans-serif; text-decoration: underline 2px transparent; transition: text-decoration-color 150ms cubic-bezier(.2,.8,.2,1); } .ds-phone svg { color: var(--field-2, #165257); inline-size: 22px; block-size: 22px; } .ds-phone:hover { text-decoration-color: currentColor; } .ds-phone:focus-visible { outline: 3px solid var(--madder, #A23B2C); outline-offset: 3px; border-radius: 4px; } .ds-hours { margin: 0; font-weight: 500; }"
+    },
+    {
+      "name": "Call Tab",
+      "kind": "custom",
+      "refersTo": "calltab",
+      "description": "The one floating object and the one shadow: a gold pill to call the clinic.",
+      "html": "<div class=\"ds-ground-sea\" dir=\"rtl\"><a class=\"ds-calltab\" href=\"#\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M5 3h3.5l2 5-2.5 1.5a11 11 0 0 0 6.5 6.5L16 13.5l5 2V19a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2Z\"/></svg>تماس با مطب</a></div>",
+      "css": ".ds-ground-sea { background: var(--sea, #E3ECE6); padding: 32px; } .ds-calltab { display: inline-flex; align-items: center; gap: 10px; min-block-size: 52px; padding: 12px 22px; border-radius: 999px; background: var(--gold, #D4A84E); color: var(--field, #0C3438); font: 700 1.0625rem/1 Vazirmatn, sans-serif; text-decoration: none; box-shadow: 0 8px 24px rgb(12 52 56 / 0.28); transition: background-color 150ms cubic-bezier(.2,.8,.2,1), color 150ms cubic-bezier(.2,.8,.2,1), scale 160ms cubic-bezier(.2,.8,.2,1); } .ds-calltab:hover { background: var(--field, #0C3438); color: var(--ivory, #F7F2E7); } .ds-calltab:active { scale: 0.97; } .ds-calltab:focus-visible { outline: 3px solid var(--madder, #A23B2C); outline-offset: 3px; }"
+    },
+    {
+      "name": "Selvedge",
+      "kind": "custom",
+      "description": "The seam between the teal cloth and the page: seven hard-edged threads.",
+      "html": "<div class=\"ds-selvedge\" aria-hidden=\"true\"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>",
+      "css": ".ds-selvedge { display: grid; grid-template-rows: 16px 8px 4px 8px 24px 8px 4px; } .ds-selvedge i:nth-child(1), .ds-selvedge i:nth-child(6) { background: var(--gold, #D4A84E); } .ds-selvedge i:nth-child(2), .ds-selvedge i:nth-child(7) { background: var(--field, #0C3438); } .ds-selvedge i:nth-child(3) { background: var(--madder, #A23B2C); } .ds-selvedge i:nth-child(4) { background: var(--ivory, #F7F2E7); } .ds-selvedge i:nth-child(5) { background: var(--field-2, #165257); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "چادرشب (the Amol weave)",
+    "overview": "**Creative North Star: \"چادرشب\" (the Amol weave)**\n\nThe site is woven like a chadorshab, the striped cloth of Mazandaran, re-dyed in the teal and gold of the doctor's own logo. Whole bands of flat colour carry the page: deep teal cloth for the header, the hero, the page heads, the procedures band and the footer; a pale Caspian-green ground for reading; ivory panels where something is filled in or looked up. Saffron-gold and madder-red appear as threads: in the striped selvedge at a seam, in the frame around the portrait, along the woven edge of a swatch. It belongs to Mazandaran, and through the logo's colours it belongs to her.\n\nThe surface is calm and legible before it is decorative. Text is Persian, right to left, set large (18 px body on a phone) with generous line height for an older reader. The pills are full-radius Parsley buttons with colour-only hovers. Everything else has the hard edges of cloth: square panels, square fields, flat swatches butted together. There is one 3D moment, the credential flip card, and one floating object with one shadow, the call tab. The phone is always one tap away, and the system never pushes.\n\nThere are no photographs yet, and none are faked. The imagery is the weave itself, the lungs mark traced from the logo, and a 4:5 woven portrait frame that makes the placeholder look intentional and a future photo look framed.",
+    "keyCharacteristics": [
+      "Flat colour fields with hard edges; stripes only at seams, never as a pattern.",
+      "One measure: the 8 px thread.",
+      "Lalezar for display at one weight, Vazirmatn for everything read.",
+      "Full pills, colour-only hovers at 150 ms, a 0.97 press.",
+      "One signature motion (the flip card) and one shadow (the call tab).",
+      "RTL and Persian digits throughout; Latin isolated, `tel:` in ASCII.",
+      "Layout survives 1 to N clinic locations without a layout change."
+    ],
+    "rules": [
+      {
+        "name": "The Madder Is a Thread Rule",
+        "body": "Madder is never a button, a panel or surface fill, a heading or ordinary text. It is a woven thread (the selvedge, the woven edges, the portrait frame), a focus ring on light ground, or the error state. Madder on teal is 2.0:1, so it is never used as a foreground on `field`. (The direction said \"stripes and focus ring only\"; the build added the error state, which reads at 5.4–5.9:1.)",
+        "section": "colors"
+      },
+      {
+        "name": "The Gold Belongs to the Cloth Rule",
+        "body": "Gold is never text, an icon, a hairline or a focus ring on `sea` or `ivory`: it measures 1.8:1 and 2.0:1 there. On light ground gold appears only as a fill carrying teal text (the call tab, a teal pill's hover, the flip-card back, the sent check, the skip link) or as a woven thread (the selvedge, the head of `--weave-head`).",
+        "section": "colors"
+      },
+      {
+        "name": "The Focus Follows the Ground Rule",
+        "body": "The focus ring is a 3 px madder outline, offset 3 px, on light ground, and it switches to gold on any teal surface.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Weight Rule",
+        "body": "Lalezar is used only for display and never for running text. It has one weight, so hierarchy comes from size and colour alone, never from faux bold.",
+        "section": "typography"
+      },
+      {
+        "name": "The Latin Fallback Rule",
+        "body": "Lalezar has no Latin glyphs. Every Latin run inside display type is wrapped in `bdi` and set in Vazirmatn 700 so its weight stays close to Lalezar's. One shared rule covers every display component; a new display component joins that list.",
+        "section": "typography"
+      },
+      {
+        "name": "The 18 px Phone Floor Rule",
+        "body": "On a phone (600 px and below), anything an older reader acts on (addresses, hours, the emergency line, field hints, the captcha alternative, condition descriptions) is at least body size. 16 px remains only for labels.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Tracking Rule",
+        "body": "Persian is never letter-spaced. It is a joined script, and tracking breaks the joins. The only tracked text in the build is the Latin captcha answer (0.15em).",
+        "section": "typography"
+      },
+      {
+        "name": "The One Shadow Rule",
+        "body": "Only the call tab casts a shadow. Panels, cards, pills and fields are flat at rest and on hover. Hover changes colour, never elevation.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Seams Only Rule",
+        "body": "Stripes appear only at seams (the selvedge), on the portrait frame and on the edges of swatches and panels. They never appear as a background pattern or texture. Overused, the weave tips into folklore: a handicraft shop, not a physician.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Two Edges Rule",
+        "body": "A woven edge is `background: var(--weave-foot)` or `var(--weave-head)`, never a new gradient. Hard stops only; no blended gradient anywhere. (The direction said \"no gradients\"; the build draws the weave as hard-stop gradients, which keeps the intent.)",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** build every gap, band and stripe from the 8 px thread (or its 4 px half inside a stripe).",
+      "**Do** open every page with a teal cloth band and follow it with the selvedge seam.",
+      "**Do** draw a woven edge with `--weave-foot` (the foot of a teal swatch) or `--weave-head` (the head of an ivory panel).",
+      "**Do** use the gold pill as the primary on teal and the teal pill as the primary on light ground; give secondaries the line pill.",
+      "**Do** switch the focus ring to gold on teal; keep it madder on light ground.",
+      "**Do** run every displayed number through `fa_digits` or `phone_display`, every editor-typed string through `isolate_latin`, and every `tel:` link through `tel_href` (ASCII).",
+      "**Do** wrap Latin inside display type in `bdi` and set it in Vazirmatn 700.",
+      "**Do** keep act-on text at 18 px or more on phones, and tap targets at 48 px (56 px for a full-width call).",
+      "**Do** design every location block for 1, 2 and 3+ locations: one wide composition, or equal columns.",
+      "**Do** gate every hover with `(hover: hover) and (pointer: fine)` and give every motion a reduced-motion alternative.",
+      "**Do** let a real photo drop into the 4:5 woven frame (`object-fit: cover`, focused at 22% from the top); until then, show the gold lungs on field-2."
+    ],
+    "donts": [
+      "**Don't** use stripes as a background pattern or texture. They belong at seams, on the portrait frame and on swatch edges only.",
+      "**Don't** use madder for a button, a panel fill, a heading or ordinary text, or as a foreground on teal.",
+      "**Don't** put gold text, icons, hairlines or focus rings on `sea` or `ivory` (1.8:1 and 2.0:1).",
+      "**Don't** set running text in Lalezar, or fake a bold for it.",
+      "**Don't** letter-space Persian.",
+      "**Don't** add shadows, glows, blur or blended gradients. The call tab's float is the only shadow.",
+      "**Don't** round a panel, card, chip or field. Only pills and round icon buttons are round.",
+      "**Don't** add a second 3D or signature motion, scroll-in entrances or hover nudges. Hovers change colour only.",
+      "**Don't** use stock photos of people, or any image presented as the doctor that is not her.",
+      "**Don't** put a lone location in a small card, or hard-code «مطب» against «مطب‌ها»."
+    ]
+  }
+}

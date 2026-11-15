@@ -38,7 +38,10 @@ class InquiryForm(forms.ModelForm):
     captcha = CaptchaField(
         label="کد امنیتی",
         help_text="حروف انگلیسیِ تصویر را بنویسید. بزرگ یا کوچک بودن حروف فرقی ندارد.",
-        error_messages={"invalid": "کد امنیتی درست نیست. کد تصویر تازه را بنویسید."},
+        error_messages={
+            "required": "لطفاً کد امنیتی تصویر را بنویسید.",
+            "invalid": "کد امنیتی درست نیست. کد تصویر تازه را بنویسید.",
+        },
         widget=CaptchaTextInput(attrs={
             "autocomplete": "off", "autocapitalize": "none", "autocorrect": "off",
             "spellcheck": "false", "dir": "ltr", "enterkeyhint": "send",

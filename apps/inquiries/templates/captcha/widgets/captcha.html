@@ -3,6 +3,7 @@
 <span class="captcha">
   <img src="{{ image }}" alt="تصویر کد امنیتی" class="captcha__image" width="200" height="70" data-captcha-image>
   <button type="button" class="captcha__refresh" data-captcha-refresh="{% url 'captcha-refresh' %}" aria-label="تصویر تازه" title="تصویر تازه" hidden><svg aria-hidden="true"><use href="#i-refresh"/></svg></button>
+  <span class="captcha__status" aria-live="polite" data-captcha-status></span>
 </span>
 {% for widget in widget.subwidgets %}{% include widget.template_name %}{% endfor %}
 {% endspaceless %}

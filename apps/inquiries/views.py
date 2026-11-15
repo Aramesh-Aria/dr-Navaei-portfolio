@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
 
@@ -47,11 +48,20 @@ class ContactView(FormView):
     form_class = InquiryForm
     success_url = reverse_lazy("contact")
 
+    def post(self, request, *args, **kwargs):
+        # A filled honeypot is a bot: confirm before validating, so it learns
+        # nothing from errors either, and save nothing.
+        if request.POST.get("website", "").strip():
+            return self.sent()
+        return super().post(request, *args, **kwargs)
+
     def form_valid(self, form):
-        if not self.request.POST.get("website", "").strip():
-            notify(form.save())
+        notify(form.save())
+        return self.sent()
+
+    def sent(self):
         messages.success(self.request, SENT, extra_tags=SENT)
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

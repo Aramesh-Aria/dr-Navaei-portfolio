@@ -17,9 +17,13 @@ register = template.Library()
 _TO_PERSIAN = str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹")
 _TO_ASCII = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
 
-# A run of Latin letters, digits stuck to them, and the spaces/punctuation
-# between Latin words ("Lung Cancer", "COVID-19"), but never a trailing space.
-_LATIN_RUN = re.compile(r"[A-Za-z][A-Za-z0-9]*(?:[ .\-/&+][A-Za-z0-9]+)*")
+# A run of Latin letters, digits stuck to them (ASCII, or Persian once
+# fa_digits has run), punctuation inside a term ("COVID-19") and the spaces
+# between Latin words ("Lung Cancer"). A space continues the run only into a
+# letter, so a number after a term ("ICU 2") stays Persian text.
+_LATIN_RUN = re.compile(
+    r"[A-Za-z][A-Za-z0-9۰-۹]*(?:[.\-/&+][A-Za-z0-9۰-۹]+| [A-Za-z][A-Za-z0-9۰-۹]*)*"
+)
 
 
 @register.filter
@@ -60,7 +64,9 @@ def phone_display(value):
 
 @register.filter(needs_autoescape=True)
 def isolate_latin(value, autoescape=True):
-    """Wrap each Latin run in <bdi> so mixed sentences stay readable in RTL."""
+    """Wrap each Latin run in <bdi> so mixed sentences stay readable in RTL,
+    and write every other digit in Persian: this is the filter for any text
+    an editor types (a house number, a year in a title)."""
     text = conditional_escape(value) if autoescape else str(value)
     # Entities such as &lt; must not be split, so skip them while wrapping.
     parts = re.split(r"(&[#\w]+;)", str(text))
@@ -69,7 +75,14 @@ def isolate_latin(value, autoescape=True):
         if part.startswith("&") and part.endswith(";"):
             out.append(part)
         else:
-            out.append(_LATIN_RUN.sub(lambda m: f"<bdi>{m.group(0)}</bdi>", part))
+            pieces = []
+            last = 0
+            for m in _LATIN_RUN.finditer(part):
+                pieces.append(fa_digits(part[last:m.start()]))
+                pieces.append(f"<bdi>{m.group(0)}</bdi>")
+                last = m.end()
+            pieces.append(fa_digits(part[last:]))
+            out.append("".join(pieces))
     return mark_safe("".join(out))
 
 

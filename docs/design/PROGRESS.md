@@ -18,7 +18,7 @@ Kickoff line for every new chat:
 | 5 | Conditions and Locations | ✅ done 2026-11-14 | — |
 | 6 | Contact and error pages | ✅ done 2026-11-15 | — |
 | 7 | Motion, mobile and cleanup | ✅ done 2026-11-15 | — |
-| 8 | Final review and report | ⬜ next | **required:** decide on the merge |
+| 8 | Final review and report | ⏸ done 2026-11-15, waiting at gate | **required:** decide on the merge |
 
 Status values: ⬜ not started · 🟡 in progress (see its checkpoint) · ⏸ waiting at gate · ✅ done
 
@@ -174,6 +174,34 @@ Append one line per decision, with the stage it was made in. Never delete a line
   - **Playwright, by API and CDP:** all six pages at 1440 / 768 / 390 (no horizontal scroll, one `h1`, zero console messages, no 4xx); `:active` forced over CDP (`scale` 0.97, `none` under reduced motion); the call tab's typing state (visible → hidden → visible); the call tab 12 px from both edges at 390; reduced motion (menu `fade-in` 150 ms, flip crossfade); the sent state (`sent-in`, focus on it; a real submit saved `09121234567`, then deleted); the 500 page (sprite icon and selvedge); the worst case (3 locations, «ICU» in a name, no mobile, two-line hours, Persian digits in a phone) at 1440 and 390, with the DB restored afterwards.
   - **In-app browser, real input:** the menu opens by click and closes on Escape with focus returned; the Tab order on About (skip link → lockup → nav → phone → flip cards), with a visible ring on every stop; the copy button's refused state and, with the clipboard stubbed, its success state and animation.
 
+- **After Stage 7 (owner, commit `339396f`):** the owner added, outside the staged flow:
+  - a server-drawn image captcha on the contact form (`django-simple-captcha`, as on ArameshMusicAcademy-website), with a Persian label, hint, error and a «تصویر تازه» (new image) button. Deploying it needs `python manage.py migrate` on Runflare (the captcha table);
+  - 400 and 403 pages in the site's style (`handler400`, `handler403`);
+  - Home's «زندگی‌نامه‌ی کامل» link as a filled primary pill (`pill--field`).
+
+  Stage 8 keeps all three and puts them through the verification loop.
+- **Stage 8:** `.playwright-mcp/` (Playwright MCP session output, 21 files committed in `339396f`) is now in `.gitignore` and removed from the index; the files stay on disk.
+
+- **Stage 8:** reviews run: impeccable `critique` (two isolated reviewers: design review 30/36, detector 0 findings in templates), `audit` 16/20, `code-review` (standards and spec, source only), `break-ui` across the site (worst case written to the dev DB, restored from a backup afterwards). The results and every fix are in [`report.md`](report.md) §4.
+- **Stage 8:** `isolate_latin` now also writes digits outside Latin runs in Persian and keeps Persian digits inside a run («COVID-۱۹» stays in one `<bdi>`). It is the filter for any text an editor types; `fa_digits` stays for numbers and plain fields.
+- **Stage 8:** with JS, keyboard focus turns a flip card through `aria-pressed` (so Enter/Space/Escape can turn it back, and leaving it turns it back); the CSS `:focus-visible` turn now applies only without JS (`html:not(.js)`). The approved "turns on keyboard focus" behaviour is unchanged.
+- **Stage 8:** error pages (400/403/404/CSRF) empty `{% block address %}`, which holds the canonical link and `og:url`.
+- **Stage 8:** the honeypot is checked in `ContactView.post()` before validation.
+- **Stage 8 (captcha, kept as the owner chose it):** a Persian `required` message; drawn at 400×140 and shown at 200×70 (sharp on 2×/3× screens); a phone alternative under it (`.field__alt`); a failed "new image" says so in a live region, and `aria-disabled` keeps focus; no press scale under reduced motion. Switching to a digits or math challenge is proposal 9.1 in the report.
+- **Stage 8:** `has_route` (context processor): «و مسیر» appears in the links to `/locations/` only when some location has a `map_url`.
+- **Stage 8:** the emergency line opens the "when to see a doctor" panel at body size; madder is no longer a link colour on the contact page; a one-sentence bio paragraph is not bolded whole; on phones the address, hours, emergency lines, field hints and condition descriptions are at body size (18 px); footer phone links are 44 px tall; the phone footer stacks with 2+ clinics (a `:has()` rule had outranked it).
+- **Stage 8:** `DESIGN.md` and `.impeccable/design.json` written with `impeccable document`, from the build. `PRODUCT.md`'s stack line now records the plain-CSS decision.
+- **Stage 8 (second pass, after the advisor's review):**
+  - `isolate_latin`: a space continues a Latin run only into a letter («ICU 2» → `<bdi>ICU</bdi> ۲`).
+  - break-ui was re-run visually at 1440/1024/768/390, with worst-case, sparse (zero procedures, no mobile, no map, empty tagline) and three-clinic data. It found and fixed:
+    - a pasted URL in an address scrolled every page sideways (`overflow-wrap`);
+    - nav labels wrapped beside a long tagline (nav `nowrap`; the degrees line hides at 961–1100 px);
+    - «COVID-19» split in a heading (heading `bdi` don't wrap).
+  - The craft floor: the eyebrow on About is removed (a ban); the error summary is framed in 2 px madder instead of a 4 px side stripe; the index rail is 1 px; the header degrees line is 16 px.
+  - `review-animations` on the captcha button: it gains the shared `--dur-press` scale transition. Approve.
+  - The critique snapshot is in `.impeccable/critique/` (left open: the captcha P1).
+- **Stage 8:** stale hashed static copies deleted after the final `collectstatic`. Screenshots of every page at 1440/768/390 are in `screens/stage8/`. LCP was measured on the final build on a `DEBUG=False --nostatic` server: 60–96 ms on localhost and 684–760 ms on simulated slow 4G, at 218–262 KB per page. On that server: zero console errors and zero 4xx across 7 pages × 3 widths. 404 and 400 were captured.
+
 ## Open questions for the owner
 
 Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.md)). Record each answer under Decisions when it comes back, then update the seeds or tell the Content Editor what to change in the admin.
@@ -194,32 +222,11 @@ Waiting on the doctor (sent as [`questions-for-doctor.md`](questions-for-doctor.
 
 ## Handoff to next stage
 
-**Stage 8 (Final review and report) is next.** Stage 7 has no gate.
+**All design stages are done. Stage 8 waits at its gate: the owner reads [`report.md`](report.md) and decides whether to merge `frontend-design` into `main`.** No chat merges or pushes.
 
-Screenshots (`docs/design/screens/stage7/`): every page at 1440 and 390 (390 full-page), `home-768.png`, `contact-390-sent.png`.
+After the merge:
+- Deploy, then run `python manage.py migrate` on Runflare (`doctor/0003` and the captcha table). Never `collectstatic` there.
+- Owner tasks are in `report.md` §7, the doctor's pre-launch review in §8, and the optional proposals (a friendlier captcha, the model clean-ups) in §9.
+- Still waiting on the doctor's answers (questions above). Each fits with an admin edit; the surname also appears in the Jazzmin titles in `config/settings/base.py`.
 
-### Template structure (updated)
-- `base.html` blocks: unchanged.
-- Context: `clinic_word` («مطب» / «مطب‌ها»), from `apps.core.context_processors.site`. Use it for every label that names the clinics.
-- CSS tokens added: `--dur-press`, `--weave-foot`, `--weave-head`. A woven edge is `background: var(--weave-…)`, never a new gradient.
-- `site.js` part 4 has a failure state; part 5 sets `html.is-typing`.
-
-### For Stage 8
-- **Simplify findings left for Stage 8 or later** (skipped here because they change a model or a partial's interface):
-  - a `ConditionTreated` queryset (`published()`, `conditions()`, `procedures()`) instead of the filter repeated in four views; it needs a models.py change;
-  - `photo_url` / `photo_srcset` call `storage.exists()` on every access (up to 6 stats per Home render); cache per instance or record the variants at save;
-  - the site context processor runs 2 queries per request, and Home/About query the profile again;
-  - the procedures and credentials `<section>` wrappers are copied between pages; the phone-link markup is hand-written about 18 times, with sr-only labels that have drifted;
-  - each page writes its meta description twice (`description` and `og_description`);
-  - `lungs.svg` is 30 KB for a 44 px mark; a simplified path would save about 75%.
-  - smaller CSS: the `body_class` blocks have no CSS or JS using them; `clinics--N`/`places--N` could be a single `--many` flag; the full-width phone-pill rule is repeated per container; the hero reaches into `.founder__frame`'s nested paddings (a `--frame` custom property would do it).
-- The impeccable hook flags `.form__summary`'s `border-inline-start: 4px` as a "side-tab". It's the error-summary alert pattern, so it's kept; the tool could only suppress it file-wide, so it was left standing.
-- **Needs a real phone:** the keyboard with the call tab hidden, landscape notch padding, autofill, the flip at 120 Hz.
-- The Playwright MCP's mouse and keyboard did nothing in this session; check that before relying on it for the keyboard pass.
-
-Pending, but not blocking:
-- The doctor's answers ([`questions-for-doctor.md`](questions-for-doctor.md)). Record them under Decisions when they arrive.
-- The medical review before launch: the condition texts, the "when to see a doctor", procedure and emergency lines (Stage 5), and the contact page copy, especially the promise that the clinic calls back (Stage 6). The new «کپی نشد» label is UI copy for the same review.
-- The email provider. Until then `INQUIRY_NOTIFICATION_EMAIL` stays empty and Inquiries are read in the admin.
-
-Tooling: the dev server is `http://127.0.0.1:8018`. To see the 404/500 pages, run a second server with `DEBUG = False` and `--nostatic` (a scratch settings module importing `config.settings.dev`); the dev server shows Django's debug pages instead.
+Tooling: the dev server is `http://127.0.0.1:8018`. For production-like serving (the 404/500 pages, LCP), run a second server on a scratch settings module that imports `config.settings.dev` and sets `DEBUG = False`, with `runserver 8019 --nostatic`.

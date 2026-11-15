@@ -2,7 +2,8 @@
 // 1. Phone menu: a disclosure. Escape closes it and returns focus to the button.
 // 2. Floating call tab: hidden while any [data-call-anchor] is on screen.
 // 3. Credential flip cards: tap (and Enter/Space) toggle aria-pressed; hover
-//    and keyboard focus turn them in CSS. Escape turns a card back.
+//    turns them in CSS. Keyboard focus turns a card through aria-pressed, so
+//    Enter/Space/Escape can turn it back; leaving it turns it back.
 // 4. Copy an address (for a taxi app): the button shows only where the
 //    clipboard is available, confirms in place and through a live region.
 // 5. Forms: a sent state or an error summary takes focus on load; the send
@@ -65,6 +66,17 @@
     });
     card.addEventListener("keydown", function (event) {
       if (event.key === "Escape") card.setAttribute("aria-pressed", "false");
+    });
+    var byFocus = false;
+    card.addEventListener("focus", function () {
+      if (card.matches(":focus-visible")) {
+        byFocus = true;
+        card.setAttribute("aria-pressed", "true");
+      }
+    });
+    card.addEventListener("blur", function () {
+      if (byFocus) card.setAttribute("aria-pressed", "false");
+      byFocus = false;
     });
   });
 
@@ -142,19 +154,22 @@
     var key = field.querySelector('input[type="hidden"]');
     var answer = field.querySelector('input:not([type="hidden"])');
     button.hidden = false;
+    var status = field.querySelector("[data-captcha-status]");
     button.addEventListener("click", function () {
-      button.disabled = true;
+      // aria-disabled, not disabled: a disabled button would drop focus.
+      if (button.getAttribute("aria-disabled") === "true") return;
+      button.setAttribute("aria-disabled", "true");
+      status.textContent = "";
       fetch(button.dataset.captchaRefresh, { headers: { "X-Requested-With": "XMLHttpRequest" } })
-        .then(function (response) { return response.ok ? response.json() : null; })
+        .then(function (response) { return response.ok ? response.json() : Promise.reject(); })
         .then(function (data) {
-          if (!data) return;
           image.src = data.image_url;
           key.value = data.key;
           answer.value = "";
           answer.focus();
         })
-        .catch(function () {})
-        .finally(function () { button.disabled = false; });
+        .catch(function () { status.textContent = "تصویر تازه نیامد. دوباره امتحان کنید."; })
+        .finally(function () { button.removeAttribute("aria-disabled"); });
     });
   });
 })();

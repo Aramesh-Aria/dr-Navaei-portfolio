@@ -53,6 +53,32 @@ class IsolateLatinFilterTests(SimpleTestCase):
             "&lt;<bdi>b</bdi>&gt;<bdi>x</bdi>&lt;/<bdi>b</bdi>&gt;",
         )
 
+    def test_digits_outside_latin_become_persian(self):
+        # An address or a title typed with ASCII digits in the admin.
+        self.assertEqual(
+            render("{{ t|isolate_latin }}", t="آمل، پلاک 12، طبقه 3"),
+            "آمل، پلاک ۱۲، طبقه ۳",
+        )
+
+    def test_digits_inside_a_latin_run_stay_in_it(self):
+        self.assertEqual(
+            render("{{ t|isolate_latin }}", t="عوارض COVID-19 و FEV1"),
+            "عوارض <bdi>COVID-19</bdi> و <bdi>FEV1</bdi>",
+        )
+
+    def test_a_number_after_a_space_is_persian_text_not_part_of_the_run(self):
+        self.assertEqual(render("{{ t|isolate_latin }}", t="بخش ICU 2"), "بخش <bdi>ICU</bdi> ۲")
+        self.assertEqual(
+            render("{{ t|fa_digits|isolate_latin }}", t="FEV1 80 درصد"),
+            "<bdi>FEV۱</bdi> ۸۰ درصد",
+        )
+
+    def test_persian_digits_after_fa_digits_stay_in_the_run(self):
+        self.assertEqual(
+            render("{{ t|fa_digits|isolate_latin }}", t="COVID-19"),
+            "<bdi>COVID-۱۹</bdi>",
+        )
+
 
 class ParagraphsFilterTests(SimpleTestCase):
     def test_text_is_split_on_blank_lines(self):
@@ -367,6 +393,22 @@ class AboutPageTests(TestCase):
         )
 
 
+class RouteLabelTests(TestCase):
+    """«نشانی مطب و مسیر» promises a route only when a map link exists."""
+
+    def test_without_a_map_link_the_label_names_only_the_address(self):
+        ClinicLocation.objects.update(map_url="")
+        html = self.client.get("/conditions/asthma/").content.decode()
+        self.assertIn("نشانی مطب<svg", html)
+        self.assertNotIn("و مسیر", html)
+
+    def test_with_a_map_link_the_label_names_the_route(self):
+        ClinicLocation.objects.update(map_url="https://neshan.org/maps/places/x")
+        for path in ("/", "/conditions/asthma/", "/contact/"):
+            with self.subTest(path=path):
+                self.assertContains(self.client.get(path), "نشانی مطب و مسیر")
+
+
 class CallTabTests(TestCase):
     def test_call_tab_starts_hidden_so_it_never_flashes_on_load(self):
         # site.js shows it once no [data-call-anchor] is on screen; CSS shows it without JS.
@@ -388,6 +430,9 @@ class NotFoundPageTests(TestCase):
         html = response.content.decode()
         self.assertRegex(html, r"<h1[^>]*>این صفحه پیدا نشد</h1>")
         self.assertIn('<meta name="robots" content="noindex">', html)
+        # A missing page must not name itself as the canonical address.
+        self.assertNotIn('rel="canonical"', html)
+        self.assertNotIn('og:url', html)
         self.assertIn('href="/conditions/"', html)
         self.assertIn('href="/conditions/asthma/"', html)  # the published conditions, as threads
         self.assertIn('href="tel:+981144229270"', html)
@@ -438,6 +483,7 @@ class BadRequestPageTests(TestCase):
         self.assertTemplateUsed(response, "400.html")
         self.assertContains(response, "درخواست نادرست بود", status_code=400)
         self.assertContains(response, '<meta name="robots" content="noindex">', status_code=400)
+        self.assertNotContains(response, 'rel="canonical"', status_code=400)
         self.assertContains(response, 'href="tel:+981144229270"', status_code=400)
 
 
@@ -455,6 +501,7 @@ class PermissionDeniedPageTests(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertTemplateUsed(response, "403.html")
         self.assertContains(response, "دسترسی به این صفحه ممکن نیست", status_code=403)
+        self.assertNotContains(response, 'rel="canonical"', status_code=403)
         self.assertContains(response, 'href="/"', status_code=403)
 
 
@@ -464,4 +511,5 @@ class ExpiredFormPageTests(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertTemplateUsed(response, "403_csrf.html")
         self.assertContains(response, "فرم منقضی شد", status_code=403)
+        self.assertNotContains(response, 'rel="canonical"', status_code=403)
         self.assertContains(response, 'href="/contact/"', status_code=403)

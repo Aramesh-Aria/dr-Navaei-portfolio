@@ -11,7 +11,6 @@
   <div class="wrap intro__grid">
     <div class="intro__portrait">{% include "partials/_portrait.html" with eager=True %}</div>
     <div class="intro__text">
-      <p class="eyebrow">درباره‌ی دکتر</p>
       <h1 class="display-1 intro__name" id="about-title">{{ profile.full_name }}</h1>
       {% if profile.intro_tagline %}<p class="display-tagline">{{ profile.intro_tagline|isolate_latin }}</p>{% endif %}
       {% include "partials/_facts.html" %}
@@ -27,7 +26,8 @@
       {% for p in profile.bio|paragraphs %}{% with s=p|lead_sentence year=p|first_year %}
       <div class="bio__para">
         <span class="bio__year" aria-hidden="true">{{ year }}</span>
-        <p><span class="bio__lead">{{ s.lead|isolate_latin }}</span>{% if s.rest %} {{ s.rest|isolate_latin }}{% endif %}</p>
+        {# A one-sentence paragraph has no lead: bolding all of it would be a wall of bold. #}
+        <p>{% if s.rest %}<span class="bio__lead">{{ s.lead|isolate_latin }}</span> {{ s.rest|isolate_latin }}{% else %}{{ s.lead|isolate_latin }}{% endif %}</p>
       </div>
       {% endwith %}{% endfor %}
     </div>

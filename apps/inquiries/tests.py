@@ -110,6 +110,15 @@ class ContactPageTests(TestCase):
         self.assertFalse(Inquiry.objects.exists())
         self.assertContains(response, "پیام شما رسید")  # a bot learns nothing
 
+    def test_a_filled_honeypot_with_invalid_fields_still_gets_the_confirmation(self):
+        # A bot that also fails validation (or the captcha) learns nothing either.
+        response = self.client.post(
+            "/contact/", {"name": "", "phone": "spam", "website": "http://spam.example"}, follow=True
+        )
+        self.assertFalse(Inquiry.objects.exists())
+        self.assertContains(response, "پیام شما رسید")
+        self.assertNotContains(response, "شماره تلفن درست نیست")
+
     def test_the_honeypot_is_hidden_from_people_and_screen_readers(self):
         html = self.client.get("/contact/").content.decode()
         self.assertRegex(html, r'<div class="form__trap" aria-hidden="true">')
@@ -145,9 +154,21 @@ class ContactCaptchaTests(TestCase):
         self.assertIn('href="#id_captcha_1"', html)  # the summary links to the box
         self.assertRegex(html, r'aria-describedby="id_captcha_1_hint id_captcha_1_error"')
 
-    def test_a_missing_code_is_refused(self):
-        self.client.post("/contact/", {"name": "مریم", "phone": "09121234567"})
+    def test_a_missing_code_is_refused_with_a_message_that_names_it(self):
+        response = self.client.post("/contact/", {"name": "مریم", "phone": "09121234567"})
         self.assertFalse(Inquiry.objects.exists())
+        self.assertContains(response, "لطفاً کد امنیتی تصویر را بنویسید.")
+
+    def test_anyone_who_cannot_read_the_image_is_offered_the_clinic_phone(self):
+        # The image has no audio version: the phone is its alternative (WCAG 1.1.1).
+        html = self.client.get("/contact/").content.decode()
+        self.assertRegex(html, r'<p class="field__alt">اگر خواندن تصویر برایتان دشوار است[^<]*<a[^>]*href="tel:\+981144229270"')
+
+    def test_the_image_is_drawn_at_twice_its_shown_size_for_sharp_phone_screens(self):
+        from django.conf import settings
+
+        self.assertEqual(settings.CAPTCHA_IMAGE_SIZE, (400, 140))
+        self.assertRegex(self.client.get("/contact/").content.decode(), r'class="captcha__image" width="200" height="70"')
 
     def test_the_contact_form_carries_a_csrf_token(self):
         self.assertContains(self.client.get("/contact/"), 'name="csrfmiddlewaretoken"')

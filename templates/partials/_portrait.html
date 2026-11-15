@@ -1,0 +1,14 @@
+{% load site %}{# The founder card: the portrait in a woven frame (gold, madder, ivory bands). Params: `caption` (bool), `eager` (bool, the LCP image). #}
+<figure class="founder{% if caption %} founder--captioned{% endif %}">
+  <div class="founder__frame"><div><div>
+    <div class="portrait">
+      <img class="portrait__img" src="{{ profile.photo_url }}"{% if profile.photo_srcset %} srcset="{{ profile.photo_srcset }}" sizes="(max-width: 960px) 40vw, 440px"{% endif %} width="800" height="1000" alt="{% if profile.photo %}{{ profile.full_name }}{% else %}نشان ریه، به جای عکس {{ profile.full_name }}{% endif %}"{% if eager %} fetchpriority="high"{% else %} loading="lazy"{% endif %} decoding="async">
+    </div>
+  </div></div></div>
+  {% if caption %}
+  <figcaption class="founder__caption">
+    <span class="founder__name">{{ profile.full_name }}</span>
+    {% if current %}<span class="founder__post">{{ current.title|isolate_latin }}، {{ current.institution|isolate_latin }}</span>{% endif %}
+  </figcaption>
+  {% endif %}
+</figure>

@@ -1,0 +1,38 @@
+{% load static site %}<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+{# Stands alone: no base.html, no context processors, nothing that needs the database. #}
+<title>مشکلی پیش آمد{% if profile %} · {{ profile.full_name }}{% endif %}</title>
+<link rel="stylesheet" href="{% static 'assets/css/site.css' %}">
+<link rel="icon" href="{% static 'assets/img/favicon-32x32.png' %}" sizes="32x32" type="image/png">
+<meta name="theme-color" content="#0C3438">
+</head>
+<body class="page-error">
+{% include "partials/_icons.html" %}
+<header class="site-header on-field">
+  <div class="site-header__bar wrap">
+    <a class="lockup" href="/"{% if profile %} aria-label="{{ profile.full_name }}، صفحه‌ی اصلی"{% endif %}>
+      <span class="mark" aria-hidden="true"></span>
+      {% if profile %}<span class="lockup__text"><span class="lockup__name">{{ profile.full_name }}</span></span>{% else %}<span class="sr-only">صفحه‌ی اصلی</span>{% endif %}
+    </a>
+  </div>
+</header>
+<main id="main">
+<section class="pagehead on-field" aria-labelledby="page-title">
+  <div class="wrap pagehead__inner">
+    <p class="pagehead__code num" aria-hidden="true">۵۰۰</p>
+    <h1 class="display-1 pagehead__title" id="page-title">مشکلی پیش آمد</h1>
+    <p class="lede">این صفحه الان باز نمی‌شود. خطا از سایت است، نه از شما. چند دقیقه‌ی دیگر دوباره امتحان کنید{% if primary_location %}، یا با مطب تماس بگیرید{% endif %}.</p>
+    <p class="actions pagehead__actions">
+      {% if primary_location %}<a class="pill pill--gold" href="{{ primary_location.phone|tel_href }}"><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="sr-only">تلفن مطب: </span><span class="num">{{ primary_location.phone|phone_display }}</span></a>{% endif %}
+      <a class="pill pill--line pill--on-field" href="/">صفحه‌ی اصلی</a>
+    </p>
+  </div>
+</section>
+{% include "partials/_weave.html" %}
+</main>
+</body>
+</html>

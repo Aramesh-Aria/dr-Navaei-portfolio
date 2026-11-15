@@ -1,7 +1,7 @@
 from whitenoise.storage import CompressedManifestStaticFilesStorage
 
 # Third-party paths that may reference files their package doesn't ship.
-VENDOR_PREFIXES = ("admin/",)
+VENDOR_PREFIXES = ("admin/", "vendor/")
 
 
 class StaticFilesStorage(CompressedManifestStaticFilesStorage):

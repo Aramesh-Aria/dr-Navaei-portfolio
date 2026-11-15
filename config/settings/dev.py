@@ -1,6 +1,15 @@
+from config.env import env_bool
+
 from .base import *  # noqa: F401,F403
 
-DEBUG = True
+# On by default; `DEBUG=false` in .env tries production-like serving locally
+# (with `runserver --nostatic`): hashed static names, the real 404/500 pages.
+DEBUG = env_bool("DEBUG", default=True)
+
+# Serve static through WhiteNoise in dev too, uncached, so an edited CSS or JS
+# file shows on a plain reload (owner decision: never a hard refresh).
+INSTALLED_APPS = ["whitenoise.runserver_nostatic", *INSTALLED_APPS]  # noqa: F405
+WHITENOISE_MAX_AGE = 0
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 DATABASES = {

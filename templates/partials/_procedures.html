@@ -1,0 +1,6 @@
+{% load site %}{# Procedures Performed (`items`) as a numbered list on the cloth; `describe` adds each short description. #}
+<ol class="procedures__list" role="list">
+  {% for p in items %}
+  <li><a href="{% url 'condition' p.slug %}"><span class="procedures__n num">{{ forloop.counter|fa_digits }}</span><span class="procedures__text"><span class="procedures__title">{{ p.title|isolate_latin }}</span>{% if describe %}<span class="procedures__desc">{{ p.short_description|fa_digits|isolate_latin }}</span>{% endif %}</span><svg aria-hidden="true"><use href="#i-forward"/></svg></a></li>
+  {% endfor %}
+</ol>

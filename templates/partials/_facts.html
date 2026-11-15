@@ -1,0 +1,7 @@
+{% load site %}{# The at-a-glance chips. Each appears only once its field is entered in the admin. #}
+{% if profile.practising_since or profile.medical_council_number %}
+<ul class="facts" aria-label="در یک نگاه">
+  {% if profile.practising_since %}<li><strong>{{ profile.practising_since|years_since|fa_digits }}</strong> سال تجربه</li><li>طبابت از <strong class="num">{{ profile.practising_since|fa_digits }}</strong></li>{% endif %}
+  {% if profile.medical_council_number %}<li class="facts__gold">شماره نظام پزشکی <strong class="num">{{ profile.medical_council_number|fa_digits }}</strong></li>{% endif %}
+</ul>
+{% endif %}

@@ -1,0 +1,10 @@
+{% load site %}{# Named threads: a list of Conditions Treated (`items`), each linking to its page. #}
+<ul class="threads" role="list">
+  {% for c in items %}
+  <li><a class="thread" href="{% url 'condition' c.slug %}">
+    <span class="thread__title">{{ c.title|isolate_latin }}</span>
+    <span class="thread__desc">{{ c.short_description|fa_digits|isolate_latin }}</span>
+    <svg class="thread__go" aria-hidden="true"><use href="#i-forward"/></svg>
+  </a></li>
+  {% endfor %}
+</ul>

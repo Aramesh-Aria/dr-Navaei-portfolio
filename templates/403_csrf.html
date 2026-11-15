@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load site %}
+{% block title %}فرم منقضی شد · {{ profile.full_name }}{% endblock %}
+{% block address %}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block body_class %}page-error{% endblock %}
+{% block content %}
+<section class="pagehead on-field" aria-labelledby="page-title">
+  <div class="wrap pagehead__inner">
+    <h1 class="display-1 pagehead__title" id="page-title">فرم منقضی شد</h1>
+    <p class="lede">صفحه‌ی فرم مدت زیادی باز مانده بود، یا مرورگر کوکی‌ها را نپذیرفت؛ برای همین پیام شما فرستاده نشد. لطفاً فرم را دوباره باز کنید و بفرستید.</p>
+    <p class="actions pagehead__actions">
+      <a class="pill pill--gold" href="{% url 'contact' %}">باز کردن دوباره‌ی فرم</a>
+      {% if primary_location %}<a class="pill pill--line pill--on-field" href="{{ primary_location.phone|tel_href }}" data-call-anchor><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="sr-only">یا تماس با مطب: </span><span class="num">{{ primary_location.phone|phone_display }}</span></a>{% endif %}
+    </p>
+  </div>
+</section>
+{% include "partials/_weave.html" %}
+{% endblock %}

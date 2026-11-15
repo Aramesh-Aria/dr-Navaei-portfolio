@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load site %}
+{% block title %}این صفحه پیدا نشد · {{ profile.full_name }}{% endblock %}
+{% block address %}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block body_class %}page-error{% endblock %}
+{% block content %}
+<section class="pagehead on-field" aria-labelledby="page-title">
+  <div class="wrap pagehead__inner">
+    <p class="pagehead__code num" aria-hidden="true">۴۰۴</p>
+    <h1 class="display-1 pagehead__title" id="page-title">این صفحه پیدا نشد</h1>
+    <p class="lede">ممکن است نشانی اشتباه نوشته شده باشد، یا این صفحه دیگر در سایت نباشد.</p>
+    <p class="actions pagehead__actions">
+      <a class="pill pill--gold" href="{% url 'home' %}">صفحه‌ی اصلی</a>
+      <a class="pill pill--line pill--on-field" href="{% url 'conditions' %}">بیماری‌ها و اقدامات</a>
+      {% if primary_location %}<a class="pill pill--line pill--on-field" href="{{ primary_location.phone|tel_href }}" data-call-anchor><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="sr-only">تلفن مطب: </span><span class="num">{{ primary_location.phone|phone_display }}</span></a>{% endif %}
+    </p>
+  </div>
+</section>
+{% include "partials/_weave.html" %}
+
+{% if conditions %}
+<section class="section" aria-labelledby="conditions-title">
+  <div class="wrap">
+    <header class="section__head">
+      <h2 class="display-2" id="conditions-title">شاید دنبال یکی از این‌ها بودید</h2>
+    </header>
+    {% include "partials/_threads.html" with items=conditions %}
+    <p class="section__more"><a class="textlink" href="{% url 'conditions' %}">همه‌ی بیماری‌ها و اقدامات<svg aria-hidden="true"><use href="#i-forward"/></svg></a></p>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

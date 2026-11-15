@@ -1,0 +1,1027 @@
+/*
+ * Dr. Sepideh Safanavaei: public site styles.
+ * Direction A «چادرشب»: deep teal cloth with saffron-gold and madder-red threads.
+ * Plain CSS, no build step. Logical properties throughout (the site is RTL).
+ * Tokens are documented in docs/design/PROGRESS.md (Stage 3 handoff).
+ */
+@layer reset, tokens, base, layout, components, pages, utilities;
+
+/* ---------------------------------------------------------------- fonts */
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../fonts/vazirmatn-400.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../fonts/vazirmatn-500.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("../fonts/vazirmatn-700.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Lalezar";
+  src: url("../fonts/lalezar-400.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+/* ---------------------------------------------------------------- reset */
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body, h1, h2, h3, h4, p, figure, blockquote, dl, dd, ul, ol { margin: 0; }
+  ul[class], ol[class], nav ul { list-style: none; padding: 0; }
+  img, svg, picture { display: block; max-width: 100%; }
+  img { height: auto; }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  [hidden] { display: none !important; }
+}
+
+/* --------------------------------------------------------------- tokens */
+@layer tokens {
+  :root {
+    /* Colour: five threads of the cloth, plus two derived inks. */
+    --field: #0C3438;        /* deep teal cloth: header, hero, footer, text ink */
+    --field-2: #165257;      /* second teal thread: portrait ground, chips */
+    --gold: #D4A84E;         /* saffron thread: primary button, years. Never on --sea */
+    --madder: #A23B2C;       /* madder-red thread: stripes and focus on light ground only */
+    --sea: #E3ECE6;          /* page ground: pale Caspian green */
+    --ivory: #F7F2E7;        /* text on teal, card grounds */
+    --ink: var(--field);     /* body text on light ground (11.1:1 on --sea) */
+    --ink-2: #3B5A5C;        /* secondary text on light ground (6.2:1) */
+    --ivory-2: #C9D6D1;      /* secondary text on teal (9.0:1) */
+
+    /* Type: Lalezar for display only (one weight), Vazirmatn for everything read. */
+    --font-display: "Lalezar", "Vazirmatn", system-ui, sans-serif;
+    --font-text: "Vazirmatn", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+    --fs-small: 1rem;                                          /* 16px, the floor */
+    --fs-body: clamp(1.125rem, 1.08rem + 0.2vw, 1.1875rem);    /* 18 → 19px */
+    --fs-lede: clamp(1.1875rem, 1.1rem + 0.45vw, 1.375rem);    /* 19 → 22px */
+    --fs-h3: clamp(1.375rem, 1.25rem + 0.6vw, 1.75rem);        /* 22 → 28px, display */
+    --fs-h2: clamp(2.125rem, 1.5rem + 2.8vw, 4rem);            /* 34 → 64px, display */
+    --fs-tagline: clamp(1.5rem, 1.2rem + 1.4vw, 2.375rem);     /* 24 → 38px, display */
+    --fs-h1: clamp(2.625rem, 1.4rem + 5.6vw, 6.5rem);          /* 42 → 104px, display */
+    --lh-text: 1.9;          /* Persian needs room for dots and descenders */
+    --lh-display: 1.35;
+
+    /* Space: the 8px thread. Every gap, band and stripe is a multiple. */
+    --t: 8px;
+    --s-1: calc(var(--t) * 1);    /*   8 */
+    --s-2: calc(var(--t) * 2);    /*  16 */
+    --s-3: calc(var(--t) * 3);    /*  24 */
+    --s-4: calc(var(--t) * 4);    /*  32 */
+    --s-5: calc(var(--t) * 5);    /*  40 */
+    --s-6: calc(var(--t) * 6);    /*  48 */
+    --s-8: calc(var(--t) * 8);    /*  64 */
+    --s-10: calc(var(--t) * 10);  /*  80 */
+    --s-12: calc(var(--t) * 12);  /*  96 */
+    --s-15: calc(var(--t) * 15);  /* 120 */
+    --margin: clamp(20px, 4vw, 64px);
+    --measure: 38em;               /* reading column */
+    --wrap: 1312px;
+
+    /* Shape: cloth has hard edges; only buttons are pills. */
+    --r-0: 0;
+    --r-pill: 999px;
+    --r-focus: 4px;
+    --tap: 48px;                   /* minimum tap target */
+
+    /* Motion: flat and exact. Hovers are colour only. */
+    --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --dur-hover: 150ms;
+    --dur-press: 160ms;      /* press feedback: the individual `scale` property, so it never fights a transform */
+    --dur-menu: 220ms;
+    --dur-tab: 260ms;
+    --dur-flip-in: 560ms;
+    --dur-flip-out: 380ms;
+
+    /* The woven edge, drawn as hard-stopped threads (no blend): at the foot of a
+       teal swatch (flip card front, "see a doctor"), at the head of an ivory panel. */
+    --weave-foot: linear-gradient(to top,
+      var(--field-2) 0 6px, var(--madder) 6px 9px, var(--gold) 9px 15px, var(--field) 15px);
+    --weave-head: linear-gradient(to bottom,
+      var(--gold) 0 8px, var(--madder) 8px 12px, var(--field-2) 12px 20px, var(--ivory) 20px);
+
+    --focus: var(--madder);
+    --shadow-float: 0 8px 24px rgb(12 52 56 / 0.28);  /* the call tab only */
+  }
+  /* Teal surfaces switch the focus ring to gold (6.1:1 on --field). */
+  .on-field { --focus: var(--gold); }
+}
+
+/* ----------------------------------------------------------------- base */
+@layer base {
+  html { scroll-padding-block-start: var(--s-3); }
+  body {
+    background: var(--sea);
+    color: var(--ink);
+    font: 400 var(--fs-body) / var(--lh-text) var(--font-text);
+    min-block-size: 100dvh;
+    display: flex;
+    flex-direction: column;
+    -webkit-tap-highlight-color: transparent;
+    /* A word longer than its line (a map link pasted into an address) breaks
+       instead of pushing the page sideways. */
+    overflow-wrap: break-word;
+  }
+  main { flex: 1 0 auto; }
+  /* Editor-typed text in grid and flex cells: break-word alone doesn't let
+     those cells shrink below the long word, so these may break anywhere. */
+  .clinic__address, .clinic__name, .place__address, .place__name, .hero__where,
+  .callband__name, .contact__name, .thread__desc, .procedures__desc, .flip__inst, .flip__detail { overflow-wrap: anywhere; }
+  main:focus { outline: none; }
+  a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.35em; }
+  ::selection { background: var(--gold); color: var(--field); }
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: var(--r-focus);
+  }
+  h1, h2, h3 { font-weight: 400; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  /* A Latin term in a heading («COVID-19», «FEV1») stays on one line: broken
+     at its hyphen, the two halves land on different lines in RTL order. */
+  :is(h1, h2, h3) bdi { white-space: nowrap; }
+  /* Latin runs inside display type fall back to Vazirmatn; keep their weight close to Lalezar's. */
+  :is(.display-1, .display-2, .display-3, .display-tagline, .clinic__name, .site-footer__name, .menu__nav ul a,
+      .flip__inst, .thread__title, .procedures__title, .place__name, .contact__name, .callband__name) bdi { font-family: var(--font-text); font-weight: 700; }
+  .num { font-variant-numeric: tabular-nums; white-space: nowrap; direction: ltr; unicode-bidi: isolate; }
+}
+
+/* --------------------------------------------------------------- layout */
+@layer layout {
+  .wrap {
+    inline-size: 100%;
+    max-inline-size: calc(var(--wrap) + 2 * var(--margin));
+    margin-inline: auto;
+    padding-inline: var(--margin);
+    /* Landscape on a notched phone (viewport-fit=cover): keep text out of the notch. */
+    padding-left: max(var(--margin), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--margin), env(safe-area-inset-right, 0px));
+  }
+  .on-field { background: var(--field); color: var(--ivory); }
+  .actions { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
+}
+
+/* ----------------------------------------------------------- components */
+@layer components {
+  /* Display type */
+  .display-1 { font: 400 var(--fs-h1) / 1.2 var(--font-display); }
+  .display-2 { font: 400 var(--fs-h2) / 1.3 var(--font-display); }
+  .display-3 { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); }
+  .display-tagline { font: 400 var(--fs-tagline) / 1.5 var(--font-display); color: var(--gold); }
+  .lede { font-size: var(--fs-lede); max-inline-size: var(--measure); }
+  .on-field .lede { color: var(--ivory-2); }
+
+  /* The lungs mark, recoloured by currentColor through a mask. */
+  .mark {
+    display: block;
+    inline-size: 44px;
+    aspect-ratio: 321 / 327;
+    background: currentColor;
+    -webkit-mask: url("../img/lungs.svg") center / contain no-repeat;
+    mask: url("../img/lungs.svg") center / contain no-repeat;
+    flex: none;
+  }
+  .mark--gold { color: var(--gold); }
+
+  /* The selvedge: seven threads, hard edges, multiples of 8px (and its 4px half). */
+  .selvedge {
+    display: grid;
+    grid-template-rows: 16px 8px 4px 8px 24px 8px 4px;
+  }
+  .selvedge i:nth-child(1) { background: var(--gold); }
+  .selvedge i:nth-child(2) { background: var(--field); }
+  .selvedge i:nth-child(3) { background: var(--madder); }
+  .selvedge i:nth-child(4) { background: var(--ivory); }
+  .selvedge i:nth-child(5) { background: var(--field-2); }
+  .selvedge i:nth-child(6) { background: var(--gold); }
+  .selvedge i:nth-child(7) { background: var(--field); }
+
+  /* Pills (Parsley): full radius, colour-only hover, 150ms. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-block-size: var(--tap);
+    padding: 10px 24px;
+    border: 2px solid transparent;
+    border-radius: var(--r-pill);
+    font: 700 1.0625rem / 1.2 var(--font-text);
+    text-decoration: none;
+    transition: background-color var(--dur-hover) var(--ease-out),
+                color var(--dur-hover) var(--ease-out),
+                border-color var(--dur-hover) var(--ease-out),
+                scale var(--dur-press) var(--ease-out);
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .pill svg { inline-size: 18px; block-size: 18px; flex: none; }
+  .pill--small { min-block-size: 44px; padding: 8px 20px; font-size: var(--fs-small); }
+  /* Primary on teal: gold, turns ivory. */
+  .pill--gold { background: var(--gold); border-color: var(--gold); color: var(--field); }
+  /* Primary on light ground: teal, turns gold (Shafer's invert, done in colour). */
+  .pill--field { background: var(--field); border-color: var(--field); color: var(--ivory); }
+  /* Secondary: an outline that fills on hover (Parsley's secondary, reversed). */
+  .pill--line { background: transparent; border-color: var(--field); color: var(--field); }
+  .pill--line.pill--on-field { border-color: var(--gold); color: var(--ivory); }
+  @media (hover: hover) and (pointer: fine) {
+    .pill--gold:hover { background: var(--ivory); border-color: var(--ivory); }
+    .pill--field:hover { background: var(--gold); border-color: var(--gold); color: var(--field); }
+    .pill--line:hover { background: var(--field); color: var(--ivory); }
+    .pill--line.pill--on-field:hover { background: var(--gold); color: var(--field); }
+  }
+  /* Press feedback: the button gives under the finger (tap-to-call is the conversion). */
+  .pill:active, .icon-button:active, .calltab:active { scale: 0.97; }
+
+  .icon-button {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--tap);
+    block-size: var(--tap);
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out),
+                scale var(--dur-press) var(--ease-out);
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .icon-button svg { inline-size: 24px; block-size: 24px; }
+  .icon-button--gold { background: var(--gold); color: var(--field); }
+  .icon-button--gold svg { inline-size: 20px; block-size: 20px; }
+
+  /* ---- header ---- */
+  .site-header { position: relative; z-index: 20; }
+  .site-header__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--s-4);
+    min-block-size: 88px;
+    padding-block: var(--s-2);
+  }
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    min-inline-size: 0;
+  }
+  .lockup .mark { color: var(--ivory); }
+  .lockup__text { display: grid; min-inline-size: 0; }
+  .lockup__name { font: 700 1.125rem / 1.4 var(--font-text); }
+  .lockup__degrees { font-size: var(--fs-small); line-height: 1.5; color: var(--ivory-2); }
+  /* Just above the phone layout the nav leaves the lockup too narrow for a
+     long tagline; the degrees are also in the hero and the footer. */
+  @media (min-width: 961px) and (max-width: 1100px) { .lockup__degrees { display: none; } }
+
+  /* Nav labels never wrap: a long tagline in the lockup wraps instead. */
+  .site-nav { flex: none; }
+  .site-nav ul { display: flex; gap: var(--s-3); font-weight: 500; white-space: nowrap; }
+  .site-nav a, .site-footer__end a {
+    display: inline-block;
+    padding-block: 8px;
+    text-decoration: none;
+    border-block-end: 2px solid transparent;
+    transition: border-color var(--dur-hover) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) { .site-nav a:hover, .site-footer__end a:hover { border-color: var(--gold); } }
+  .site-nav a[aria-current="page"], .site-footer__end a[aria-current="page"] { border-color: var(--gold); }
+  .site-header__phone { margin-inline-start: auto; }
+  .site-header__call, .site-header__menu { display: none; }
+
+  /* Phone menu: a disclosure panel under the bar, on the same cloth. */
+  .menu { display: none; }
+  .menu { border-block-end: 4px solid var(--gold); }
+  .menu__nav { padding-block: var(--s-1) var(--s-5); }
+  .menu__nav ul { display: grid; }
+  .menu__nav li + li { border-block-start: 1px solid rgb(247 242 231 / 0.14); }
+  .menu__nav ul a {
+    display: flex;
+    align-items: center;
+    min-block-size: 60px;
+    font: 400 1.5rem / 1.4 var(--font-display);
+    text-decoration: none;
+  }
+  .menu__nav ul a[aria-current="page"] { color: var(--gold); }
+  .menu__clinic { margin-block-start: var(--s-4); }
+  .menu__clinic-name { font-size: var(--fs-small); color: var(--ivory-2); margin-block-end: var(--s-1); }
+  .menu__phones { display: flex; flex-wrap: wrap; gap: var(--s-1); }
+
+  /* ---- footer ---- */
+  .site-footer { margin-block-start: auto; }
+  .site-footer__body {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: var(--s-8);
+    padding-block: var(--s-10) var(--s-8);
+  }
+  .site-footer__brand .mark { inline-size: 56px; margin-block-end: var(--s-2); }
+  .site-footer__name { font: 400 1.75rem / 1.4 var(--font-display); }
+  .site-footer__degrees { color: var(--ivory-2); margin-block-start: 4px; }
+  .site-footer__fact { margin-block-start: var(--s-2); font-size: var(--fs-small); color: var(--ivory-2); }
+  .site-footer__heading { font: 500 var(--fs-small) / 1.6 var(--font-text); color: var(--ivory-2); margin-block-end: var(--s-3); }
+
+  /* 1 location: one wide composition. 2+: equal columns. Never a lonely card. */
+  .clinics { display: grid; gap: var(--s-6) var(--s-5); }
+  .clinics--many { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+  .site-footer__body:has(.clinics--many) { grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); }
+  .clinic { display: grid; gap: var(--s-2); align-content: start; justify-items: start; }
+  .clinics--1 .clinic {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--s-6);
+  }
+  .clinics--1 .clinic__name, .clinics--1 .clinic__address { grid-column: 1; }
+  .clinics--1 .clinic__facts { grid-column: 2; grid-row: 1 / span 3; }
+  .clinics--1 .clinic > .pill { grid-column: 1; }
+  .clinic__name { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); color: var(--gold); }
+  .clinic__address { max-inline-size: 30em; }
+  .clinic__facts { display: grid; gap: var(--s-2); }
+  .clinic__facts dt { font-size: var(--fs-small); color: var(--ivory-2); }
+  /* 44px tall: a thumb target, not just a line of text. */
+  .clinic__facts dd a { display: inline-flex; align-items: center; min-block-size: 44px; font-weight: 700; font-size: 1.25rem; text-decoration: none; }
+  @media (hover: hover) and (pointer: fine) { .clinic__facts dd a:hover { color: var(--gold); } }
+
+  .site-footer__end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-2) var(--s-4);
+    padding-block: var(--s-3) var(--s-4);
+    border-block-start: 1px solid rgb(247 242 231 / 0.14);
+    font-size: var(--fs-small);
+  }
+  .site-footer__end ul { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-3); }
+  .site-footer__out { display: inline-flex; align-items: center; gap: 6px; color: var(--ivory-2); }
+  .site-footer__out svg { inline-size: 16px; block-size: 16px; }
+
+  /* ---- floating call tab (the one thing that floats, so the one shadow) ---- */
+  .calltab {
+    position: fixed;
+    z-index: 30;
+    inset-inline-end: var(--s-3);
+    inset-block-end: max(var(--s-3), env(safe-area-inset-bottom));
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-block-size: 52px;
+    padding: 12px 22px;
+    border-radius: var(--r-pill);
+    background: var(--gold);
+    color: var(--field);
+    font: 700 1.0625rem / 1 var(--font-text);
+    text-decoration: none;
+    box-shadow: var(--shadow-float);
+    transition: transform var(--dur-tab) var(--ease-out),
+                opacity 200ms linear,
+                visibility 0s linear 0s,
+                background-color var(--dur-hover) var(--ease-out),
+                color var(--dur-hover) var(--ease-out),
+                scale var(--dur-press) var(--ease-out);
+    touch-action: manipulation;
+  }
+  .calltab svg { inline-size: 18px; block-size: 18px; }
+  /* While someone types in the form, the tab would float over the field above the keyboard. */
+  .is-typing .calltab { opacity: 0; visibility: hidden; pointer-events: none; }
+  @media (hover: hover) and (pointer: fine) { .calltab:hover { background: var(--field); color: var(--ivory); } }
+  .calltab:focus-visible { outline-color: var(--madder); }
+  /* It starts hidden in the markup (no flash on load); without JS it is always shown. */
+  html:not(.js) .calltab.is-hidden { transform: none; opacity: 1; visibility: visible; }
+  .calltab.is-hidden {
+    transform: translateY(16px);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform var(--dur-tab) var(--ease-out), opacity 200ms linear, visibility 0s linear 260ms;
+  }
+
+  .skip-link {
+    position: absolute;
+    z-index: 100;
+    inset-inline-start: var(--s-2);
+    inset-block-start: var(--s-2);
+    padding: 12px 20px;
+    border-radius: var(--r-pill);
+    background: var(--gold);
+    color: var(--field);
+    font-weight: 700;
+    text-decoration: none;
+    transform: translateY(-200%);
+  }
+  .skip-link:focus { transform: none; }
+}
+
+/* ----------------------------------------------- phone and tablet layout */
+@layer components {
+  @media (max-width: 960px) {
+    .site-nav, .site-header__phone { display: none; }
+    .site-header__bar { gap: var(--s-1); min-block-size: 72px; padding-block: var(--s-1); }
+    .lockup { margin-inline-end: auto; }
+    .lockup .mark { inline-size: 36px; }
+    .lockup__name { font-size: 1.0625rem; }
+    .site-header__call { display: inline-grid; }
+    .js .site-header__menu { display: inline-grid; }
+    .site-header__menu .icon-close { display: none; }
+    .site-header__menu[aria-expanded="true"] .icon-open { display: none; }
+    .site-header__menu[aria-expanded="true"] .icon-close { display: block; }
+
+    /* Without JS the menu is simply open; with JS it is a disclosure. */
+    .menu { display: block; }
+    .js .menu { display: none; }
+    .js .menu.is-open { display: block; animation: menu-in var(--dur-menu) var(--ease-out); }
+
+    .site-footer__body, .site-footer__body:has(.clinics--many) { grid-template-columns: 1fr; gap: var(--s-6); padding-block: var(--s-8) var(--s-6); }
+    .clinics--1 .clinic { grid-template-columns: 1fr; }
+    .clinics--1 .clinic__facts { grid-column: 1; grid-row: auto; }
+    .site-footer__end { padding-block-end: calc(var(--s-12) + env(safe-area-inset-bottom)); }
+
+    /* On a phone the call tab is a full-width bar at the thumb. */
+    .calltab {
+      /* Physical sides: the safe-area insets are physical, and the page is RTL. */
+      left: max(12px, env(safe-area-inset-left, 0px));
+      right: max(12px, env(safe-area-inset-right, 0px));
+      inset-block-end: max(12px, env(safe-area-inset-bottom));
+      justify-content: center;
+      min-block-size: 56px;
+      font-size: 1.125rem;
+    }
+  }
+  /* Below 480px the degrees line would wrap and crowd the bar; the name carries it. */
+  @media (max-width: 480px) {
+    .lockup__degrees { display: none; }
+  }
+  @keyframes menu-in {
+    from { opacity: 0; transform: translateY(-8px); }
+  }
+}
+
+/* ------------------------------------------------------------ pages */
+/* Shared page components (Home, About) live in `components`; layouts per page in `pages`. */
+@layer components {
+  /* ---- sections on the pale ground ---- */
+  .section { padding-block: var(--s-15) var(--s-12); }
+  .section + .section { padding-block-start: var(--s-4); }
+  .section__head { margin-block-end: var(--s-6); display: grid; gap: var(--s-2); }
+  .section__more { margin-block-start: var(--s-6); }
+
+  .textlink {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-1);
+    min-block-size: var(--tap);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: rgb(12 52 56 / 0.35);
+    transition: text-decoration-color var(--dur-hover) var(--ease-out);
+  }
+  .textlink svg { inline-size: 18px; block-size: 18px; flex: none; }
+  @media (hover: hover) and (pointer: fine) { .textlink:hover { text-decoration-color: currentColor; } }
+  /* Tap feedback for links (the tap highlight is off site-wide): the hover colour, on press. */
+  .textlink:active, .place__phone:active { text-decoration-color: currentColor; }
+  .thread:active .thread__title { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.3em; }
+
+  /* ---- the founder card: portrait in a woven frame ---- */
+  .founder { inline-size: 100%; }
+  .founder__frame { background: var(--gold); padding: 12px; }
+  .founder__frame > div { background: var(--madder); padding: 4px; }
+  .founder__frame > div > div { background: var(--ivory); padding: 8px; }
+  .portrait { aspect-ratio: 4 / 5; background: var(--field-2); overflow: hidden; }
+  /* Any upload, any aspect: cover the 4:5 slot, faces sit in the upper third. */
+  .portrait__img { inline-size: 100%; block-size: 100%; object-fit: cover; object-position: 50% 22%; }
+  .founder__caption { display: grid; gap: 4px; padding: var(--s-2) var(--s-3) var(--s-3); background: var(--ivory); color: var(--field); }
+  .founder__name { font: 400 1.625rem / 1.4 var(--font-display); }
+  .founder__post { font-size: var(--fs-small); line-height: 1.7; color: var(--ink-2); }
+
+  /* ---- at-a-glance chips: flat swatches butted together ---- */
+  .facts { display: flex; flex-wrap: wrap; gap: 2px; }
+  .facts li { padding: 10px 20px; background: var(--field-2); font-size: var(--fs-small); font-weight: 500; }
+  .facts .facts__gold { background: var(--gold); color: var(--field); }
+  .facts strong { font-weight: 700; }
+
+  /* ---- credential flip cards: a swatch of cloth turned to its reverse ---- */
+  .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-3); }
+  /* Each card is a size container, so its 5:4 is a minimum height: a long
+     institution or detail grows the card (and its row) instead of overflowing. */
+  .cards > li { container-type: inline-size; }
+  .flip {
+    display: grid;
+    inline-size: 100%;
+    block-size: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    perspective: 1100px;
+    touch-action: manipulation;
+    /* A long press to read the card must not select its title. */
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .flip__turn {
+    display: grid;
+    min-block-size: 80cqi;
+    transform-style: preserve-3d;
+    transition: transform var(--dur-flip-out) var(--ease-out);
+  }
+  .flip__face {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+    padding: var(--s-3);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  /* Front: the teal swatch, its woven edge drawn as hard-stopped threads (no blend). */
+  .flip__front {
+    position: relative;
+    padding-block-end: var(--s-5);
+    color: var(--ivory);
+    background: var(--weave-foot);
+  }
+  .flip__cue { position: absolute; inset-block-start: var(--s-3); inset-inline-end: var(--s-3); inline-size: 22px; block-size: 22px; color: var(--gold); }
+  .flip__year { font: 400 3.5rem / 1.1 var(--font-display); color: var(--gold); }
+  .flip__title { margin-block-start: auto; font: 700 1.25rem / 1.6 var(--font-text); }
+  /* Back: the gold reverse of the cloth. RTL: it turns the mirror way. */
+  .flip__back { justify-content: flex-end; background: var(--gold); color: var(--field); transform: rotateY(180deg); }
+  .flip__label { font-size: var(--fs-small); font-weight: 500; }
+  .flip__inst { font: 400 1.625rem / 1.5 var(--font-display); }
+  .flip__detail { font-size: var(--fs-small); line-height: 1.7; }
+
+  /* With JS, keyboard focus turns a card through aria-pressed (site.js), so
+     Enter, Space and Escape can turn it back; without JS, focus alone does. */
+  html:not(.js) .flip:focus-visible .flip__turn,
+  .flip[aria-pressed="true"] .flip__turn {
+    transform: rotateY(-180deg);
+    transition-duration: var(--dur-flip-in);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .flip:hover .flip__turn { transform: rotateY(-180deg); transition-duration: var(--dur-flip-in); }
+  }
+
+  /* Static rows: memberships and publications, woven as ribbons. */
+  .ribbons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; margin-block-start: var(--s-6); }
+  .ribbons li {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: var(--s-2);
+    align-items: baseline;
+    padding: var(--s-2) var(--s-3);
+    background: var(--ivory);
+    font-weight: 500;
+  }
+  .ribbons__year { font: 400 1.5rem / 1 var(--font-display); color: var(--field-2); }
+  .ribbons__detail { display: block; font-weight: 400; font-size: var(--fs-small); color: var(--ink-2); }
+
+  /* ---- named threads: the conditions list ---- */
+  .threads { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-6); }
+  .thread {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--s-2);
+    align-items: center;
+    padding-block: var(--s-3);
+    border-block-start: 2px solid var(--field);
+    text-decoration: none;
+    transition: color var(--dur-hover) var(--ease-out);
+  }
+  .thread__title { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); }
+  .thread__desc { grid-column: 1; color: var(--ink-2); font-size: var(--fs-small); }
+  .thread__go { grid-column: 2; grid-row: 1 / span 2; inline-size: 24px; block-size: 24px; color: var(--field-2); }
+  @media (hover: hover) and (pointer: fine) { .thread:hover .thread__title { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.3em; } }
+
+  /* ---- the closing call band ---- */
+  .callband { padding-block: var(--s-12); border-block-start: 2px solid var(--field); }
+  .callband__inner { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-4) var(--s-8); }
+  .callband__head { display: grid; gap: var(--s-2); align-content: start; }
+  .callband__list { display: grid; gap: var(--s-5); }
+  .callband__clinic { display: grid; gap: var(--s-1); }
+  .callband__name { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); }
+  .callband__phones { display: flex; flex-wrap: wrap; gap: var(--s-1); }
+  .callband__phones .pill { font-size: 1.1875rem; }
+  .callband__hours { color: var(--ink-2); }
+  .callband__more { grid-column: 2; display: flex; flex-wrap: wrap; gap: 0 var(--s-4); }
+}
+
+@layer pages {
+  /* ---- Home: hero ---- */
+  .hero { padding-block: var(--s-6) var(--s-12); }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+    grid-template-areas: "text portrait";
+    gap: var(--s-8);
+    align-items: center;
+  }
+  .hero__text { grid-area: text; display: grid; justify-items: start; }
+  .hero__portrait { grid-area: portrait; justify-self: end; inline-size: min(100%, 420px); }
+  .hero__name { margin-block-end: var(--s-1); }
+  .hero__tagline { margin-block-end: var(--s-4); max-inline-size: 22em; }
+  .hero .facts { margin-block-end: var(--s-5); }
+  .hero__where { display: grid; gap: 4px; margin-block-start: var(--s-3); font-size: var(--fs-small); color: var(--ivory-2); }
+  .hero__where strong { font-weight: 500; color: var(--ivory); }
+
+  /* ---- Home: procedures on the cloth ---- */
+  .procedures { padding-block: var(--s-12); }
+  .procedures__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-4) var(--s-8); align-items: start; }
+  .procedures__grid header { display: grid; gap: var(--s-2); }
+  .procedures__list li + li { border-block-start: 1px solid rgb(247 242 231 / 0.18); }
+  .procedures__list a {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    gap: var(--s-2);
+    align-items: center;
+    min-block-size: 72px;
+    padding-block: var(--s-2);
+    text-decoration: none;
+    transition: color var(--dur-hover) var(--ease-out);
+  }
+  .procedures__n { font: 400 1.75rem / 1 var(--font-display); color: var(--gold); }
+  .procedures__title { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); }
+  .procedures__list svg { inline-size: 24px; block-size: 24px; color: var(--gold); }
+  @media (hover: hover) and (pointer: fine) { .procedures__list a:hover { color: var(--gold); } }
+
+  /* ---- About: intro and bio ---- */
+  .intro { padding-block: var(--s-8) var(--s-12); }
+  .intro__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    grid-template-areas: "text portrait";
+    gap: var(--s-8);
+    align-items: end;
+  }
+  .intro__text { grid-area: text; display: grid; justify-items: start; gap: var(--s-1); padding-block-end: var(--s-2); }
+  .intro__text .facts { margin-block-start: var(--s-3); }
+  .intro__portrait { grid-area: portrait; justify-self: end; inline-size: min(100%, 460px); }
+
+  .bio__grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: var(--s-8); align-items: start; }
+  .bio__title { position: sticky; inset-block-start: var(--s-4); }
+  .bio__body { display: grid; gap: var(--s-5); }
+  .bio__para { display: grid; grid-template-columns: 6rem minmax(0, var(--measure)); gap: var(--s-3); align-items: baseline; }
+  .bio__year { font: 400 2.25rem / 1 var(--font-display); color: var(--field-2); }
+  .bio__lead { font-weight: 700; }
+  .creds--about { padding-block-start: var(--s-6); }
+}
+
+/* ---- tablet and phone: their own decisions, not a shrink ---- */
+@layer pages {
+  @media (max-width: 1100px) {
+    .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 960px) {
+    .section { padding-block: var(--s-10) var(--s-8); }
+    .section__head { margin-block-end: var(--s-4); }
+
+    /* Hero: a small framed portrait above the name; the caption moves out. */
+    .hero { padding-block: var(--s-3) var(--s-8); }
+    .hero__grid { grid-template-columns: 1fr; grid-template-areas: "portrait" "text"; gap: var(--s-3); }
+    .hero__portrait { justify-self: start; inline-size: 124px; }
+    .hero__portrait .founder__frame { padding: 6px; }
+    .hero__portrait .founder__frame > div { padding: 2px; }
+    .hero__portrait .founder__frame > div > div { padding: 4px; }
+    .hero__portrait .founder__caption { display: none; }
+
+    .intro { padding-block: var(--s-4) var(--s-8); }
+    .intro__grid { grid-template-columns: 1fr; grid-template-areas: "portrait" "text"; gap: var(--s-4); }
+    .intro__portrait { justify-self: start; inline-size: min(64%, 300px); }
+
+    .threads { grid-template-columns: 1fr; }
+    .procedures { padding-block: var(--s-8); }
+    .procedures__grid, .callband__inner, .bio__grid { grid-template-columns: 1fr; }
+    .callband { padding-block: var(--s-8); }
+    .callband__more { grid-column: 1; }
+    .bio__title { position: static; }
+    .ribbons { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    /* On a phone the calls are full-width thumb targets. */
+    .hero__actions { inline-size: 100%; }
+    .hero__actions .pill, .callband__phones .pill { flex: 1 1 100%; min-block-size: 56px; font-size: 1.125rem; }
+    .cards { gap: var(--s-1); }
+    .flip__turn { min-block-size: 125cqi; }
+    .flip__face { padding: var(--s-2); }
+    .flip__front { padding-block-end: var(--s-4); }
+    .flip__cue { inset-block-start: var(--s-2); inset-inline-end: var(--s-2); inline-size: 18px; block-size: 18px; }
+    .flip__year { font-size: 2.5rem; }
+    .flip__title { font-size: 1.0625rem; line-height: 1.55; }
+    .flip__inst { font-size: 1.1875rem; }
+    .bio__para { grid-template-columns: 1fr; gap: 0; }
+    .bio__year { font-size: 1.75rem; }
+    .bio__year:empty { display: none; }
+    .ribbons li { grid-template-columns: 3.5rem minmax(0, 1fr); padding-inline: var(--s-2); }
+  }
+}
+
+/* ------------------------------------------- inner pages (Stage 5) */
+@layer components {
+  /* ---- page head: the band of cloth that opens every inner page ---- */
+  .pagehead { padding-block: var(--s-8) var(--s-10); }
+  .pagehead__inner { display: grid; gap: var(--s-2); justify-items: start; }
+  .pagehead__title { max-inline-size: 15em; }
+  /* Condition titles run long («Ablation تومورهای برونکیال ریه»): one step smaller. */
+  .pagehead__title--long { font-size: clamp(2.375rem, 1.4rem + 4vw, 5rem); }
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--s-1); font-size: var(--fs-small); color: var(--ivory-2); }
+  .crumbs a { display: inline-block; padding-block: 10px; color: var(--ivory); text-decoration-color: rgb(247 242 231 / 0.45); transition: text-decoration-color var(--dur-hover) var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) { .crumbs a:hover { text-decoration-color: currentColor; } }
+
+  /* Jump links to each group, with its count in gold. */
+  .jumps { display: flex; flex-wrap: wrap; gap: var(--s-1); margin-block-start: var(--s-3); }
+  .jumps__n { color: var(--gold); transition: color var(--dur-hover) var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) { .jumps .pill:hover .jumps__n { color: inherit; } }
+
+  .on-field .textlink { text-decoration-color: rgb(247 242 231 / 0.45); }
+
+  /* Procedures with their short description (the conditions page). */
+  .procedures__text { display: grid; gap: 2px; }
+  .procedures__desc { font-size: var(--fs-small); line-height: 1.7; color: var(--ivory-2); }
+  @media (hover: hover) and (pointer: fine) { .procedures__list a:hover .procedures__desc { color: inherit; } }
+
+  /* ---- "when to see a doctor": a teal swatch with the woven edge ---- */
+  .seedoc {
+    display: grid;
+    gap: var(--s-2);
+    justify-items: start;
+    padding: var(--s-4) var(--s-4) var(--s-6);
+    background: var(--weave-foot);
+  }
+  .seedoc > p { color: var(--ivory-2); }
+  .seedoc h2 { color: var(--ivory); }
+  .seedoc__phones { display: flex; flex-wrap: wrap; gap: var(--s-1); margin-block: var(--s-1); }
+  .seedoc .seedoc__phones .pill { font-size: 1.1875rem; }
+  .seedoc__hours { font-size: var(--fs-small); }
+  .seedoc__links { display: flex; flex-wrap: wrap; gap: 0 var(--s-3); }
+  .seedoc .seedoc__links { color: var(--ivory); }
+  .seedoc > .seedoc__urgent { color: var(--ivory); }
+  .seedoc__urgent {
+    justify-self: stretch;
+    padding-block-end: var(--s-2);
+    border-block-end: 1px solid rgb(247 242 231 / 0.18);
+  }
+  .seedoc__urgent a { color: var(--gold); font-weight: 700; text-decoration: none; }
+
+  /* ---- Clinic Locations: one is a wide composition; 2+ are equal columns ---- */
+  .places { display: grid; gap: var(--s-3); }
+  .places--many { grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); }
+  .place > section {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+    block-size: 100%;
+    padding: var(--s-5) var(--s-4) var(--s-5);
+    /* The woven edge, on top this time: the cloth's selvedge over an ivory panel. */
+    background: var(--weave-head);
+  }
+  .place__name { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); }
+  .place__address { font-size: var(--fs-lede); font-weight: 500; line-height: 1.8; max-inline-size: 24em; }
+  .place__route { margin-block-start: var(--s-3); }
+  .place__route [data-copy] { min-inline-size: 11.5em; }
+  .place__facts { display: grid; gap: var(--s-3); align-content: start; }
+  .place__facts dt { font-size: var(--fs-small); color: var(--ink-2); }
+  .place__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-1);
+    min-block-size: var(--tap);
+    font: 700 1.5rem / 1.2 var(--font-text);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    transition: text-decoration-color var(--dur-hover) var(--ease-out);
+    touch-action: manipulation;
+  }
+  .place__phone svg { inline-size: 22px; block-size: 22px; color: var(--field-2); flex: none; }
+  @media (hover: hover) and (pointer: fine) { .place__phone:hover { text-decoration-color: currentColor; } }
+  .place__hours { font-weight: 500; }
+  .places__more { display: flex; flex-wrap: wrap; gap: 0 var(--s-4); margin-block-start: var(--s-5); }
+}
+
+@layer pages {
+  /* ---- Condition page (Mayo's order) ---- */
+  .article { padding-block: var(--s-10) var(--s-12); }
+  .article__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-8); align-items: start; }
+  .article--toc .article__grid { grid-template-columns: minmax(0, 3fr) minmax(0, 8fr); }
+  .article__body { display: grid; gap: var(--s-6); max-inline-size: var(--measure); }
+  .article__section { display: grid; gap: var(--s-2); }
+  /* Today's bodies are one or two sentences: the overview is set as a lede, not a stub. */
+  .article__section--intro p { font-size: var(--fs-lede); line-height: 1.85; }
+  .article__aside, .toc { position: sticky; inset-block-start: var(--s-4); }
+  .toc ol { list-style: none; padding: 0; }
+  .toc__title { font: 500 var(--fs-small) / 1.6 var(--font-text); color: var(--ink-2); margin-block-end: var(--s-1); }
+  .toc a {
+    display: block;
+    padding-block: 10px;
+    padding-inline-start: var(--s-2);
+    border-inline-start: 1px solid rgb(12 52 56 / 0.2);
+    font-weight: 500;
+    text-decoration: none;
+    transition: border-color var(--dur-hover) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) { .toc a:hover { border-color: var(--field); } }
+
+  /* ---- Locations ---- */
+  .places-section { padding-block: var(--s-10) var(--s-12); }
+  .places--1 .place > section {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-areas: "name facts" "where facts";
+    grid-template-rows: auto 1fr;
+    column-gap: var(--s-8);
+    padding: var(--s-6) var(--s-6) var(--s-8);
+  }
+  .places--1 .place__name { grid-area: name; font-size: var(--fs-h2); line-height: 1.3; }
+  .places--1 .place__where { grid-area: where; }
+  .places--1 .place__facts { grid-area: facts; padding-inline-start: var(--s-6); border-inline-start: 2px solid var(--field); }
+
+  @media (max-width: 960px) {
+    .pagehead { padding-block: var(--s-4) var(--s-8); }
+    .article { padding-block: var(--s-8); }
+    .article__grid, .article--toc .article__grid { grid-template-columns: 1fr; gap: var(--s-6); }
+    .article__aside, .toc { position: static; }
+    .places-section { padding-block: var(--s-6) var(--s-8); }
+    .places--1 .place > section { column-gap: var(--s-5); padding: var(--s-5) var(--s-4) var(--s-6); }
+    .places--1 .place__facts { padding-inline-start: var(--s-4); }
+  }
+  /* One location stacks only once two columns no longer fit. */
+  @media (max-width: 700px) {
+    .places--1 .place > section { grid-template-columns: 1fr; grid-template-areas: "name" "where" "facts"; grid-template-rows: none; padding: var(--s-5) var(--s-4) var(--s-5); }
+    .places--1 .place__name { font-size: var(--fs-h3); }
+    .places--1 .place__facts { padding-inline-start: 0; border-inline-start: 0; padding-block-start: var(--s-3); border-block-start: 2px solid var(--field); }
+  }
+  @media (max-width: 600px) {
+    .seedoc { padding-inline: var(--s-3); }
+    .seedoc__phones, .place__route { inline-size: 100%; }
+    .seedoc__phones .pill, .place__route .pill { flex: 1 1 100%; min-block-size: 56px; font-size: 1.125rem; }
+    .place > section { padding-inline: var(--s-3); }
+    .jumps { inline-size: 100%; }
+    .jumps .pill { flex: 1 1 0; padding-inline: 16px; }
+  }
+}
+
+/* ------------------------------------------- contact and error pages (Stage 6) */
+@layer components {
+  /* ---- form fields: hard-edged like the cloth, 18px+ text so iOS never zooms ---- */
+  .form { display: grid; gap: var(--s-4); }
+  .field { display: grid; gap: 6px; }
+  .field label { font-weight: 700; }
+  .field__optional { font-weight: 400; color: var(--ink-2); }
+  .field__hint { font-size: var(--fs-small); line-height: 1.7; color: var(--ink-2); }
+  .field input, .field textarea {
+    inline-size: 100%;
+    min-block-size: 56px;
+    padding: 12px 16px;
+    border: 2px solid var(--ink-2);
+    border-radius: var(--r-0);
+    background: var(--ivory);
+    color: var(--ink);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    transition: border-color var(--dur-hover) var(--ease-out);
+  }
+  .field textarea { min-block-size: 9rem; resize: vertical; }
+  /* The phone is typed left to right but sits flush with the Persian labels. */
+  .field input[dir="ltr"] { text-align: right; }
+  .field input:focus-visible, .field textarea:focus-visible { border-color: var(--field); outline-offset: 2px; border-radius: var(--r-0); }
+  @media (hover: hover) and (pointer: fine) { .field input:hover, .field textarea:hover { border-color: var(--field); } }
+  .field--invalid input, .field--invalid textarea { border-color: var(--madder); }
+  .field__error { display: flex; gap: var(--s-1); align-items: flex-start; font-size: var(--fs-small); font-weight: 700; line-height: 1.7; color: var(--madder); }
+  .field__error svg { inline-size: 20px; block-size: 20px; flex: none; margin-block-start: 3px; }
+
+  .form__summary {
+    display: grid;
+    gap: var(--s-1);
+    padding: var(--s-2) var(--s-3);
+    border: 2px solid var(--madder);
+    background: var(--sea);
+  }
+  .form__summary ul { padding-inline-start: 1.25em; }
+  .form__summary a { color: var(--madder); font-weight: 700; }
+  /* Focused on load so it is announced; its madder frame already marks it. */
+  .form__summary:focus, .form__summary:focus-visible { outline: none; }
+
+  /* Captcha: the image with its "new image" button, then the answer box. */
+  .captcha { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-1) var(--s-2); }
+  /* The image has a white ground; multiply lays its letters on the panel. */
+  .captcha__image { inline-size: 12.5rem; block-size: auto; mix-blend-mode: multiply; }
+  .captcha__refresh {
+    display: inline-grid; place-items: center;
+    inline-size: 44px; block-size: 44px;
+    border: 2px solid var(--field); border-radius: var(--r-pill);
+    background: transparent; color: var(--field); cursor: pointer;
+    transition: background-color var(--dur-hover) var(--ease-out), color var(--dur-hover) var(--ease-out),
+                scale var(--dur-press) var(--ease-out);
+  }
+  .captcha__refresh svg { inline-size: 20px; block-size: 20px; }
+  .captcha__refresh[aria-disabled="true"] { opacity: 0.6; cursor: progress; }
+  .captcha__status { flex-basis: 100%; font-size: var(--fs-small); font-weight: 700; color: var(--madder); }
+  .captcha__status:empty { display: none; }
+  .captcha__refresh:active { scale: 0.97; }
+  /* The phone, for anyone who cannot read the image (it has no audio version). */
+  .field__alt { font-size: var(--fs-small); line-height: 1.7; color: var(--ink-2); }
+  .field__alt a { color: var(--field); font-weight: 700; }
+  @media (hover: hover) and (pointer: fine) { .captcha__refresh:hover { background: var(--field); color: var(--ivory); } }
+  /* The answer is Latin letters: centred, tracked, and as wide as the image. */
+  .field input[name="captcha_1"] { max-inline-size: 12.5rem; text-align: center; letter-spacing: 0.15em; }
+
+  /* Honeypot: off-screen, not display:none (some bots skip hidden fields). */
+  .form__trap { position: absolute; inset-inline-start: -9999px; inline-size: 1px; block-size: 1px; overflow: hidden; }
+
+  .form__send .pill { min-inline-size: 14rem; min-block-size: 56px; font-size: 1.125rem; }
+  .form__send .pill[aria-disabled="true"] { opacity: 0.7; cursor: progress; scale: none; }
+  .form__urgent { padding-block-start: var(--s-3); border-block-start: 1px solid rgb(12 52 56 / 0.18); font-size: var(--fs-small); line-height: 1.8; color: var(--ink-2); }
+  .form__urgent a { color: var(--field); font-weight: 700; }
+
+  /* ---- the sent state replaces the form, in place ---- */
+  .sent { display: grid; gap: var(--s-2); justify-items: start; }
+  .sent:focus, .sent:focus-visible { outline: none; }  /* focused on load only to be announced */
+  .sent__mark { inline-size: 56px; block-size: 56px; padding: 12px; background: var(--gold); color: var(--field); }
+  /* The one success moment: only the gold check settles in; the text is there at once. */
+  .sent__mark { animation: sent-in 280ms var(--ease-out) 80ms both; }
+  @keyframes sent-in { from { opacity: 0; scale: 0.9; } }
+  .sent a.num { font-weight: 700; }
+
+  /* ---- error pages: the code in gold above the title ---- */
+  .pagehead__code { font: 400 var(--fs-h2) / 1 var(--font-display); color: var(--gold); }
+  .pagehead__actions { margin-block-start: var(--s-3); }
+}
+
+@layer pages {
+  /* ---- Contact: the phones first (the start side), the form beside them ---- */
+  .contact__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-8); align-items: start; }
+  .contact__call { display: grid; gap: var(--s-3); position: sticky; inset-block-start: var(--s-4); }
+  .contact__clinics { display: grid; gap: var(--s-4); }
+  .contact__clinic { display: grid; gap: 4px; padding-block-start: var(--s-2); border-block-start: 2px solid var(--field); }
+  .contact__name { font: 400 var(--fs-h3) / var(--lh-display) var(--font-display); }
+  .contact__hours { color: var(--ink-2); }
+  /* The call is the primary path here: the numbers are the largest thing beside the form. */
+  .contact__clinic .place__phone { font-size: clamp(1.625rem, 1.3rem + 1vw, 2.125rem); }
+  .contact__clinic .place__phone svg { inline-size: 26px; block-size: 26px; }
+  .contact__more { display: flex; flex-wrap: wrap; gap: 0 var(--s-4); }
+  .contact__panel {
+    display: grid;
+    gap: var(--s-2);
+    padding: var(--s-6) var(--s-6) var(--s-6);
+    /* The woven edge on top, as on the Clinic Location panels. */
+    background: var(--weave-head);
+  }
+  .contact__intro { margin-block-end: var(--s-2); }
+  /* A two-column contact page with no location: the form takes the width it needs. */
+  .contact__grid:not(:has(.contact__call)) { grid-template-columns: minmax(0, 46rem); }
+
+  @media (max-width: 960px) {
+    .contact__grid { grid-template-columns: 1fr; gap: var(--s-6); }
+    .contact__call { position: static; }
+    /* Stacked above the form, 2+ clinics sit side by side where they fit. */
+    .contact__clinics { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--s-3) var(--s-4); }
+  }
+  @media (max-width: 600px) {
+    .contact__panel { padding: var(--s-5) var(--s-3) var(--s-4); margin-inline: calc(var(--margin) * -1 + 8px); }
+    .form__send .pill { inline-size: 100%; }
+    .pagehead__actions { inline-size: 100%; }
+    .pagehead__actions .pill { flex: 1 1 100%; min-block-size: 56px; }
+    /* What an older reader needs to act on (address, hours, the emergency
+       line, field hints) is never below 18px on a phone; 16px stays for labels. */
+    .hero__where, .seedoc__hours, .form__urgent, .field__hint, .field__alt, .thread__desc { font-size: var(--fs-body); }
+  }
+}
+
+/* ------------------------------------------------------------ utilities */
+@layer utilities {
+  .sr-only {
+    position: absolute !important;
+    inline-size: 1px; block-size: 1px;
+    margin: -1px; padding: 0; overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap; border: 0;
+  }
+  .sprite { position: absolute; inline-size: 0; block-size: 0; overflow: hidden; }
+}
+
+/* Reduced motion: nothing moves; state changes stay instant or cross-fade. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; }
+  .calltab.is-hidden { transform: none; }
+  .js .menu.is-open { animation: fade-in 150ms linear; }  /* gentler, not zero: no slide */
+  .pill:active, .icon-button:active, .calltab:active, .captcha__refresh:active { scale: none; }
+  .sent__mark { animation: fade-in 200ms linear both; }
+  /* The flip becomes a crossfade: no turn, the back fades over the front. */
+  .flip__turn, html:not(.js) .flip:focus-visible .flip__turn, .flip[aria-pressed="true"] .flip__turn, .flip:hover .flip__turn { transform: none; transition: none; }
+  .flip__face { -webkit-backface-visibility: visible; backface-visibility: visible; }
+  .flip__back { transform: none; opacity: 0; transition: opacity 200ms linear; }
+  html:not(.js) .flip:focus-visible .flip__back, .flip[aria-pressed="true"] .flip__back { opacity: 1; }
+}
+@keyframes fade-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) and (hover: hover) and (pointer: fine) {
+  .flip:hover .flip__back { opacity: 1; }
+}

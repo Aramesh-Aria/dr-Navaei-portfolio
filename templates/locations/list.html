@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load site %}
+{% block title %}{{ clinic_word }}: نشانی، تلفن و ساعت پذیرش · {{ profile.full_name }}{% endblock %}
+{% block og_title %}نشانی و تلفن {{ clinic_word }} · {{ profile.full_name }}{% endblock %}
+{% block description %}{% for l in locations %}{{ l.name }}: {{ l.address }}{% if not forloop.last %}؛ {% endif %}{% endfor %}{% endblock %}
+{% block og_description %}{% for l in locations %}{{ l.name }}: {{ l.address }}{% if not forloop.last %}؛ {% endif %}{% endfor %}{% endblock %}
+{% block body_class %}page-locations{% endblock %}
+{% block content %}
+<section class="pagehead on-field" aria-labelledby="page-title">
+  <div class="wrap pagehead__inner">
+    <h1 class="display-1 pagehead__title" id="page-title">{{ clinic_word }}</h1>
+    <p class="lede">نشانی، تلفن و ساعت پذیرش. برای گرفتن نوبت، تماس تلفنی سریع‌ترین راه است.</p>
+  </div>
+</section>
+{% include "partials/_weave.html" %}
+
+<div class="section places-section">
+  <div class="wrap">
+    {% if locations %}
+    <ul class="places places--{{ locations|length }}{% if locations|length > 1 %} places--many{% endif %}" role="list">
+      {% for location in locations %}
+      <li class="place">
+        <section aria-labelledby="place-{{ forloop.counter }}">
+          <h2 class="place__name" id="place-{{ forloop.counter }}">{{ location.name|isolate_latin }}</h2>
+          <div class="place__where">
+            <p class="place__address">{{ location.address|isolate_latin }}</p>
+            <p class="actions place__route">
+              {% if location.map_url %}<a class="pill pill--field" href="{{ location.map_url }}" rel="noopener" target="_blank"><svg aria-hidden="true"><use href="#i-route"/></svg>مسیر روی نقشه<span class="sr-only"> (در پنجره‌ی تازه)</span></a>{% endif %}
+              <button class="pill pill--line" type="button" data-copy="{{ location.address }}" hidden><svg aria-hidden="true"><use href="#i-copy"/></svg><span data-copy-label>کپی نشانی</span></button>
+            </p>
+          </div>
+          <dl class="place__facts">
+            <div><dt>تلفن مطب</dt><dd><a class="place__phone" href="{{ location.phone|tel_href }}"{% if forloop.first %} data-call-anchor{% endif %}><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="num">{{ location.phone|phone_display }}</span></a></dd></div>
+            {% if location.mobile_phone %}<div><dt>همراه</dt><dd><a class="place__phone" href="{{ location.mobile_phone|tel_href }}"><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="num">{{ location.mobile_phone|phone_display }}</span></a></dd></div>{% endif %}
+            <div><dt>ساعت پذیرش</dt><dd class="place__hours">{{ location.hours|fa_digits|linebreaksbr }}</dd></div>
+          </dl>
+        </section>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="lede">نشانی مطب به‌زودی در این صفحه می‌آید.</p>
+    {% endif %}
+    <p class="places__more">
+      <a class="textlink" href="{% url 'contact' %}">یا پیام بگذارید: فرم تماس<svg aria-hidden="true"><use href="#i-forward"/></svg></a>
+      {% if profile.paziresh24_url %}<a class="textlink" href="{{ profile.paziresh24_url }}" rel="noopener" target="_blank">پروفایل در پذیرش۲۴<svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr-only"> (در پنجره‌ی تازه)</span></a>{% endif %}
+    </p>
+    <p class="sr-only" aria-live="polite" data-copy-status></p>
+  </div>
+</div>
+{% endblock %}

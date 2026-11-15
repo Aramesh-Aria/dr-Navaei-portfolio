@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "public/static/admin/css/changelists.59465e72d1ef.css"
+        ],
+        "createdAt": "2026-11-15T19:04:20.884Z",
+        "reason": "Claude triage: Django's own admin stylesheet (django.contrib.admin changelists.css) copied by collectstatic; not project design code"
+      }
+    ]
+  }
+}

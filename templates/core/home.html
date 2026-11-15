@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load site %}
+{% block body_class %}page-home{% endblock %}
+{% block content %}
+<section class="hero on-field" aria-labelledby="hero-title">
+  <div class="wrap hero__grid">
+    <div class="hero__portrait">{% include "partials/_portrait.html" with caption=True eager=True %}</div>
+    <div class="hero__text">
+      <h1 class="display-1 hero__name" id="hero-title">{{ profile.full_name }}</h1>
+      {% if profile.intro_tagline %}<p class="display-tagline hero__tagline">{{ profile.intro_tagline|isolate_latin }}</p>{% endif %}
+      {% include "partials/_facts.html" %}
+      {% if primary_location %}
+      <p class="actions hero__actions">
+        <a class="pill pill--gold hero__call" href="{{ primary_location.phone|tel_href }}" data-call-anchor><svg aria-hidden="true"><use href="#i-phone"/></svg>تماس با مطب<span class="sr-only">، {{ primary_location.phone|phone_display }}</span></a>
+        {% if primary_location.map_url %}<a class="pill pill--line pill--on-field" href="{{ primary_location.map_url }}" rel="noopener" target="_blank"><svg aria-hidden="true"><use href="#i-route"/></svg>مسیر {{ primary_location.name|isolate_latin }}<span class="sr-only"> (در پنجره‌ی تازه)</span></a>
+        {% else %}<a class="pill pill--line pill--on-field" href="{% url 'locations' %}"><svg aria-hidden="true"><use href="#i-route"/></svg>نشانی {{ primary_location.name|isolate_latin }}</a>{% endif %}
+      </p>
+      <p class="hero__where">
+        {% for location in locations %}<span><strong>{{ location.name|isolate_latin }}</strong> · {{ location.address|isolate_latin }} · {{ location.hours|fa_digits }}</span>{% endfor %}
+      </p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% include "partials/_weave.html" %}
+
+{% if cards or rows %}
+<section class="section creds" aria-labelledby="creds-title">
+  <div class="wrap">
+    <header class="section__head">
+      <h2 class="display-2" id="creds-title">سوابق علمی و حرفه‌ای</h2>
+      {% if cards %}<p class="lede">پشت هر کارت آمده است که آن مدرک یا سمت کجا به دست آمده.</p>{% endif %}
+    </header>
+    {% include "partials/_credentials.html" %}
+    <p class="section__more"><a class="pill pill--field" href="{% url 'about' %}">زندگی‌نامه‌ی کامل دکتر<svg aria-hidden="true"><use href="#i-forward"/></svg></a></p>
+  </div>
+</section>
+{% endif %}
+
+{% if conditions %}
+<section class="section topics" aria-labelledby="conditions-title">
+  <div class="wrap">
+    <header class="section__head">
+      <h2 class="display-2" id="conditions-title">بیماری‌هایی که درمان می‌شوند</h2>
+    </header>
+    {% include "partials/_threads.html" with items=conditions %}
+    <p class="section__more"><a class="pill pill--line" href="{% url 'conditions' %}">همه‌ی بیماری‌ها و اقدامات<svg aria-hidden="true"><use href="#i-forward"/></svg></a></p>
+  </div>
+</section>
+{% endif %}
+
+{% if procedures %}
+<section class="procedures on-field" aria-labelledby="procedures-title">
+  <div class="wrap procedures__grid">
+    <header>
+      <h2 class="display-2" id="procedures-title">اقدامات درمانی</h2>
+      <p class="lede">اقدامات تشخیصی و درمانی ریه که {{ profile.full_name }} انجام می‌دهند.</p>
+    </header>
+    {% include "partials/_procedures.html" with items=procedures %}
+  </div>
+</section>
+{% endif %}
+
+{% include "partials/_call_band.html" %}
+{% endblock %}
